@@ -45,21 +45,21 @@
   .btn-acc:hover{background:rgba(0,229,255,.1)}
   .btn:disabled{opacity:.3;cursor:not-allowed}
 
-  .tri-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
-  .pow{background:var(--panel);border:1px solid var(--brd);padding:8px 12px;text-align:center}
+  .tri-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}
+  .pow{background:var(--panel);border:1px solid var(--brd);padding:6px 10px;text-align:center}
   .pow-lbl{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:2px}
   .pow-name{font-family:var(--head);font-size:11px;letter-spacing:1px;margin-bottom:6px}
   .pbar-bg{background:var(--bg);height:4px}
   .pbar-fill{height:4px;transition:width .5s}
   .pow-val{font-size:11px;font-weight:700;margin-top:4px}
 
-  .econ-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
-  .econ-blk{background:var(--bg2);border:1px solid var(--brd2);padding:7px 12px;display:flex;align-items:center;justify-content:space-between}
+  .econ-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}
+  .econ-blk{background:var(--bg2);border:1px solid var(--brd2);padding:5px 10px;display:flex;align-items:center;justify-content:space-between}
   .econ-k{font-size:9px;color:var(--txt2);letter-spacing:1px}
   .econ-v{font-family:var(--head);font-size:13px}
 
-  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
-  .room-card{background:var(--panel);border:1px solid var(--brd);padding:10px 12px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden}
+  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+  .room-card{background:var(--panel);border:1px solid var(--brd);padding:7px 10px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden}
   .room-card:hover{border-color:var(--acc)}
   .room-id{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:2px}
   .room-name{font-family:var(--head);font-size:10px;color:var(--acc);margin-bottom:4px;letter-spacing:1px}
@@ -71,21 +71,21 @@
   .sbar{height:3px;transition:width .5s,background .3s}
   .room-tag{display:inline-block;font-size:9px;padding:1px 6px;border:1px solid;letter-spacing:1px;margin-top:4px}
 
-  .ops-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px}
+  .ops-panel{background:var(--panel);border:1px solid var(--brd);padding:7px 12px;margin-bottom:5px}
   .ops-title{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:8px}
   .ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-  .op-btn{background:var(--bg2);border:1px solid var(--brd2);color:var(--txt);font-family:var(--mono);font-size:10px;padding:7px 10px;cursor:pointer;text-align:left;letter-spacing:.5px;transition:all .15s;display:flex;flex-direction:column;gap:2px}
+  .op-btn{background:var(--bg2);border:1px solid var(--brd2);color:var(--txt);font-family:var(--mono);font-size:10px;padding:5px 8px;cursor:pointer;text-align:left;letter-spacing:.5px;transition:all .15s;display:flex;flex-direction:column;gap:1px}
   .op-btn:hover{border-color:var(--acc);color:var(--acc)}
   .op-btn.active-op{border-color:var(--acc3);color:var(--acc3)}
   .op-btn:disabled{opacity:.25;cursor:not-allowed}
   .op-code{font-size:9px;color:var(--txt3);letter-spacing:1px}
   .op-desc{font-size:9px;color:var(--txt2)}
 
-  .adv-btn{width:100%;background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:12px;padding:12px;cursor:pointer;letter-spacing:3px;transition:all .2s;margin-bottom:8px}
+  .adv-btn{width:100%;background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:11px;padding:8px;cursor:pointer;letter-spacing:3px;transition:all .2s;margin-bottom:5px}
   .adv-btn:hover{background:rgba(118,255,3,.08)}
   .adv-btn:disabled{opacity:.25;cursor:not-allowed}
 
-  .log-panel{background:var(--bg);border:1px solid var(--brd2);padding:10px 14px;min-height:140px;max-height:200px;overflow-y:auto;margin-bottom:8px}
+  .log-panel{background:var(--bg);border:1px solid var(--brd2);padding:8px 12px;min-height:100px;max-height:160px;overflow-y:auto;margin-bottom:5px}
   .log-title{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:8px}
   .log-entry{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--brd2);animation:fadeIn .3s}
   @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
@@ -100,7 +100,7 @@
   .alert-chip{display:inline-block;background:rgba(255,23,68,.08);border:1px solid var(--dng);color:var(--dng);font-size:10px;padding:3px 10px;margin:2px;letter-spacing:1px;animation:pulse 2s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
 
-  .nodes-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px}
+  .nodes-panel{background:var(--panel);border:1px solid var(--brd);padding:7px 12px;margin-bottom:5px}
   .nodes-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
   .node-chip{background:var(--bg2);border:1px solid var(--brd2);padding:5px 6px;font-size:9px;line-height:1.3}
   .node-chip.mole{border-color:var(--dng)}
@@ -152,19 +152,15 @@
     </div>
   </div>
 
-  <!-- PROVIDER SELECTOR -->
-  <div style="background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:6px">
-    <div style="font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:8px">// SELECT AI PROVIDER — ALL FREE TIERS SUPPORTED</div>
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px" id="providerGrid"></div>
-  </div>
-
-  <!-- API KEY -->
-  <div style="background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-    <label style="font-size:10px;color:var(--txt2);letter-spacing:1px;white-space:nowrap" id="keyLabel">API KEY //</label>
-    <input class="api-input" type="password" id="apiKey" placeholder="paste your key..." style="flex:1;min-width:180px" />
-    <select id="modelSelect" style="background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:10px;padding:5px 8px;outline:none;cursor:pointer"></select>
-    <button class="btn btn-acc" onclick="saveKey()">CONNECT</button>
-    <span id="keyStatus" style="font-size:10px;color:var(--txt2)">NO KEY LOADED</span>
+  <!-- PROVIDER + API KEY — COMPACT ROW -->
+  <div style="background:var(--panel);border:1px solid var(--brd);padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap">
+    <span style="font-size:9px;color:var(--txt3);letter-spacing:1px;white-space:nowrap">PROVIDER //</span>
+    <div style="display:flex;gap:4px" id="providerGrid"></div>
+    <div style="width:1px;height:20px;background:var(--brd2);flex-shrink:0"></div>
+    <input class="api-input" type="password" id="apiKey" placeholder="paste api key..." style="flex:1;min-width:120px;max-width:260px" />
+    <select id="modelSelect" style="background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:4px 6px;outline:none;cursor:pointer;max-width:200px"></select>
+    <button class="btn btn-acc" onclick="saveKey()" style="padding:4px 10px;font-size:10px;white-space:nowrap">CONNECT</button>
+    <span id="keyStatus" style="font-size:9px;color:var(--txt2);white-space:nowrap">NO KEY</span>
   </div>
 
   <!-- POWER TRIANGLE -->
@@ -229,17 +225,20 @@
     <div id="logEntries"></div>
   </div>
 
-  <!-- NODES -->
-  <div class="nodes-panel">
-    <div class="sec-lbl">// NODE NETWORK — 50 SIMULATED ENTITIES</div>
-    <div style="font-size:9px;color:var(--txt2);margin-bottom:6px">
-      <span style="color:var(--acc)">&#9679;</span> REGULAR &nbsp;
-      <span style="color:var(--pur)">&#9679;</span> PREMIUM &nbsp;
-      <span style="color:var(--acc2)">&#9679;</span> COMPETITOR &nbsp;
-      <span style="color:var(--amb)">&#9679;</span> INSPECTOR &nbsp;
-      <span style="color:var(--dng)">&#9632;</span> MOLE SUSPECTED
+  <!-- NODE RADAR -->
+  <div class="nodes-panel" id="nodeRadarPanel">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+      <div class="sec-lbl" style="margin-bottom:0;border:none;padding:0">// NODE RADAR — CLICK NODE TO MAP RELATIONS</div>
+      <div style="font-size:9px;color:var(--txt2)">
+        <span style="color:var(--acc)">&#9679;</span> REG &nbsp;
+        <span style="color:var(--pur)">&#9679;</span> PREM &nbsp;
+        <span style="color:var(--acc2)">&#9679;</span> COMP &nbsp;
+        <span style="color:var(--amb)">&#9679;</span> INSP &nbsp;
+        <span style="color:var(--dng)">&#9632;</span> MOLE
+      </div>
     </div>
-    <div class="nodes-grid" id="nodesGrid"></div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px" id="radarGrid"></div>
+    <div id="nodeDetail" style="display:none;background:var(--bg);border:1px solid var(--acc);margin-top:6px;padding:8px 12px"></div>
   </div>
 
 </div>
@@ -334,10 +333,7 @@ function renderProviders(){
   g.innerHTML='';
   Object.entries(PROVIDERS).forEach(([id,p])=>{
     const active=selectedProvider===id;
-    g.innerHTML+=`<button onclick="selectProvider('${id}')" style="background:${active?'rgba(0,229,255,0.08)':'var(--bg2)'};border:1px solid ${active?p.color:'var(--brd2)'};color:${active?p.color:'var(--txt2)'};font-family:var(--mono);font-size:9px;padding:7px 6px;cursor:pointer;letter-spacing:0.5px;text-align:center;transition:all .15s;display:flex;flex-direction:column;gap:3px">
-      <span style="font-size:10px;font-weight:700">${p.label}</span>
-      <span style="font-size:8px;color:${active?p.color:'var(--txt3)'}">${p.freeNote}</span>
-    </button>`;
+    g.innerHTML+=`<button onclick="selectProvider('${id}')" title="${p.freeNote}" style="background:${active?'rgba(0,229,255,0.06)':'transparent'};border:1px solid ${active?p.color:'var(--brd2)'};color:${active?p.color:'var(--txt3)'};font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap">${p.label}</button>`;
   });
 }
 
@@ -420,19 +416,139 @@ function renderAlerts(){
   document.getElementById('alertsPanel').innerHTML=gs.alerts.map(a=>`<span class="alert-chip">!! ${a}</span>`).join('');
 }
 
+const FC_HEX={regular:'#00e5ff',premium:'#ea80fc',competitor:'#ff3d00',inspector:'#ffab00'};
+let selectedNode=null;
+
+function getNodeRelations(node){
+  const roomMates=gs.nodes.filter(n=>n.room===node.room&&n.id!==node.id);
+  const sameFactRooms=gs.nodes.filter(n=>n.faction===node.faction&&n.id!==node.id&&n.room!==node.room);
+  const moles=gs.nodes.filter(n=>n.mole&&n.id!==node.id&&n.room===node.room);
+  return{roomMates,sameFactRooms,moles};
+}
+
 function renderNodes(){
-  const g=document.getElementById('nodesGrid');
+  const g=document.getElementById('radarGrid');
   g.innerHTML='';
-  gs.nodes.slice(0,50).forEach(n=>{
-    const fc=FC[n.faction]||'#888';
-    const rm=ROOMS.find(r=>r.itKey===n.room);
-    g.innerHTML+=`<div class="node-chip${n.mole?' mole':''}${n.loyalty===0?' tier0':''}">
-      <div class="node-id">${n.id} <span class="ndot" style="background:${fc}"></span></div>
-      <div class="node-nm">${n.name}</div>
-      <div class="node-rm">${rm?rm.tag:n.room}</div>
-      <div style="font-size:8px;color:${n.loyalty===0?'var(--dng)':n.loyalty===2?'var(--acc3)':'var(--txt3)'}">T${n.loyalty}${n.mole?' [MOLE]':''}</div>
+  ROOMS.forEach(r=>{
+    const roomNodes=gs.nodes.filter(n=>n.room===r.itKey);
+    const W=200,H=180,CX=100,CY=90,RAD=68;
+    const rings=[0.35,0.65,1.0];
+    let svgDots='',svgLines='',svgLabels='';
+    const positions=[];
+    roomNodes.forEach((n,i)=>{
+      const angle=(2*Math.PI*i/Math.max(roomNodes.length,1))-(Math.PI/2);
+      const ringR=RAD*rings[Math.min(n.loyalty,2)];
+      const x=CX+Math.cos(angle)*ringR*(0.85+Math.random()*0.15);
+      const y=CY+Math.sin(angle)*ringR*(0.85+Math.random()*0.15);
+      positions.push({n,x,y,angle});
+    });
+    // web lines between roommates
+    positions.forEach((a,ai)=>{
+      positions.forEach((b,bi)=>{
+        if(bi<=ai)return;
+        const isMoleLink=a.n.mole||b.n.mole;
+        const opacity=isMoleLink?'0.5':'0.12';
+        const stroke=isMoleLink?'#ff1744':'#1a3045';
+        const dash=isMoleLink?'3,2':'4,3';
+        svgLines+=`<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${stroke}" stroke-width="0.8" stroke-opacity="${opacity}" stroke-dasharray="${dash}"/>`;
+      });
+    });
+    // radar rings
+    rings.forEach((r,ri)=>{
+      const labels=['T0','T1','T2'];
+      svgDots+=`<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-opacity="0.4" stroke-dasharray="2,4"/>`;
+      svgDots+=`<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="6" font-family="Share Tech Mono">${labels[ri]}</text>`;
+    });
+    // center cross
+    svgDots+=`<line x1="${CX-4}" y1="${CY}" x2="${CX+4}" y2="${CY}" stroke="#1a3045" stroke-width="0.5"/>`;
+    svgDots+=`<line x1="${CX}" y1="${CY-4}" x2="${CX}" y2="${CY+4}" stroke="#1a3045" stroke-width="0.5"/>`;
+    // node dots
+    positions.forEach(({n,x,y})=>{
+      const col=FC_HEX[n.faction]||'#888';
+      const isSel=selectedNode&&selectedNode.id===n.id;
+      const isRelated=selectedNode&&selectedNode.id!==n.id&&n.room===selectedNode.room;
+      const r2=isSel?5:n.mole?4:3;
+      const opacity=selectedNode&&!isSel&&!isRelated?'0.25':'1';
+      const stroke=isSel?'#ffffff':n.mole?'#ff1744':'none';
+      const sw=isSel?1.5:n.mole?1:0;
+      svgDots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" onclick="clickNode('${n.id}')"/>`;
+      if(isSel||isRelated||!selectedNode){
+        const lx=x>CX?x+6:x-6;
+        const anchor=x>CX?'start':'end';
+        svgLabels+=`<text x="${lx.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#ffffff':col}" fill-opacity="${opacity}" font-size="6" font-family="Share Tech Mono" text-anchor="${anchor}" style="cursor:pointer;pointer-events:none">${n.name.slice(0,6)}</text>`;
+      }
+    });
+    // stress arc on outer ring
+    const rd=gs.rooms[r.itKey]||{stress:0};
+    const stress=rd.stress||0;
+    const arcAngle=stress*2*Math.PI;
+    const ex=CX+Math.cos(-Math.PI/2+arcAngle)*RAD;
+    const ey=CY+Math.sin(-Math.PI/2+arcAngle)*RAD;
+    const largeArc=arcAngle>Math.PI?1:0;
+    const stressCol=stress<0.4?'#76ff03':stress<0.7?'#ffab00':'#ff1744';
+    if(stress>0.01){
+      svgDots+=`<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stressCol}" stroke-width="1.5" stroke-opacity="0.6"/>`;
+    }
+
+    const rColor=r.color.replace('var(--acc)','#00e5ff').replace('var(--pur)','#ea80fc').replace('var(--acc2)','#ff3d00').replace('var(--wrn)','#ff6d00').replace('var(--amb)','#ffab00').replace('var(--acc3)','#76ff03');
+
+    g.innerHTML+=`<div style="background:var(--bg2);border:1px solid var(--brd2);padding:6px;position:relative">
+      <div style="font-size:8px;color:${rColor};letter-spacing:1px;margin-bottom:2px;font-family:'Orbitron',monospace">${r.tag}</div>
+      <div style="font-size:7px;color:var(--txt3);margin-bottom:4px">${roomNodes.length} nodes</div>
+      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">
+        ${svgLines}${svgDots}${svgLabels}
+      </svg>
     </div>`;
   });
+  renderNodeDetail();
+}
+
+function clickNode(id){
+  const node=gs.nodes.find(n=>n.id===id);
+  if(!node)return;
+  if(selectedNode&&selectedNode.id===id){
+    selectedNode=null;
+    document.getElementById('nodeDetail').style.display='none';
+  } else {
+    selectedNode=node;
+  }
+  renderNodes();
+}
+
+function renderNodeDetail(){
+  if(!selectedNode)return;
+  const d=document.getElementById('nodeDetail');
+  d.style.display='block';
+  const n=selectedNode;
+  const {roomMates,sameFactRooms,moles}=getNodeRelations(n);
+  const col=FC_HEX[n.faction]||'#888';
+  const room=ROOMS.find(r=>r.itKey===n.room);
+  const loyLbl=['DEFECTOR','ACTIVE ASSET','BLACK OPS OPERATOR'];
+  const relLines=roomMates.slice(0,8).map(r=>{
+    const rc=FC_HEX[r.faction]||'#888';
+    return `<span style="color:${rc};margin-right:8px;font-size:9px">${r.name}${r.mole?' [M]':''}</span>`;
+  }).join('');
+  const netLines=sameFactRooms.slice(0,5).map(r=>`<span style="color:var(--txt2);margin-right:8px;font-size:9px">${r.name}@${ROOMS.find(rm=>rm.itKey===r.room)?.tag||'?'}</span>`).join('');
+  d.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div>
+      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">NODE PROFILE</div>
+      <div style="font-family:'Orbitron',monospace;font-size:11px;color:${col}">${n.name.toUpperCase()}</div>
+      <div style="font-size:9px;color:var(--txt2);margin-top:2px">${n.id} // ${n.faction.toUpperCase()}</div>
+      <div style="font-size:9px;color:var(--txt2);margin-top:1px">LOCATION: ${room?room.tag:'?'}</div>
+      <div style="font-size:9px;margin-top:2px;color:${n.loyalty===0?'var(--dng)':n.loyalty===2?'var(--acc3)':'var(--txt)'}">${loyLbl[n.loyalty]||'UNKNOWN'}</div>
+      <div style="font-size:9px;margin-top:2px;color:${n.stress>0.7?'var(--dng)':n.stress>0.4?'var(--amb)':'var(--acc3)'}">STRESS: ${Math.round(n.stress*100)}%</div>
+      ${n.mole?'<div style="font-size:9px;color:var(--dng);margin-top:3px;letter-spacing:1px">!! MOLE SUSPECTED</div>':''}
+    </div>
+    <div>
+      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">ROOM CONNECTIONS (${roomMates.length})</div>
+      <div style="line-height:1.8">${relLines||'<span style="color:var(--txt3);font-size:9px">ISOLATED</span>'}</div>
+      ${moles.length?`<div style="font-size:9px;color:var(--dng);margin-top:4px">!! ${moles.length} MOLE(S) IN ROOM</div>`:''}
+    </div>
+    <div>
+      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">FACTION NETWORK (${sameFactRooms.length})</div>
+      <div style="line-height:1.8">${netLines||'<span style="color:var(--txt3);font-size:9px">NO EXTERNAL CONTACTS</span>'}</div>
+    </div>
+  </div>`;
 }
 
 function renderAll(){renderPowers();renderRooms();renderOps();renderAlerts();renderNodes();}
