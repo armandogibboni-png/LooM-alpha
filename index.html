@@ -339,14 +339,13 @@ function renderProviders(){
 function selectProvider(id){
   selectedProvider=id;
   const p=PROVIDERS[id];
-  document.getElementById('keyLabel').textContent=p.label+' KEY //';
-  document.getElementById('apiKey').placeholder=p.placeholder;
-  document.getElementById('apiKey').value='';
-  document.getElementById('keyStatus').textContent='NO KEY LOADED';
-  document.getElementById('keyStatus').style.color='var(--txt2)';
+  const ki=document.getElementById('apiKey');
+  if(ki){ki.placeholder=p.placeholder;ki.value='';}
+  const ks=document.getElementById('keyStatus');
+  if(ks){ks.textContent='NO KEY';ks.style.color='var(--txt2)';}
   apiKey='';
   const sel=document.getElementById('modelSelect');
-  sel.innerHTML=p.models.map(m=>`<option value="${m}">${m}</option>`).join('');
+  if(sel)sel.innerHTML=p.models.map(m=>`<option value="${m}">${m}</option>`).join('');
   selectedModel=p.models[0];
   renderProviders();
 }
