@@ -154,7 +154,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
 .mi.b{color:var(--acc)}.mi.a{color:var(--dng)}.mi.o{color:var(--gold)}.mi.m{color:var(--dng);font-weight:600}
 
 /* ── OVERLAYS ─────────────────────────────────────────────── */
-#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:none;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .lt{font-family:var(--head);font-size:18px;color:var(--acc);letter-spacing:5px}
 .ls{font-size:8px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.4}
 .lb{width:200px;height:2px;background:var(--brd);overflow:hidden}
@@ -384,14 +384,14 @@ let needsRender = true; // dirty flag
 
 window.startGame = function() {
   document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('loading').style.display = 'flex';
   document.getElementById('app').style.display = '';
-  // Avvia engine e loading ora
   setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
     needsRender = true;
     SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
     addLog('--','Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.',[],[]);
-  }, 2000);
+  }, 1800);
 };
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -405,13 +405,7 @@ window.addEventListener('DOMContentLoaded', () => {
     requestAnimationFrame(renderLoop);
   })();
 
-  setTimeout(() => {
-    if(document.getElementById('app').style.display==='none')return;
-    document.getElementById('loading').style.display = 'none';
-    needsRender = true;
-    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
-    addLog('--','Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.', [],[]);
-  }, 2600);
+  // Init complete — game starts on BEGIN INFILTRATION click
 });
 
 function bindCallbacks() {
