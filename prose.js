@@ -42,52 +42,52 @@ export const CONTEXT_CONFIG = {
 export const LORE_BY_CONTEXT = {
   LOOM_CORE: {
     REGULARS: [
-      'Ha copiato tre identità di copertura negli ultimi sei mesi. Nessuna ha retto più di quattro settimane.',
-      'Sa che il suo handler lo sta usando come esca. Sta aspettando il momento giusto per sparire.',
-      'Tiene un registro cifrato di ogni ordine ricevuto. Assicurazione sulla vita.',
-      'Ha una famiglia in un paese che non può nominare. Questo lo rende malleabile.',
-      'Ha fallito la sua ultima missione ma ha falsificato il report. Qualcuno lo sa.',
-      'Ogni volta che entra in una stanza nuova, identifica prima le uscite.',
-      'Parla tre lingue. Ne nega due quando fa comodo.',
-      'È entrato nella rete per soldi. È rimasto per paura.',
-      'Conosce il vero nome di almeno due regine. Non l\'ha mai detto a nessuno.',
-      'Il suo telefono ha una SIM di backup che nessuno conosce.',
+      'Has cycled through three cover identities in six months. None held longer than four weeks.',
+      'Knows their handler is using them as bait. Waiting for the right moment to disappear.',
+      'Keeps an encrypted log of every order received. Life insurance.',
+      'Has family in a country they cannot name. That makes them manageable.',
+      'Failed their last mission and falsified the report. Someone knows.',
+      'Every time they enter a new room, they locate the exits first.',
+      'Speaks three languages. Denies two of them when convenient.',
+      'Joined the network for money. Stayed because of fear.',
+      'Knows the real name of at least two sovereigns. Has never told anyone.',
+      'Their phone has a backup SIM that no one knows about.',
     ],
     PREMIUM: [
-      'Frequenta gli stessi tre ristoranti da dieci anni. Non è abitudine — è protocollo.',
-      'La sua reputazione è costruita su un evento che non è mai avvenuto come racconta.',
-      'Ha comprato informazioni da entrambe le parti. Considera questo equilibrio.',
-      'Conosce il nome dei sette intermediari che tengono in piedi questa rete.',
-      'Ha lasciato un country per ragioni che non tornano.',
-      'Ogni sei mesi cambia fornitore. Non per preferenza — per sicurezza.',
-      'Sa dove sono archiviate le comunicazioni dei COMPETITORS. Non lo ha mai usato.',
-      'Ha un accordo verbale con una delle regine che nessuna terza parte conosce.',
-      'Il suo accento cambia leggermente quando mente. Solo chi lo conosce bene se ne accorge.',
-      'Ha bruciato un contatto per salvare un altro. Ancora non sa se ha scelto bene.',
+      'Has frequented the same three restaurants for ten years. Not habit — protocol.',
+      'Their reputation is built on an event that never happened the way they tell it.',
+      'Has bought information from both sides. Considers this balance.',
+      'Knows the names of the seven intermediaries holding this network together.',
+      'Left a country for reasons that do not add up.',
+      'Changes supplier every six months. Not preference — security.',
+      'Knows where COMPETITORS communications are archived. Has never used it.',
+      'Has a verbal agreement with one sovereign that no third party knows about.',
+      'Their accent shifts slightly when lying. Only people who know them well notice.',
+      'Burned one contact to save another. Still not sure they chose correctly.',
     ],
     COMPETITORS: [
-      'È nella rete da abbastanza a lungo da sapere chi dovrebbe fidarsi di chi. Non lo fa mai.',
-      'Sta raccogliendo materiale su qualcuno nella sua stessa fazione. Piano di uscita.',
-      'Il suo obiettivo dichiarato e quello reale non coincidono da mesi.',
-      'Sa che c\'è un mole nella sua fazione. Ha deciso di aspettare invece di agire.',
-      'Ha venduto intel ai REGULARS due volte. Nessuno dei due lo sa.',
-      'Il suo accesso alla rete è basato su una credenziale che non dovrebbe avere ancora.',
-      'Finge incompetenza in almeno tre aree in cui è invece esperto.',
-      'Ha un accordo con un elemento degli INSPECTORS. Nessuno dei due lo chiamerebbe così.',
-      'Il suo comportamento di copertura è così credibile che a volte ci crede lui stesso.',
-      'Sa esattamente quando il sospetto sulla sua fazione raggiungerà il punto critico.',
+      'Has been in the network long enough to know who should trust whom. Never does.',
+      'Building a file on someone in their own faction. Exit plan.',
+      'Their stated objective and their real one have not aligned for months.',
+      'Knows there is a mole in their faction. Decided to wait rather than act.',
+      'Has sold intel to REGULARS twice. Neither side knows.',
+      'Their network access is based on credentials they should not have yet.',
+      'Fakes incompetence in at least three areas where they are actually expert.',
+      'Has an arrangement with an INSPECTOR. Neither of them would call it that.',
+      'Their cover behavior is so convincing that sometimes they believe it themselves.',
+      'Knows exactly when suspicion on their faction will reach critical.',
     ],
     INSPECTORS: [
-      'Il suo mandato ufficiale è più ristretto di quello che sta effettivamente investigando.',
-      'Ha trovato qualcosa tre settimane fa che non ha ancora inserito nel rapporto.',
-      'Conosce almeno un elemento nella rete che non è nel suo dossier. Scelta deliberata.',
-      'Il suo superiore non sa che è qui. Opera con un margine di autonomia non autorizzato.',
-      'Ha chiuso un caso tre anni fa in modo che qualcuno potesse continuare a lavorare.',
-      'Non tutti i documenti che ha accesso a leggere sono documenti che ha il diritto di leggere.',
-      'Sta raccogliendo prove su qualcuno molto più in alto di lui nella catena di comando.',
-      'Il suo rapporto finale avrà omissioni. Intenzionali.',
-      'Ha incrociato questa rete prima, in un altro contesto, sotto un altro nome.',
-      'Sospetta che qualcuno nel suo stesso ufficio lo stia monitorando.',
+      'Their official mandate is narrower than what they are actually investigating.',
+      'Found something three weeks ago that has not gone into the report yet.',
+      'Knows at least one network element not in their dossier. Deliberate choice.',
+      'Their superior does not know they are here. Operating with unauthorized autonomy.',
+      'Closed a case three years ago in a way that allowed someone to keep working.',
+      'Not all the documents they can access are documents they have the right to read.',
+      'Building evidence on someone much higher in the command chain.',
+      'The final report will have omissions. Intentional.',
+      'Has crossed this network before, in a different context, under a different name.',
+      'Suspects someone in their own office is monitoring them.',
     ],
   }
 };
@@ -96,28 +96,28 @@ export const LORE_BY_CONTEXT = {
 export const MISSION_TEMPLATES = {
   LOOM_CORE: {
     REGULARS: [
-      'Il nostro asset {target} nel Server Room ha qualcosa che non ci ha detto. Trova cosa.',
-      '{target} dei REGULARS si muove in modo irregolare. Monitora e riferisci.',
-      'Dobbiamo sapere cosa sa {target}. Con qualsiasi mezzo necessario.',
+      'Our asset {target} in Server Room has something they have not told us. Find out what.',
+      '{target} from REGULARS is moving irregularly. Monitor and report.',
+      'We need to know what {target} knows. By whatever means necessary.',
     ],
     PREMIUM: [
-      '{target} dei PREMIUM ha accesso a qualcosa che non dovrebbe avere. Documenta.',
-      'L\'intermediario {target} lavora per entrambe le parti. Scopri per chi di più.',
-      'Servono tre contatti di {target}. Non importa come li ottieni.',
+      '{target} from PREMIUM has access to something they should not have. Document it.',
+      'The intermediary {target} works both sides. Find out which side more.',
+      'We need three contacts from {target}. It does not matter how you get them.',
     ],
     COMPETITORS: [
-      '{target} dei COMPETITORS sta per fare una mossa. Anticipala.',
-      'Il handler di {target} non sa che {target} ha già scelto da che parte stare. Confermalo.',
-      'Neutralizza {target} prima che completi il trasferimento. Hai 8 turni.',
+      '{target} from COMPETITORS is about to make a move. Get ahead of it.',
+      '{target}\'s handler does not know {target} has already chosen a side. Confirm it.',
+      'Neutralize {target} before they complete the transfer. You have 8 turns.',
     ],
     INSPECTORS: [
-      '{target} degli INSPECTORS si sta avvicinando troppo. Rallentalo.',
-      'Scopri cosa ha già nel dossier {target}. Poi decidi il passo successivo.',
-      '{target} ha un contatto nella rete che non abbiamo identificato. Trovalo.',
+      '{target} from INSPECTORS is getting too close. Slow them down.',
+      'Find out what {target} already has in the dossier. Then decide the next step.',
+      '{target} has a network contact we have not identified. Find them.',
     ],
     DEFAULT: [
-      '{target} ha qualcosa. Trovalo prima che lo usi.',
-      'Avvicinati a {target}. Abbiamo bisogno di sapere se è ancora affidabile.',
+      '{target} has something. Find it before they use it.',
+      'Get close to {target}. We need to know if they are still reliable.',
     ]
   }
 };
@@ -125,75 +125,68 @@ export const MISSION_TEMPLATES = {
 // ── AMBIENT INTERCEPTS (testo flavor per il monitor) ─────────────────────────
 export const AMBIENT_INTERCEPTS = {
   LOOM_CORE: {
-    'Server Room':        [
-      'Qualcuno ha cambiato le credenziali alle 03:14. Nessun log.',
-      'Traffico anomalo su porta 443. Durata: 8 secondi. Origine: non tracciabile.',
-      'Un nodo ha smesso di pulsare. Non è andato offline — è diventato silenzioso.',
-      '{a} ha aperto un file che non avrebbe dovuto sapere che esisteva.',
-      'Latenza aumentata del 340% negli ultimi 4 minuti. Qualcuno sta copiando qualcosa.',
+    'Server Room': [
+      'Credentials rotated at 03:14. No log entry.',
+      'Anomalous traffic on port 443. Duration: 8 seconds. Origin: untraceable.',
+      'A node stopped pulsing. It did not go offline — it went silent.',
+      '{a} opened a file they should not have known existed.',
+      'Latency up 340% over the last 4 minutes. Someone is copying something.',
     ],
-    'The Embassy':        [
-      '{a} e {b} si sono incontrati per undici minuti. Nessun registro.',
-      'Una valigia diplomatica è uscita fuori protocollo.',
-      '{a} ha cambiato tre volte tavolo durante la cena. Nervosismo o protocollo?',
-      'La linea sicura è stata usata alle 02:00. Non era programmata.',
-      'Due persone con lo stesso handler nello stesso posto. Coincidenza improbabile.',
+    'The Embassy': [
+      '{a} and {b} met for eleven minutes. No record.',
+      'A diplomatic pouch left outside protocol.',
+      '{a} changed tables three times during dinner. Nerves or procedure?',
+      'The secure line was used at 02:00. It was not scheduled.',
+      'Two people with the same handler in the same location. Unlikely coincidence.',
     ],
-    'Encrypted Channel':  [
-      'Frammentazione insolita nei pacchetti. Qualcuno sta nascondendo qualcosa nel rumore.',
-      '{a} ha usato un protocollo che non era attivo da sei mesi.',
-      'Il canale è stato testato tre volte nelle ultime due ore. Test di stabilità o di copertura?',
-      'Un messaggio è stato inviato e immediatamente cancellato. Solo il timestamp rimane.',
-      'Frequenza anomala. Non è errore — è segnale.',
+    'Encrypted Channel': [
+      'Unusual packet fragmentation. Someone is hiding something in the noise.',
+      '{a} used a protocol that had been dormant for six months.',
+      'The channel was stress-tested three times in the last two hours. Stability check or cover test?',
+      'A message was sent and immediately deleted. Only the timestamp remains.',
+      'Anomalous frequency. Not an error — a signal.',
     ],
-    'Black Site':         [
-      'Nessun movimento registrato nelle ultime 4 ore. Questo è il problema.',
-      '{a} è entrato. {b} è uscito. Non si sono incrociati — eppure erano lì insieme.',
-      'Le luci sono rimaste accese tutta la notte. Non è svista.',
-      'Un file è stato distrutto fisicamente. Nel 2026. Qualcuno aveva paura del backup.',
-      'Il sito non esiste nei registri pubblici. Esiste nei nostri.',
+    'Black Site': [
+      'No movement logged in the last 4 hours. That is the problem.',
+      '{a} entered. {b} left. They did not cross paths — yet both were there.',
+      'Lights stayed on all night. Not an oversight.',
+      'A file was physically destroyed. In 2026. Someone was afraid of the backup.',
+      'This site does not exist in public records. It exists in ours.',
     ],
-    'Press Room':         [
-      'Un articolo è stato scritto e poi ritirato entro venti minuti dalla pubblicazione.',
-      '{a} ha incontrato tre giornalisti diversi in altrettanti bar. Nessuna storia è uscita.',
-      'La fonte anonima di ieri usa la stessa sintassi di {b}.',
-      'Tre redazioni hanno ricevuto lo stesso leak da tre fonti diverse. Non è leak — è campagna.',
-      'Qualcuno sta preparando una storia. Non per pubblicarla — per averla pronta.',
+    'Press Room': [
+      'An article was written and pulled within twenty minutes of publication.',
+      '{a} met three different journalists at three different locations. No story ran.',
+      'Yesterday's anonymous source uses the same syntax as {b}.',
+      'Three outlets received the same leak from three separate sources. Not a leak — a campaign.',
+      'Someone is preparing a story. Not to publish it — to have it ready.',
     ],
     'External Safehouse': [
-      '{a} è rimasto 47 minuti. I safehouse non si usano così a lungo senza motivo.',
-      'La casa è stata affittata tre settimane fa. In contanti. A nome di qualcuno che non esiste.',
-      'Seconda visita in due giorni. La prima era esplorazione. Questa è operativa.',
-      'Nessun contatto esterno nelle ultime 36 ore. Isolamento volontario o forzato?',
-      'La luce in fondo è rimasta accesa tutta la notte.',
+      '{a} stayed 47 minutes. Safehouses are not used that long without a reason.',
+      'The property was rented three weeks ago. Cash. Under a name that does not exist.',
+      'Second visit in two days. The first was reconnaissance. This one is operational.',
+      'No external contact in 36 hours. Voluntary isolation or forced?',
+      'The light at the back stayed on all night.',
     ],
   }
 };
 
-// ── SCENARIO INTRO ─────────────────────────────────────────────────────────
-export const SCENARIO_INTRO = [
-  'La rete è già attiva.',
-  '200 nodi. 6 zone. Quattro fazioni che non si fidano l\'una dell\'altra.',
-  'Due regine controllano il flusso di informazioni.',
-  'Il tuo compito è neutralizzarle entrambe prima che il sospetto ti bruci.',
-  'Non hai un\'identità. Hai solo un vantaggio: sai cose che loro non sanno che tu sai.',
-];
+
 
 // ── FALLBACK NARRATIVO (quando AI non disponibile) ────────────────────────────
 export const FALLBACK_TURNS = [
-  'La rete respira. I nodi si spostano. Nessun evento rilevante questo turno.',
-  'Silenzio operativo. Il sospetto tiene la rete in equilibrio instabile.',
-  'Movimento nei corridoi. Nessuna deviazione dal pattern atteso.',
-  'I COMPETITORS si riorganizzano. Gli INSPECTORS aumentano la frequenza di scansione.',
-  'Un asset si è spostato senza notifica. Anomalia registrata, causa sconosciuta.',
-  'La rete si adatta. Come sempre. Come se sapesse che qualcuno la osserva.',
+  'The network holds. Nodes shift. No significant deviations this turn.',
+  'Operational silence. Suspicion keeps the network in unstable equilibrium.',
+  'Movement in the corridors. No deviation from expected patterns.',
+  'COMPETITORS are reorganizing. INSPECTORS increasing scan frequency.',
+  'An asset repositioned without notification. Anomaly logged, cause unknown.',
+  'The network adapts. It always does. As if it knows someone is watching.',
 ];
 
 export const FALLBACK_EVENTS = [
-  ['Ridistribuzione nodi in Server Room.', 'Latenza aumentata su Encrypted Channel.'],
-  ['Un nodo ha cambiato zona senza trigger visibile.', 'INSPECTORS in movimento verso Press Room.'],
-  ['Anomalia rilevata in Black Site.', 'Il canale criptato è silenzioso da troppo tempo.'],
-  ['Asset PREMIUM si è spostato in External Safehouse.', 'Pattern di clustering insolito.'],
+  [{type:'movement',text:'Node redistribution in Server Room.'},{type:'anxiety',text:'Latency spike on Encrypted Channel.'}],
+  [{type:'movement',text:'A node changed zones without a visible trigger.'},{type:'movement',text:'INSPECTORS moving toward Press Room.'}],
+  [{type:'anxiety',text:'Anomaly detected in Black Site.'},{type:'beacon',text:'Encrypted Channel has been silent too long.'}],
+  [{type:'movement',text:'PREMIUM asset moved to External Safehouse.'},{type:'beacon',text:'Unusual clustering pattern detected.'}],
 ];
 
 // ── QUEEN NEUTRALIZATION SCENES ──────────────────────────────────────────────
