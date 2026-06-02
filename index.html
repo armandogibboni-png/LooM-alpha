@@ -591,7 +591,6 @@ JSON SCHEMA:
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey},
       body:JSON.stringify({
-        model:selectedModel,
         max_tokens:1000,
         system:sys,
         messages:[{role:'user',content:userMsg}]
