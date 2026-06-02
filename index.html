@@ -144,7 +144,7 @@
       <div class="hdr-acronym">
         <span>L</span>ocal &nbsp;<span>O</span>pinion &nbsp;<span>O</span>verhaul &nbsp;<span>M</span>onitor
       </div>
-      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE &nbsp;|&nbsp; BYO-API PUBLIC TRIAL</div>
+      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE</div>
     </div>
     <div class="hdr-right">
       <div class="turn-counter">TURN <span id="turnNum">01</span></div>
@@ -152,16 +152,7 @@
     </div>
   </div>
 
-  <!-- PROVIDER + API KEY — COMPACT ROW -->
-  <div style="background:var(--panel);border:1px solid var(--brd);padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap">
-    <span style="font-size:9px;color:var(--txt3);letter-spacing:1px;white-space:nowrap">PROVIDER //</span>
-    <div style="display:flex;gap:4px" id="providerGrid"></div>
-    <div style="width:1px;height:20px;background:var(--brd2);flex-shrink:0"></div>
-    <input class="api-input" type="password" id="apiKey" placeholder="paste api key..." style="flex:1;min-width:120px;max-width:260px" />
-    <select id="modelSelect" style="background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:4px 6px;outline:none;cursor:pointer;max-width:200px"></select>
-    <button class="btn btn-acc" onclick="saveKey()" style="padding:4px 10px;font-size:10px;white-space:nowrap">CONNECT</button>
-    <span id="keyStatus" style="font-size:9px;color:var(--txt2);white-space:nowrap">NO KEY</span>
-  </div>
+  <!-- ENGINE: GROQ via server-side env var — no key needed -->
 
   <!-- POWER TRIANGLE -->
   <div class="tri-bar">
@@ -295,69 +286,6 @@ let gs={
 
 let loading=false;
 
-const PROVIDERS={
-  anthropic:{
-    label:'ANTHROPIC',color:'var(--acc)',placeholder:'sk-ant-api03-...',
-    models:['claude-sonnet-4-20250514','claude-haiku-4-5-20251001'],
-    freeNote:'Trial credits (~$5)',link:'https://console.anthropic.com',
-  },
-  groq:{
-    label:'GROQ',color:'var(--acc3)',placeholder:'gsk_...',
-    models:['llama-4-scout-17b-16e-instruct','llama3-70b-8192','mixtral-8x7b-32768','gemma2-9b-it'],
-    freeNote:'FREE — 14.4K req/day',link:'https://console.groq.com',
-  },
-  gemini:{
-    label:'GEMINI',color:'var(--amb)',placeholder:'AIza...',
-    models:['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'],
-    freeNote:'FREE — 1500 req/day',link:'https://aistudio.google.com/apikey',
-  },
-  mistral:{
-    label:'MISTRAL',color:'var(--pur)',placeholder:'your mistral key...',
-    models:['open-mistral-nemo','mistral-small-latest','open-mixtral-8x7b'],
-    freeNote:'FREE — rate limited',link:'https://console.mistral.ai',
-  },
-  openrouter:{
-    label:'OPENROUTER',color:'#ff9800',placeholder:'sk-or-v1-...',
-    models:['meta-llama/llama-4-scout:free','google/gemma-3-27b-it:free','mistralai/mistral-7b-instruct:free','qwen/qwen3-8b:free'],
-    freeNote:'FREE — :free models',link:'https://openrouter.ai/keys',
-  },
-};
-
-let selectedProvider='groq';
-let apiKey='';
-let selectedModel='';
-
-function renderProviders(){
-  const g=document.getElementById('providerGrid');
-  g.innerHTML='';
-  Object.entries(PROVIDERS).forEach(([id,p])=>{
-    const active=selectedProvider===id;
-    g.innerHTML+=`<button onclick="selectProvider('${id}')" title="${p.freeNote}" style="background:${active?'rgba(0,229,255,0.06)':'transparent'};border:1px solid ${active?p.color:'var(--brd2)'};color:${active?p.color:'var(--txt3)'};font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap">${p.label}</button>`;
-  });
-}
-
-function selectProvider(id){
-  selectedProvider=id;
-  const p=PROVIDERS[id];
-  const ki=document.getElementById('apiKey');
-  if(ki){ki.placeholder=p.placeholder;ki.value='';}
-  const ks=document.getElementById('keyStatus');
-  if(ks){ks.textContent='NO KEY';ks.style.color='var(--txt2)';}
-  apiKey='';
-  const sel=document.getElementById('modelSelect');
-  if(sel)sel.innerHTML=p.models.map(m=>`<option value="${m}">${m}</option>`).join('');
-  selectedModel=p.models[0];
-  renderProviders();
-}
-
-function saveKey(){
-  apiKey=document.getElementById('apiKey').value.trim();
-  selectedModel=document.getElementById('modelSelect').value;
-  const s=document.getElementById('keyStatus');
-  const p=PROVIDERS[selectedProvider];
-  s.textContent=apiKey?`${p.label} ACTIVE`:'NO KEY LOADED';
-  s.style.color=apiKey?p.color:'var(--txt2)';
-}
 
 function sc(s){
   if(s<.4)return'var(--acc3)';
@@ -579,7 +507,6 @@ function setLoading(v){
 }
 
 async function doAdvanceTurn(){
-  if(!apiKey){alert('Connect an API key first — select a provider above and paste your key.');return;}
   setLoading(true);
 
   const snap=JSON.stringify({
@@ -646,7 +573,7 @@ JSON SCHEMA:
   try{
     const resp=await fetch('/api/proxy',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey,'x-provider':selectedProvider},
+      headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         model:selectedModel,
         max_tokens:1000,
@@ -694,10 +621,8 @@ JSON SCHEMA:
 }
 
 window.addEventListener('DOMContentLoaded',()=>{
-  selectProvider('groq');
   setTimeout(()=>{
     document.getElementById('loadingOverlay').style.display='none';
-    renderProviders();
     renderAll();
     addLog('--','System initialized. Operations grid online. 50 active nodes detected across 6 classified rooms. Select a provider and connect your API key to begin.',['Grid stabilized','Node network nominal','Multi-provider uplink: READY'],[]);
   },2200);
