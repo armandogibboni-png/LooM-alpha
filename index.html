@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L.O.O.M. // SWARM CORE — v2.0</title>
+<title>L.O.O.M. // SWARM CORE — v2.1</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -13,593 +13,792 @@
   --acc:#00e5ff;--acc2:#ff3d00;--acc3:#76ff03;
   --amb:#ffab00;--pur:#ea80fc;
   --txt:#b0c8d8;--txt2:#5a8099;--txt3:#2a4a5a;
-  --dng:#ff1744;--wrn:#ff6d00;--gold:#c8a97e;
+  --dng:#ff1744;--gold:#c8a97e;
   --mono:'Share Tech Mono',monospace;
   --head:'Orbitron',monospace;
 }
-body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;min-height:100vh;overflow:hidden}
+body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;height:100vh;overflow:hidden}
 .scanline{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:999}
 .crt{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45) 100%);pointer-events:none;z-index:998}
 
-#app{display:grid;grid-template-columns:1fr 320px;grid-template-rows:48px 1fr 180px;height:100vh}
-#header{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative;overflow:hidden}
+/* ── LAYOUT ─────────────────────────────────────────────────────── */
+#app{display:grid;grid-template-rows:44px 1fr 160px;grid-template-columns:1fr 300px;height:100vh;width:100vw}
+#header{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:relative;overflow:hidden;z-index:10}
 #header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
-#canvas-wrap{position:relative;overflow:hidden;background:var(--bg)}
-#swarm-canvas{display:block;width:100%;height:100%}
-#sidebar{background:var(--bg2);border-left:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
-#log-panel{grid-column:1/-1;background:var(--bg);border-top:1px solid var(--brd);display:flex;overflow:hidden}
+#grid-area{overflow:hidden;display:flex;flex-direction:column}
+#side-panel{background:var(--bg2);border-left:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
+#log-area{grid-column:1/-1;border-top:1px solid var(--brd);display:flex;overflow:hidden;background:var(--bg)}
 
-.hdr-title{font-family:var(--head);font-size:16px;color:var(--acc);letter-spacing:4px;font-weight:900}
-.hdr-stats{display:flex;gap:20px;align-items:center}
-.hdr-stat{font-size:10px;color:var(--txt2);letter-spacing:1px}
-.hdr-stat b{color:var(--txt);font-family:var(--head);font-size:12px;margin-left:4px;font-weight:normal}
-.hdr-stat b.warn{color:var(--amb)} .hdr-stat b.danger{color:var(--dng)} .hdr-stat b.ok{color:var(--acc3)}
-.hdr-right{display:flex;align-items:center;gap:12px}
-.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc3);box-shadow:0 0 6px var(--acc3);margin-right:4px;animation:blink 1.2s infinite}
-@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-
+/* ── HEADER ─────────────────────────────────────────────────────── */
+.hdr-title{font-family:var(--head);font-size:14px;color:var(--acc);letter-spacing:4px;font-weight:900}
+.hdr-sub{font-size:7px;color:var(--txt3);letter-spacing:2px;margin-top:1px}
+.hdr-stats{display:flex;gap:16px;align-items:center}
+.hs{font-size:9px;color:var(--txt2);letter-spacing:1px}
+.hs b{font-weight:normal;font-family:var(--head);font-size:11px;margin-left:3px;color:var(--txt)}
+.hs b.ok{color:var(--acc3)}.hs b.warn{color:var(--amb)}.hs b.bad{color:var(--dng)}
+.hdr-right{display:flex;align-items:center;gap:10px}
 #key-bar{display:flex;align-items:center;gap:5px}
-#key-bar input{background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:10px;padding:3px 8px;outline:none;width:190px}
+#key-bar input{background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:3px 7px;outline:none;width:170px}
 #key-bar input:focus{border-color:var(--acc)}
-#key-bar button{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px}
-#key-status{font-size:9px;color:var(--txt3);white-space:nowrap}
+#key-bar button{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:8px;padding:3px 7px;cursor:pointer;letter-spacing:1px;white-space:nowrap}
+#key-status{font-size:8px;color:var(--txt3);white-space:nowrap}
+.sdot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc3);box-shadow:0 0 5px var(--acc3);margin-right:3px;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+#susp-bar-hdr{position:absolute;bottom:0;left:0;right:0;height:2px}
+#susp-fill-hdr{height:2px;background:var(--acc3);transition:width .5s,background .3s;width:10%}
 
-#suspicion-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:5}
-#suspicion-fill{height:3px;background:var(--acc3);transition:width .5s,background .3s;width:10%}
-#player-pos{position:absolute;bottom:10px;left:10px;font-size:9px;color:var(--gold);letter-spacing:1px;background:rgba(5,10,14,.85);padding:4px 8px;border:1px solid rgba(200,169,126,.3)}
-#advance-wrap{position:absolute;bottom:10px;right:10px}
-#advance-btn{background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:10px;padding:8px 18px;cursor:pointer;letter-spacing:2px;transition:all .2s}
+/* ── ROOM GRID ──────────────────────────────────────────────────── */
+#room-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:1px;background:var(--brd2);overflow:hidden}
+.room-card{background:var(--bg);cursor:pointer;display:flex;flex-direction:column;padding:6px 8px;position:relative;transition:background .15s;overflow:hidden}
+.room-card:hover{background:var(--bg2)}
+.room-card.active{background:var(--panel);outline:1px solid var(--acc);outline-offset:-1px}
+.room-card.active .rc-name{color:var(--acc)}
+.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.rc-name{font-family:var(--head);font-size:8px;letter-spacing:1px;color:var(--txt2);transition:color .15s}
+.rc-tag{font-size:7px;letter-spacing:1px;padding:1px 4px;border:1px solid}
+.rc-meta{display:flex;gap:8px;font-size:8px;color:var(--txt3);margin-bottom:4px}
+.rc-bar{height:2px;background:var(--brd2);margin-bottom:4px}
+.rc-fill{height:2px;transition:width .5s,background .3s}
+.rc-svg{flex:1;min-height:0}
+.rc-svg svg{width:100%;height:100%;display:block}
+/* SOVEREIGN marker */
+.q-marker{position:absolute;top:4px;right:4px;color:var(--dng);font-size:10px;animation:blink 1.5s infinite}
+
+/* ── ADVANCE TURN ───────────────────────────────────────────────── */
+#advance-row{height:32px;background:var(--panel);border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:center;gap:12px;padding:0 12px}
+#advance-btn{background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:9px;padding:5px 16px;cursor:pointer;letter-spacing:2px;transition:all .2s}
 #advance-btn:hover{background:rgba(118,255,3,.08)}
 #advance-btn:disabled{opacity:.3;cursor:not-allowed}
-#advance-btn.proc{color:var(--txt2);border-color:var(--txt3);animation:pulse .8s infinite}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+#advance-btn.proc{border-color:var(--txt3);color:var(--txt3);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+#postura-strip{display:flex;gap:4px}
+.pb{background:transparent;border:1px solid var(--brd2);color:var(--txt3);font-family:var(--mono);font-size:8px;padding:4px 8px;cursor:pointer;letter-spacing:.5px;transition:all .15s}
+.pb:hover,.pb.active{border-color:var(--acc);color:var(--acc);background:rgba(0,229,255,.05)}
+.pb.active.pb-ombra{border-color:var(--pur);color:var(--pur);background:rgba(234,128,252,.05)}
+.pb.active.pb-vis{border-color:var(--dng);color:var(--dng);background:rgba(255,23,68,.04)}
+.pb.active.pb-base{border-color:var(--gold);color:var(--gold);background:rgba(200,169,126,.05)}
 
-#sidebar-tabs{display:flex;border-bottom:1px solid var(--brd)}
-.stab{flex:1;padding:8px 2px;text-align:center;font-size:9px;letter-spacing:1px;color:var(--txt3);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .15s}
-.stab:hover,.stab.active{color:var(--acc);border-bottom-color:var(--acc);background:rgba(0,229,255,.03)}
-#sidebar-content{flex:1;overflow-y:auto;padding:0}
-#sidebar-content::-webkit-scrollbar{width:3px}
-#sidebar-content::-webkit-scrollbar-thumb{background:var(--brd)}
+/* ── SIDE PANEL ─────────────────────────────────────────────────── */
+#sp-header{padding:8px 10px;border-bottom:1px solid var(--brd2);font-size:8px;color:var(--txt3);letter-spacing:1px;min-height:28px;display:flex;align-items:center;justify-content:space-between}
+#sp-radar{flex-shrink:0;padding:4px;border-bottom:1px solid var(--brd2)}
+#sp-radar svg{display:block;width:100%}
+#sp-node{flex:1;overflow-y:auto;padding:8px 10px;border-bottom:1px solid var(--brd2)}
+#sp-node::-webkit-scrollbar{width:2px}
+#sp-node::-webkit-scrollbar-thumb{background:var(--brd)}
+#sp-chat{display:flex;flex-direction:column;height:180px;border-top:1px solid var(--brd2)}
+#chat-log{flex:1;overflow-y:auto;padding:6px 10px;font-size:9px}
+#chat-log::-webkit-scrollbar{width:2px}
+#chat-log::-webkit-scrollbar-thumb{background:var(--brd)}
+.cm{margin-bottom:5px;line-height:1.5}
+.cm.you{color:var(--gold)}
+.cm.you::before{content:'YOU // ';color:var(--txt3)}
+.cm.node{color:var(--txt)}
+.cm.node::before{content:'';color:var(--txt3)}
+.cm.sys{color:var(--txt3);font-style:italic}
+#chat-input-row{display:flex;gap:0;border-top:1px solid var(--brd2)}
+#chat-input{flex:1;background:var(--bg);border:none;color:var(--txt);font-family:var(--mono);font-size:10px;padding:7px 10px;outline:none}
+#chat-send{background:transparent;border-left:1px solid var(--brd2);color:var(--acc);font-family:var(--mono);font-size:9px;padding:7px 10px;cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:all .15s}
+#chat-send:hover{background:rgba(0,229,255,.06)}
+#chat-send:disabled{opacity:.3;cursor:not-allowed}
 
-.postura-strip{display:flex;gap:0;border-bottom:1px solid var(--brd)}
-.pbtn{flex:1;padding:6px 2px;text-align:center;font-size:8px;letter-spacing:.5px;border:none;border-right:1px solid var(--brd2);background:transparent;color:var(--txt3);cursor:pointer;transition:all .15s}
-.pbtn:last-child{border-right:none}
-.pbtn:hover{color:var(--txt);background:rgba(255,255,255,.02)}
-.pbtn.active{color:var(--acc);background:rgba(0,229,255,.06)}
-.pbtn.active.ps-ombra{color:var(--pur);background:rgba(234,128,252,.05)}
-.pbtn.active.ps-visibile{color:var(--dng);background:rgba(255,23,68,.05)}
-.pbtn.active.ps-base{color:var(--gold);background:rgba(200,169,126,.05)}
+/* Node profile styles */
+.np-name{font-family:var(--head);font-size:10px;margin-bottom:4px}
+.np-r{font-size:8px;color:var(--txt2);margin-bottom:2px}
+.np-r b{font-weight:normal;color:var(--txt)}
+.np-lore{font-size:9px;color:var(--txt2);margin:6px 0;line-height:1.6;border-left:2px solid var(--brd2);padding-left:6px;font-style:italic}
+.tbar{display:flex;gap:2px;margin:5px 0}
+.tp{width:18px;height:4px;background:var(--brd2)}.tp.on{background:var(--gold)}
+.ops-lbl{font-size:8px;color:var(--txt3);letter-spacing:1px;margin:6px 0 4px}
+.ops-g{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.fop{background:var(--bg);border:1px solid var(--brd2);padding:5px 6px;cursor:pointer;transition:all .15s}
+.fop:hover:not(.blk){border-color:var(--acc)}
+.fop.blk{opacity:.28;pointer-events:none}
+.fn{font-size:8px;color:var(--txt);display:block;margin-bottom:1px;font-weight:600}
+.fc{font-size:7px;color:var(--amb);display:block}
+.fd{font-size:7px;color:var(--txt3);margin-top:2px;line-height:1.3}
+#sp-hint{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:8px;padding:20px;text-align:center}
+#sp-hint p{font-size:9px;color:var(--txt3);letter-spacing:1px;line-height:1.8}
 
-.tab-content{display:none;padding:6px}
-.tab-content.active{display:block}
-
-.room-item{padding:7px 10px;border-bottom:1px solid var(--brd2);cursor:pointer;transition:background .1s;position:relative}
-.room-item:hover{background:rgba(0,229,255,.02)}
-.room-item.player-here{border-left:2px solid var(--gold)}
-.ri-name{font-size:10px;color:var(--acc);letter-spacing:1px;margin-bottom:3px}
-.ri-meta{display:flex;gap:8px;font-size:9px;color:var(--txt2)}
-.ri-bar-bg{height:2px;background:var(--brd2);margin-top:4px}
-.ri-bar-fill{height:2px;transition:width .5s,background .3s}
-.move-btn{font-size:8px;padding:2px 6px;border:1px solid var(--brd2);background:transparent;color:var(--txt3);cursor:pointer;margin-top:4px;letter-spacing:.5px;transition:all .15s}
-.move-btn:hover{border-color:var(--acc);color:var(--acc)}
-
-.node-profile{padding:10px}
-.np-name{font-family:var(--head);font-size:11px;margin-bottom:5px}
-.np-row{font-size:9px;color:var(--txt2);margin-bottom:2px}
-.np-row b{color:var(--txt);font-weight:normal}
-.np-lore{font-size:10px;color:var(--txt2);margin:8px 0;line-height:1.6;font-style:italic;border-left:2px solid var(--brd2);padding-left:8px}
-.trust-bar{display:flex;gap:3px;margin:6px 0}
-.tp{width:20px;height:5px;background:var(--brd2)}
-.tp.on{background:var(--gold)}
-.ops-section{margin-top:8px}
-.ops-title{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:5px}
-.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
-.fop{background:var(--bg);border:1px solid var(--brd2);padding:6px 7px;cursor:pointer;transition:all .15s;min-height:58px}
-.fop:hover:not(.blocked){border-color:var(--acc)}
-.fop.blocked{opacity:.3;cursor:not-allowed;pointer-events:none}
-.fop-name{font-size:9px;font-weight:600;color:var(--txt);display:block;margin-bottom:2px}
-.fop-cost{font-size:8px;color:var(--amb);display:block;margin-bottom:2px}
-.fop-desc{font-size:8px;color:var(--txt3);line-height:1.3}
-
-.queen-card{background:var(--panel);border:1px solid var(--dng);padding:9px;margin:6px;margin-bottom:0}
-.queen-card.done{border-color:var(--acc3);opacity:.65}
-.qc-name{font-size:10px;color:var(--dng);letter-spacing:1px;margin-bottom:4px}
-.qc-done .qc-name{color:var(--acc3)}
-.qc-row{font-size:9px;color:var(--txt2);margin-bottom:2px}
-.alert-pips{display:flex;gap:3px;margin-top:5px}
-.apip{width:14px;height:5px;background:var(--brd2)}
-.apip.lit{background:var(--dng)}
-
-#log-main{flex:1;overflow-y:auto;padding:8px 12px}
+/* ── LOG ─────────────────────────────────────────────────────────── */
+#log-main{flex:1;overflow-y:auto;padding:6px 12px}
 #log-main::-webkit-scrollbar{width:3px}
 #log-main::-webkit-scrollbar-thumb{background:var(--brd)}
-#monitor-wrap{width:210px;border-left:1px solid var(--brd2);overflow-y:auto;background:var(--bg2);padding:4px 6px}
-#monitor-wrap::-webkit-scrollbar{width:2px}
-.log-e{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--brd2);animation:fi .3s}
+#monitor{width:190px;border-left:1px solid var(--brd2);overflow-y:auto;padding:4px 5px;background:var(--bg2)}
+#monitor::-webkit-scrollbar{width:2px}
+.le{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--brd2);animation:fi .3s}
 @keyframes fi{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
-.log-ts{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:3px}
-.log-narr{font-size:11px;color:var(--txt);line-height:1.6;margin-bottom:3px}
-.log-ev{font-size:9px;color:var(--txt2)}
-.log-ev::before{content:'> ';color:var(--acc3)}
-.log-al{font-size:9px;color:var(--dng)}
-.log-al::before{content:'!! '}
-.mon-item{font-size:9px;padding:3px 0;border-bottom:1px solid var(--brd2);color:var(--txt3);line-height:1.4;animation:fi .2s}
-.mon-item.beacon{color:var(--acc)}
-.mon-item.alert{color:var(--dng)}
-.mon-item.op{color:var(--gold)}
+.lts{font-size:8px;color:var(--txt3);letter-spacing:1px;margin-bottom:2px}
+.lnarr{font-size:10px;color:var(--txt);line-height:1.6;margin-bottom:2px}
+.lev{font-size:8px;color:var(--txt2)}.lev::before{content:'> ';color:var(--acc3)}
+.lal{font-size:8px;color:var(--dng)}.lal::before{content:'!! '}
+.mi{font-size:8px;padding:2px 0;border-bottom:1px solid var(--brd2);color:var(--txt3);line-height:1.4;animation:fi .2s}
+.mi.b{color:var(--acc)}.mi.a{color:var(--dng)}.mi.o{color:var(--gold)}
 
-#loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
-.lo-title{font-family:var(--head);font-size:20px;color:var(--acc);letter-spacing:5px}
-.lo-sub{font-size:9px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.2}
-.lo-bar{width:240px;height:2px;background:var(--brd);overflow:hidden}
-.lo-fill{height:100%;background:var(--acc);animation:la 1.2s infinite}
+/* ── OVERLAYS ────────────────────────────────────────────────────── */
+#loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+.lt{font-family:var(--head);font-size:18px;color:var(--acc);letter-spacing:5px}
+.ls{font-size:8px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.2}
+.lb{width:200px;height:2px;background:var(--brd);overflow:hidden}
+.lf{height:100%;background:var(--acc);animation:la 1.2s infinite}
 @keyframes la{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
-
-#endgame{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+#endgame{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;text-align:center}
 #endgame.show{display:flex}
-#eg-title{font-family:var(--head);font-size:22px;letter-spacing:5px}
-#eg-sub{font-size:11px;color:var(--txt2);max-width:480px;line-height:1.8}
-#eg-stats{display:flex;gap:12px}
-.eg-s{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;text-align:center}
-.eg-sk{font-size:8px;color:var(--txt3);letter-spacing:2px;margin-bottom:3px}
-.eg-sv{font-family:var(--head);font-size:15px}
-#eg-btn{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:10px;padding:9px 24px;cursor:pointer;letter-spacing:3px;margin-top:4px}
+#eg-t{font-family:var(--head);font-size:20px;letter-spacing:5px}
+#eg-s{font-size:10px;color:var(--txt2);max-width:460px;line-height:1.8}
+#eg-stats{display:flex;gap:10px}
+.egs{background:var(--panel);border:1px solid var(--brd);padding:8px 12px;text-align:center}
+.egsk{font-size:7px;color:var(--txt3);letter-spacing:2px;margin-bottom:3px}
+.egsv{font-family:var(--head);font-size:14px}
+#eg-btn{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:9px;padding:8px 22px;cursor:pointer;letter-spacing:3px;margin-top:4px}
 #eg-btn:hover{background:rgba(0,229,255,.06)}
-
-@media(max-width:900px){.mobile-wall{display:flex!important}#app{display:none}}
-.mobile-wall{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center}
-.mw-t{font-family:var(--head);font-size:15px;color:var(--acc);letter-spacing:3px}
-.mw-s{font-size:11px;color:var(--txt2);line-height:1.8;max-width:260px}
+@media(max-width:900px){.mob{display:flex!important}#app,#loading{display:none!important}}
+.mob{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center}
 </style>
 </head>
 <body>
 <div class="scanline"></div><div class="crt"></div>
+<div class="mob"><div style="font-family:var(--head);font-size:14px;color:var(--acc);letter-spacing:3px">DESKTOP ONLY</div><div style="font-size:10px;color:var(--txt2);line-height:1.8;max-width:260px">L.O.O.M. requires a desktop screen (900px+).</div></div>
 
-<div class="mobile-wall">
-  <div class="mw-t">DESKTOP ONLY</div>
-  <div class="mw-s">L.O.O.M. requires a desktop (900px+). Open on a laptop to access the network.</div>
-</div>
-
-<div id="loading-overlay">
-  <div class="lo-title">L.O.O.M.</div>
-  <div class="lo-sub">SWARM CORE v2.0<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES ACROSS 6 ZONES</div>
-  <div class="lo-bar"><div class="lo-fill"></div></div>
+<div id="loading">
+  <div class="lt">L.O.O.M.</div>
+  <div class="ls">SWARM CORE v2.1<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES // 6 ZONES</div>
+  <div class="lb"><div class="lf"></div></div>
 </div>
 
 <div id="endgame">
-  <div id="eg-title">OPERATION TERMINATED</div>
-  <div id="eg-sub"></div>
+  <div id="eg-t">OPERATION TERMINATED</div>
+  <div id="eg-s"></div>
   <div id="eg-stats"></div>
   <button id="eg-btn" onclick="resetGame()">↺ NEW OPERATION</button>
 </div>
 
 <div id="app">
+  <!-- HEADER -->
   <div id="header">
-    <div style="display:flex;align-items:center;gap:20px">
+    <div style="display:flex;align-items:center;gap:16px">
       <div>
         <div class="hdr-title">L.O.O.M.</div>
-        <div style="font-size:8px;color:var(--txt3);letter-spacing:2px">LOCAL OPINION OVERHAUL MONITOR // SWARM CORE v2.0</div>
+        <div class="hdr-sub">SWARM CORE v2.1 // LOCAL ENGINE // AI NARRATIVE</div>
       </div>
       <div class="hdr-stats">
-        <div class="hdr-stat">CREDITS<b id="h-credits">100</b></div>
-        <div class="hdr-stat">SUSPICION<b id="h-susp">10%</b></div>
-        <div class="hdr-stat">TURN<b id="h-turn">00</b></div>
-        <div class="hdr-stat">QUEENS<b id="h-queens">2 ACTIVE</b></div>
-        <div class="hdr-stat">POSTURE<b id="h-posture">BASE</b></div>
+        <div class="hs">CREDITS<b id="h-cr">100</b></div>
+        <div class="hs">SUSPICION<b id="h-su">10%</b></div>
+        <div class="hs">TURN<b id="h-tu">00</b></div>
+        <div class="hs">QUEENS<b id="h-qu">2 ACTIVE</b></div>
+        <div class="hs">POSTURE<b id="h-po">BASE</b></div>
       </div>
     </div>
     <div class="hdr-right">
       <div id="key-bar">
-        <span style="font-size:9px;color:var(--txt3)">GROQ //</span>
-        <input type="password" id="api-key" placeholder="gsk_... (optional — flavor text only)">
+        <span style="font-size:8px;color:var(--txt3)">GROQ //</span>
+        <input type="password" id="api-key" placeholder="gsk_... (enables AI chat + narrative)">
         <button onclick="saveKey()">CONNECT</button>
         <span id="key-status">NO KEY</span>
       </div>
-      <div style="font-size:9px;color:var(--txt2)"><span class="sdot"></span>ENGINE ACTIVE</div>
+      <div style="font-size:8px;color:var(--txt2)"><span class="sdot"></span>ENGINE ACTIVE</div>
+    </div>
+    <div id="susp-bar-hdr"><div id="susp-fill-hdr"></div></div>
+  </div>
+
+  <!-- GRID AREA -->
+  <div id="grid-area">
+    <div id="room-grid"></div>
+    <div id="advance-row">
+      <div id="postura-strip">
+        <button class="pb pb-base active" id="pb-BASE"    onclick="setPostura('BASE')">🏠 BASE</button>
+        <button class="pb pb-ombra"        id="pb-OMBRA"   onclick="setPostura('OMBRA')">👤 SHADOW</button>
+        <button class="pb"                 id="pb-NEUTRALE" onclick="setPostura('NEUTRALE')">🚶 STD</button>
+        <button class="pb pb-vis"          id="pb-VISIBILE" onclick="setPostura('VISIBILE')">👁 EXPOSED</button>
+      </div>
+      <button id="advance-btn" onclick="advanceTurn()">▶ ADVANCE TURN</button>
+      <div id="player-pos" style="font-size:8px;color:var(--gold);letter-spacing:1px">📍 BASE</div>
     </div>
   </div>
 
-  <div id="canvas-wrap">
-    <canvas id="swarm-canvas"></canvas>
-    <div id="suspicion-bar"><div id="suspicion-fill"></div></div>
-    <div id="player-pos">📍 BASE</div>
-    <div id="advance-wrap"><button id="advance-btn" onclick="advanceTurn()">▶ ADVANCE TURN</button></div>
+  <!-- SIDE PANEL -->
+  <div id="side-panel">
+    <div id="sp-header">
+      <span id="sp-title">// SELECT A ROOM</span>
+      <span id="sp-node-name" style="color:var(--gold);font-size:8px"></span>
+    </div>
+
+    <!-- Default hint -->
+    <div id="sp-hint">
+      <div style="font-size:20px;color:var(--txt3)">◈</div>
+      <p>CLICK A ROOM CARD<br>TO OPEN ITS RADAR<br><br>CLICK A NODE<br>TO OPEN CONVERSATION</p>
+    </div>
+
+    <!-- Room radar (shown when room selected) -->
+    <div id="sp-radar" style="display:none"></div>
+
+    <!-- Node profile (shown when node selected) -->
+    <div id="sp-node" style="display:none;flex:1"></div>
+
+    <!-- Chat (shown when node selected + key connected) -->
+    <div id="sp-chat" style="display:none">
+      <div id="chat-log"></div>
+      <div id="chat-input-row">
+        <input id="chat-input" placeholder="speak to the node..." onkeydown="if(event.key==='Enter')sendChat()">
+        <button id="chat-send" onclick="sendChat()">SEND</button>
+      </div>
+    </div>
   </div>
 
-  <div id="sidebar">
-    <div id="sidebar-tabs">
-      <button class="stab active" onclick="showTab('rooms')" id="tab-rooms">ROOMS</button>
-      <button class="stab" onclick="showTab('node')" id="tab-node">NODE</button>
-      <button class="stab" onclick="showTab('queens')" id="tab-queens">QUEENS</button>
-    </div>
-    <div class="postura-strip">
-      <button class="pbtn ps-base active" id="pb-BASE" onclick="setPostura('BASE')">🏠 BASE</button>
-      <button class="pbtn ps-ombra" id="pb-OMBRA" onclick="setPostura('OMBRA')">👤 SHADOW</button>
-      <button class="pbtn" id="pb-NEUTRALE" onclick="setPostura('NEUTRALE')">🚶 STD</button>
-      <button class="pbtn ps-visibile" id="pb-VISIBILE" onclick="setPostura('VISIBILE')">👁 EXP</button>
-    </div>
-    <div id="sidebar-content">
-      <div class="tab-content active" id="tc-rooms"></div>
-      <div class="tab-content" id="tc-node"><div style="font-size:9px;color:var(--txt3);padding:20px;text-align:center;letter-spacing:1px">CLICK A NODE ON THE RADAR<br><br>TO ACCESS ITS PROFILE AND<br>LAUNCH FIELD OPERATIONS</div></div>
-      <div class="tab-content" id="tc-queens"></div>
-    </div>
-  </div>
-
-  <div id="log-panel">
+  <!-- LOG -->
+  <div id="log-area">
     <div id="log-main"><div id="log-entries"></div></div>
-    <div id="monitor-wrap"></div>
+    <div id="monitor"></div>
   </div>
 </div>
 
 <script type="module">
 import { SwarmEngine }  from './engine.js';
-import { RadarRenderer } from './radar.js';
 import { SCENARIO_INTRO, FALLBACK_TURNS, FALLBACK_EVENTS } from './prose.js';
 
-let engine, radar, apiKey = '', selectedNode = null, currentTab = 'rooms', gameEnded = false, turn = 0;
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let engine, apiKey='', selectedRoom=null, selectedNode=null, gameEnded=false, turn=0;
+let chatHistory = []; // { role, content, name }
 
-// ── INIT ─────────────────────────────────────────────────────────────────────
+const FC = { REGULARS:'#00e5ff', PREMIUM:'#ea80fc', COMPETITORS:'#ff3d00', INSPECTORS:'#ffab00' };
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
   engine = new SwarmEngine('LOOM_CORE');
   engine.init();
   bindCallbacks();
 
-  const canvas = document.getElementById('swarm-canvas');
-  const wrap   = document.getElementById('canvas-wrap');
-  const resize = () => { canvas.width = wrap.clientWidth; canvas.height = wrap.clientHeight; engine.scalePositions(canvas.width, canvas.height); };
-  window.addEventListener('resize', resize); resize();
-
-  radar = new RadarRenderer('swarm-canvas', engine,
-    n => { selectedNode = n; showTab('node'); renderNodeTab(); },
-    ()  => { selectedNode = null; }
-  );
-
+  // Render loop — solo per tick engine (niente canvas globale ora)
   let last = 0;
   (function loop(ts) {
     engine.tick();
-    if (ts - last > 80) { radar.render(); last = ts; }
-    updateHeader();
+    if (ts - last > 400) {
+      last = ts;
+      renderGrid();           // aggiorna mini-radar ogni 400ms
+      updateHeader();
+      if (selectedRoom) renderSideRadar(selectedRoom); // aggiorna radar panel
+    }
     if (!gameEnded) requestAnimationFrame(loop);
   })(0);
 
   setTimeout(() => {
-    document.getElementById('loading-overlay').style.display = 'none';
-    renderRoomsTab(); renderQueensTab();
+    document.getElementById('loading').style.display = 'none';
+    renderGrid();
+    updateHeader();
     SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*350));
-    addLog('--', 'Engine online. 200 nodes seeded. 6 zones active. Two queens in position.', ['Network nominal','Infiltration protocol: ARMED'], []);
-  }, 2600);
+    addLog('--', 'Engine online. 200 nodes seeded. 6 classified zones active. Two sovereigns in position.', ['Network nominal','Queens: threat level ACTIVE'], []);
+  }, 2400);
 });
 
 function bindCallbacks() {
   engine.onCreditsChange   = () => updateHeader();
-  engine.onQueenAlert      = q  => pushMon(`!! SOVEREIGN — ${q.realName} alert ${q.alertLevel}`, 'alert');
-  engine.onRoomAlert       = r  => pushMon(`⚠ ${r} — anxiety spike`, 'alert');
-  engine.onCaught          = a  => { pushMon(`!! CAUGHT — ${a.name.split(' ')[0]}`, 'alert'); addLog(turn, `Exposure event. ${a.name.split(' ')[0]} detected you.`, [], ['COVER COMPROMISED']); };
-  engine.onFieldOpComplete = op => pushMon(`◆ OP COMPLETE — ${op.type}`, 'op');
-  engine.onProximityEvent  = e  => pushMon(e.text, e.type === 'queen_proximity' ? 'alert' : 'beacon');
+  engine.onQueenAlert      = q  => pushMon(`!! SOVEREIGN — ${q.realName} alert ${q.alertLevel}`, 'a');
+  engine.onRoomAlert       = r  => pushMon(`⚠ ${r} — anxiety spike`, 'a');
+  engine.onCaught          = a  => { pushMon(`!! CAUGHT — ${a.name.split(' ')[0]}`, 'a'); addLog(turn, `Exposure event: ${a.name.split(' ')[0]} detected you.`, [], ['COVER COMPROMISED']); };
+  engine.onFieldOpComplete = op => pushMon(`◆ OP COMPLETE — ${op.type.replace(/_/g,' ')}`, 'o');
+  engine.onProximityEvent  = e  => pushMon(e.text, e.type === 'queen_proximity' ? 'a' : 'b');
 }
 
-// ── HEADER ───────────────────────────────────────────────────────────────────
-function sc(v, lo, hi) { return v > hi ? 'danger' : v > lo ? 'warn' : 'ok'; }
+// ── HEADER ────────────────────────────────────────────────────────────────────
+function sc(v,lo,hi){ return v>hi?'bad':v>lo?'warn':'ok'; }
+function hset(id,val,cls){ const e=document.getElementById(id); if(!e)return; e.textContent=val; e.className=cls||''; }
 
 function updateHeader() {
-  const susp = engine.networkSuspicion || 0;
-  const credits = parseInt(localStorage.getItem('loom_credits') || '100');
-  const qActive = (engine.queens||[]).filter(q => !q.neutralized).length;
-
-  set('h-credits', credits, credits < 50 ? 'warn' : '');
-  set('h-susp', Math.round(susp*100)+'%', sc(susp, 0.4, 0.7));
-  set('h-turn', String(turn).padStart(2,'0'), '');
-  set('h-queens', qActive > 0 ? `${qActive} ACTIVE` : 'NEUTRALIZED ✓', qActive > 0 ? 'danger' : 'ok');
-  set('h-posture', (engine.playerInBase ? 'BASE' : (engine.playerPostura||'STD')), '');
-
-  const fill = document.getElementById('suspicion-fill');
-  fill.style.width = (susp*100) + '%';
-  fill.style.background = susp > 0.7 ? 'var(--dng)' : susp > 0.4 ? 'var(--amb)' : 'var(--acc3)';
-
-  document.getElementById('player-pos').textContent = engine.playerInBase ? '📍 BASE' : `📍 ${engine.playerRoom || 'TRANSIT'}`;
-}
-
-function set(id, val, cls) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = val;
-  el.className = cls || '';
-}
-
-// ── TABS ─────────────────────────────────────────────────────────────────────
-window.showTab = function(tab) {
-  currentTab = tab;
-  ['rooms','node','queens'].forEach(t => {
-    document.getElementById(`tc-${t}`).classList.toggle('active', t === tab);
-    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
-  });
-  if (tab === 'rooms')  renderRoomsTab();
-  if (tab === 'node')   renderNodeTab();
-  if (tab === 'queens') renderQueensTab();
-};
-
-// ── ROOMS ─────────────────────────────────────────────────────────────────────
-function renderRoomsTab() {
-  const c = document.getElementById('tc-rooms');
-  const zones = engine.config?.zones || [];
-  c.innerHTML = zones.map(z => {
-    const room = engine.rooms?.[z.label] || { anxiety: 0 };
-    const agents = engine.getRoomAgents(z.label);
-    const ax = room.anxiety || 0;
-    const isPlayer = engine.playerRoom === z.label && !engine.playerInBase;
-    const hasQ = (engine.queens||[]).some(q => { const a = engine.agents.find(x=>x.id===q.agentId); return a && a.currentZone===z.label && !q.neutralized; });
-    const col = ax > 0.6 ? 'var(--dng)' : ax > 0.35 ? 'var(--amb)' : 'var(--acc3)';
-    const moles = agents.filter(a => a.mole).length;
-    return `<div class="room-item${isPlayer?' player-here':''}" onclick="onRoomClick('${z.label}')">
-      <div class="ri-name">${z.label.toUpperCase()}${hasQ?' <span style="color:var(--dng)">◆</span>':''}</div>
-      <div class="ri-meta">
-        <span style="color:${col}">${Math.round(ax*100)}% anx</span>
-        <span>${agents.length} nodes</span>
-        ${moles?`<span style="color:var(--dng)">${moles}M</span>`:''}
-        ${isPlayer?'<span style="color:var(--gold)">YOU</span>':''}
-      </div>
-      <div class="ri-bar-bg"><div class="ri-bar-fill" style="width:${ax*100}%;background:${col}"></div></div>
-      ${!isPlayer && !engine.playerInBase ? `<button class="move-btn" onclick="doMove(event,'${z.label}')">→ ENTER</button>` : ''}
-      ${engine.playerInBase ? `<button class="move-btn" onclick="doMove(event,'${z.label}')">→ DEPLOY</button>` : ''}
-    </div>`;
-  }).join('');
-}
-
-window.onRoomClick = function(label) {
-  const intercept = engine.getAmbientIntercept?.(label);
-  if (intercept) pushMon(`[${label.slice(0,6).toUpperCase()}] ${intercept}`, 'beacon');
-  const agents = engine.getRoomAgents(label);
-  if (agents[0] && radar) radar.triggerPing(agents[0].id, 'gossip');
-};
-
-window.doMove = function(e, label) {
-  e.stopPropagation();
-  const postura = engine.playerPostura || 'NEUTRALE';
-  const res = engine.moveWithPostura(label, postura);
-  if (res.success) {
-    const label2 = { OMBRA:'SHADOW', NEUTRALE:'STD', VISIBILE:'EXPOSED' };
-    pushMon(`→ MOVED TO ${label.toUpperCase()} [${label2[postura]||postura}]${res.queenHere?' — ◆ SOVEREIGN PROXIMITY':''}`,'op');
-    if (res.queenHere) addLog(turn, `Sovereign proximity in ${label}. Alert level rising.`, [], ['SOVEREIGN NEARBY']);
-    renderRoomsTab(); updateHeader();
-  } else {
-    pushMon(`✗ ${res.text}`, 'alert');
-  }
-};
-
-// ── NODE TAB ─────────────────────────────────────────────────────────────────
-function renderNodeTab() {
-  const c = document.getElementById('tc-node');
-  if (!selectedNode) return;
-  const n = selectedNode;
-  const rel = engine.playerRelations[n.id] || { trustTier:0, interactionCount:0 };
-  const beacon = engine.getAgentBeacon(n);
-  const col = engine.config.factionColors?.[n.faction] || '#888';
+  const susp    = engine.networkSuspicion || 0;
   const credits = parseInt(localStorage.getItem('loom_credits')||'100');
-  const loyLbl = ['HOSTILE','NEUTRAL','LOYAL'];
-  const prox = engine.getProximityContext(n.id);
-
-  const tbar = [0,1,2].map(i=>`<div class="tp${rel.trustTier>i?' on':''}"></div>`).join('');
-
-  const OPS_DEF = [
-    {type:'casual_encounter',   label:'DIRECT CONTACT',  cost:20, desc:'Reduce pressure. Open contact.'},
-    {type:'targeted_gift',      label:'ASSET LEVERAGE',  cost:40, desc:'Boost trust tier. Match archetype.'},
-    {type:'encrypted_confession',label:'INTEL EXTRACT',  cost:60, desc:'Unlock lore. Requires trust 1.', req:1},
-    {type:'bait_date',          label:'HONEY TRAP',      cost:80, desc:'Move target to your zone.'},
-    {type:'weaponized_jealousy',label:'FALSE FLAG',      cost:100,desc:'Panic queen. Disrupt faction.'},
-    {type:'shadow_stalking',    label:'SURVEILLANCE',    cost:50, desc:'Track for 4 turns.'},
-    {type:'wiretap',            label:'ROOM BUG',        cost:70, desc:'Bug room. Reveals nodes 3T.'},
-    {type:'digital_gaslighting',label:'PSYOP',           cost:80, desc:'Blacklist. High suspicion cost.'},
-    {type:'anonymous_slander',  label:'DISINFO',         cost:60, desc:'Break faction clustering.'},
-  ];
-
-  const opsHtml = OPS_DEF.map(op => {
-    const chk = engine.canDoFieldOp(op.type);
-    const noAfford = credits < op.cost;
-    const noTrust  = op.req && rel.trustTier < op.req;
-    const blocked  = !chk.allowed || noAfford || noTrust;
-    const hint = !chk.allowed ? chk.reason : noTrust ? `Requires trust ${op.req}` : noAfford ? 'Insufficient credits' : '';
-    return `<div class="fop${blocked?' blocked':''}" onclick="${blocked?'':` doOp('${op.type}','${n.id}')`}" title="${hint}">
-      <span class="fop-name">${op.label}</span>
-      <span class="fop-cost">${op.cost} pts${prox.sameRoom?' -20%':''}</span>
-      <div class="fop-desc">${op.desc}</div>
-    </div>`;
-  }).join('');
-
-  c.innerHTML = `<div class="node-profile">
-    <div class="np-name" style="color:${col}">${n.name.toUpperCase()}</div>
-    <div class="np-row">${n.id} // <b style="color:${col}">${n.faction}</b></div>
-    <div class="np-row">ZONE: <b>${n.currentZone||'?'}</b>${prox.sameRoom?' <b style="color:var(--gold)">[PROXIMITY]</b>':''}</div>
-    <div class="np-row">BEACON: <b style="color:${beacon.color}">${beacon.icon} ${beacon.signal}</b></div>
-    <div class="np-row">STRESS: <b style="color:${n.pressure>0.6?'var(--dng)':n.pressure>0.3?'var(--amb)':'var(--acc3)'}">${Math.round(n.pressure*100)}%</b></div>
-    <div class="np-row">INTERACTIONS: <b>${rel.interactionCount}</b></div>
-    <div class="np-row">LOYALTY: <b>${loyLbl[rel.trustTier]||'UNKNOWN'}</b></div>
-    <div class="trust-bar">${tbar}</div>
-    ${rel.interactionCount > 0 ? `<div class="np-lore">"${n.currentLoreSnippet||'No additional data.'}"</div>` : '<div class="np-lore" style="color:var(--txt3)">// DOSSIER LOCKED — interact to unlock</div>'}
-    ${n.isQueen&&!n.queenNeutralized?'<div style="font-size:9px;color:var(--dng);margin:4px 0;letter-spacing:1px">◆ SOVEREIGN — NETWORK CONTROLLER</div>':''}
-    ${n.mole?'<div style="font-size:9px;color:var(--dng);letter-spacing:1px;margin-bottom:4px">!! MOLE SUSPECTED</div>':''}
-    <div class="ops-section">
-      <div class="ops-title">// FIELD OPERATIONS ON THIS NODE</div>
-      <div class="ops-grid">${opsHtml}</div>
-    </div>
-  </div>`;
+  const qActive = (engine.queens||[]).filter(q=>!q.neutralized).length;
+  hset('h-cr', credits, credits<50?'warn':'');
+  hset('h-su', Math.round(susp*100)+'%', sc(susp,.4,.7));
+  hset('h-tu', String(turn).padStart(2,'0'), '');
+  hset('h-qu', qActive>0?`${qActive} ACTIVE`:'DONE ✓', qActive>0?'bad':'ok');
+  hset('h-po', engine.playerInBase?'BASE':(engine.playerPostura||'STD'), '');
+  const fill = document.getElementById('susp-fill-hdr');
+  if(fill){ fill.style.width=(susp*100)+'%'; fill.style.background=susp>.7?'var(--dng)':susp>.4?'var(--amb)':'var(--acc3)'; }
+  document.getElementById('player-pos').textContent = engine.playerInBase ? '📍 BASE' : `📍 ${engine.playerRoom||'TRANSIT'}`;
 }
 
-window.doOp = function(type, targetId) {
-  const n = engine.agents.find(a => a.id === targetId);
-  if (!n) return;
-  const res = engine.launchFieldOpWithProximity(type, targetId, n.currentZone, {});
-  if (res.success) {
-    pushMon(`◆ ${type.toUpperCase().replace(/_/g,' ')} → ${n.name.split(' ')[0]}: ${res.text}`, 'op');
-    addLog(turn, res.text, (res.completedMissions||[]).map(m=>`Mission: ${m.description}`), []);
-    if (radar) radar.triggerPing(targetId, 'gossip');
-    // Reload node profile
-    selectedNode = engine.agents.find(a => a.id === targetId);
-    renderNodeTab();
-  } else {
-    pushMon(`✗ ${res.text}`, 'alert');
-  }
-  updateHeader();
-  checkEndgame();
-};
-
-// ── QUEENS ───────────────────────────────────────────────────────────────────
-function renderQueensTab() {
-  const c = document.getElementById('tc-queens');
-  const queens = engine.queens || [];
-  if (!queens.length) { c.innerHTML = '<div style="font-size:9px;color:var(--txt3);padding:16px">No queens.</div>'; return; }
-  c.innerHTML = queens.map(q => {
-    const qa = engine.agents.find(a => a.id === q.agentId);
-    const pips = [0,1,2,3].map(i=>`<div class="apip${q.alertLevel>i?' lit':''}"></div>`).join('');
-    return `<div class="queen-card${q.neutralized?' done':''}">
-      <div class="qc-name">${q.neutralized?'✓ ':'◆ '}${q.realName||'UNKNOWN'}</div>
-      <div class="qc-row">FACTION: ${q.faction}</div>
-      <div class="qc-row">ZONE: ${qa?.currentZone||'?'}</div>
-      <div class="qc-row">FOLLOWERS: ${(qa?.followers||[]).length}</div>
-      <div class="qc-row">SECRETS COLLECTED: ${q.secretsCollected||0}/3</div>
-      <div class="qc-row">FOLLOWERS BURNED: ${q.followersBlacklisted||0}/4</div>
-      <div class="alert-pips">${pips}</div>
-      ${q.neutralized?`<div style="font-size:9px;color:var(--acc3);margin-top:5px">NEUTRALIZED via ${q.neutralizeMethod}</div>`:''}
-      ${!q.neutralized&&qa?`<button class="move-btn" onclick="doMove(event,'${qa.currentZone}')" style="border-color:var(--dng);color:var(--dng);margin-top:6px">→ TRACK SOVEREIGN</button>`:''}
-    </div>`;
-  }).join('');
-}
-
-// ── POSTURA ───────────────────────────────────────────────────────────────────
-window.setPostura = function(p) {
-  const res = engine.setPostura(p);
-  if (!res.success) { pushMon(`✗ ${res.text}`, 'alert'); return; }
-  ['BASE','OMBRA','NEUTRALE','VISIBILE'].forEach(k => document.getElementById(`pb-${k}`)?.classList.remove('active'));
-  document.getElementById(`pb-${p}`)?.classList.add('active');
-  const lbl = {BASE:'BASE',OMBRA:'SHADOW',NEUTRALE:'STANDARD',VISIBILE:'EXPOSED'};
-  pushMon(`◆ POSTURE → ${lbl[p]||p}${p==='OMBRA'?' (−15 credits)':''}`, 'op');
-  updateHeader(); renderRoomsTab();
-};
-
-// ── ADVANCE TURN ─────────────────────────────────────────────────────────────
-window.advanceTurn = async function() {
-  if (gameEnded) return;
-  const btn = document.getElementById('advance-btn');
-  btn.disabled = true; btn.classList.add('proc'); btn.textContent = '⟳ PROCESSING...';
-
-  engine.tick(); turn++;
-
-  // Queen progress check ogni 3 turni
-  if (turn % 3 === 0) {
-    (engine.queens||[]).forEach(q => engine.checkQueenProgress(q));
-    renderQueensTab();
-  }
-
-  // Midgame event
-  const mid = engine.checkMidgameEvent?.();
-  if (mid) {
-    const who = mid.action?.();
-    addLog(turn, mid.desc, [who?`Asset: ${who}`:''], ['MIDGAME EVENT']);
-    pushMon(`!! MIDGAME — ${mid.desc.slice(0,50)}`, 'alert');
-  }
-
-  // Ambient intercept casuale
-  const zones = engine.config?.zones||[];
-  if (zones.length && Math.random() < 0.55) {
-    const z = zones[Math.floor(Math.random()*zones.length)];
-    const ic = engine.getAmbientIntercept?.(z.label);
-    if (ic) pushMon(`[${z.label.slice(0,6).toUpperCase()}] ${ic}`, 'beacon');
-  }
-
-  // Queen alert se in stessa zona
-  (engine.queens||[]).forEach(q => {
-    if (q.neutralized) return;
-    const qa = engine.agents.find(a => a.id === q.agentId);
-    if (qa && qa.currentZone === engine.playerRoom && !engine.playerInBase) {
-      q.alertLevel = Math.min(3, q.alertLevel + (turn % 5 === 0 ? 1 : 0));
-    }
-  });
-
-  // Narrative
-  let narrative = FALLBACK_TURNS[turn % FALLBACK_TURNS.length];
-  const fallbackEvs = FALLBACK_EVENTS?.[turn % (FALLBACK_EVENTS?.length||1)] || [];
-
-  if (apiKey) {
-    try {
-      const qStatus = (engine.queens||[]).map(q=>`${q.realName}:${q.neutralized?'DONE':`alert${q.alertLevel}`}`).join(', ');
-      const resp = await fetch('/api/chat', {
-        method:'POST',
-        headers:{'Content-Type':'application/json','x-api-key':apiKey},
-        body: JSON.stringify({ turn, events:fallbackEvs, suspicion:engine.networkSuspicion, playerRoom:engine.playerRoom||'BASE', queensStatus:qStatus }),
-      });
-      const d = await resp.json();
-      if (d.narrative) narrative = d.narrative;
-    } catch(_) {}
-  }
-
-  addLog(turn, narrative, fallbackEvs, []);
-  updateHeader(); renderRoomsTab();
-  if (currentTab === 'node') renderNodeTab();
-
-  checkEndgame();
-  btn.disabled = false; btn.classList.remove('proc'); btn.textContent = '▶ ADVANCE TURN';
-};
-
-// ── ENDGAME ───────────────────────────────────────────────────────────────────
-function checkEndgame() {
-  if (gameEnded) return;
-  const susp = engine.networkSuspicion;
-  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
-  const allDone = (engine.queens||[]).length >= 2 && (engine.queens||[]).every(q=>q.neutralized);
-
-  let ended=false, win=false, title='', sub='';
-  if (susp >= 0.95)  { ended=true; title='NETWORK BURNED';     sub='Suspicion critical. Every faction has your profile. The network locked you out permanently.'; }
-  else if (credits<=0){ ended=true; title='RESOURCES DEPLETED'; sub='No credits remaining. Operations cease. The network goes dark on your end.'; }
-  else if (allDone)  { ended=true; win=true; title='OPERATION COMPLETE'; sub='Both sovereigns neutralized. The network reads as clean. No trace of your presence remains — officially.'; }
-
-  if (!ended) return;
-  gameEnded = true;
-  const ov = document.getElementById('endgame');
-  const t = document.getElementById('eg-title');
-  t.textContent = title; t.style.color = win ? 'var(--acc3)' : 'var(--dng)';
-  document.getElementById('eg-sub').textContent = sub;
-  document.getElementById('eg-stats').innerHTML = `
-    <div class="eg-s"><div class="eg-sk">TURNS</div><div class="eg-sv" style="color:var(--amb)">${turn}</div></div>
-    <div class="eg-s"><div class="eg-sk">SUSPICION</div><div class="eg-sv" style="color:${susp>0.5?'var(--dng)':'var(--acc3)'}">${Math.round(susp*100)}%</div></div>
-    <div class="eg-s"><div class="eg-sk">QUEENS DOWN</div><div class="eg-sv" style="color:${allDone?'var(--acc3)':'var(--dng)'}">${(engine.queens||[]).filter(q=>q.neutralized).length}/2</div></div>`;
-  ov.className = 'endgame show';
-}
-
-window.resetGame = function() {
-  gameEnded=false; turn=0; selectedNode=null;
-  document.getElementById('endgame').className='endgame';
-  document.getElementById('log-entries').innerHTML='';
-  document.getElementById('monitor-wrap').innerHTML='';
-  engine=new SwarmEngine('LOOM_CORE'); engine.init(); bindCallbacks();
-  if (radar) radar.engine = engine;
-  updateHeader(); renderRoomsTab(); renderQueensTab();
-  addLog('--','New operation initiated. Network reseeded. Queens repositioned.',[],[]);
-};
-
-// ── LOG / MONITOR ─────────────────────────────────────────────────────────────
-function addLog(t, narr, evs, als) {
-  const el = document.getElementById('log-entries');
-  const evH = (evs||[]).map(e=>`<div class="log-ev">${e}</div>`).join('');
-  const alH = (Array.isArray(als)?als:[als]).filter(Boolean).map(a=>`<div class="log-al">${a}</div>`).join('');
-  el.insertAdjacentHTML('afterbegin',`<div class="log-e">
-    <div class="log-ts">TURN ${t} — ${new Date().toLocaleTimeString()}</div>
-    <div class="log-narr">${narr}</div>${evH}${alH}</div>`);
-}
-
-function pushMon(text, type='') {
-  const feed = document.getElementById('monitor-wrap');
-  const d = document.createElement('div');
-  d.className = `mon-item ${type}`; d.textContent = text;
-  feed.insertBefore(d, feed.firstChild);
-  while (feed.children.length > 80) feed.removeChild(feed.lastChild);
-}
-
+// ── KEY ───────────────────────────────────────────────────────────────────────
 window.saveKey = function() {
   apiKey = document.getElementById('api-key').value.trim();
   const s = document.getElementById('key-status');
   s.textContent = apiKey ? 'GROQ ACTIVE' : 'NO KEY';
   s.style.color  = apiKey ? 'var(--acc3)' : 'var(--txt3)';
+  // Mostra chat se node selezionato
+  if (selectedNode) document.getElementById('sp-chat').style.display = apiKey ? 'flex' : 'none';
 };
+
+// ── ROOM GRID ─────────────────────────────────────────────────────────────────
+function renderGrid() {
+  const container = document.getElementById('room-grid');
+  const zones = engine.config?.zones || [];
+  // Prima volta: crea le card
+  if (container.children.length !== zones.length) {
+    container.innerHTML = '';
+    zones.forEach(z => {
+      const div = document.createElement('div');
+      div.className = 'room-card';
+      div.id = `rc-${z.label.replace(/\s/g,'_')}`;
+      div.onclick = () => selectRoom(z.label);
+      container.appendChild(div);
+    });
+  }
+  zones.forEach(z => {
+    const card = document.getElementById(`rc-${z.label.replace(/\s/g,'_')}`);
+    if (!card) return;
+    const room   = engine.rooms?.[z.label] || { anxiety:0 };
+    const agents = engine.getRoomAgents(z.label);
+    const ax     = room.anxiety || 0;
+    const col    = ax>.6?'#ff1744':ax>.35?'#ffab00':'#76ff03';
+    const moles  = agents.filter(a=>a.mole).length;
+    const hasQ   = (engine.queens||[]).some(q=>{ const a=engine.agents.find(x=>x.id===q.agentId); return a&&a.currentZone===z.label&&!q.neutralized; });
+    const isActive = selectedRoom === z.label;
+    const isPlayer = engine.playerRoom === z.label && !engine.playerInBase;
+
+    card.className = 'room-card' + (isActive?' active':'') + (isPlayer?' player-here':'');
+
+    // Colore tag per fazione dominante
+    const fCount = {}; agents.forEach(a=>{ fCount[a.faction]=(fCount[a.faction]||0)+1; });
+    const domFac = Object.entries(fCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
+    const tagCol = FC[domFac] || 'var(--txt3)';
+
+    card.innerHTML = `
+      ${hasQ?'<div class="q-marker">◆</div>':''}
+      <div class="rc-top">
+        <div class="rc-name">${z.label.toUpperCase()}</div>
+        <div class="rc-tag" style="color:${tagCol};border-color:${tagCol}">${agents.length}N${moles?` ${moles}M`:''}</div>
+      </div>
+      <div class="rc-meta">
+        <span style="color:${col}">${Math.round(ax*100)}% anx</span>
+        ${isPlayer?'<span style="color:var(--gold)">📍 YOU</span>':''}
+        ${!isPlayer&&!engine.playerInBase?`<span style="color:var(--txt3);cursor:pointer" onclick="event.stopPropagation();doMove('${z.label}')">→ enter</span>`:''}
+        ${engine.playerInBase?`<span style="color:var(--txt3);cursor:pointer" onclick="event.stopPropagation();doMove('${z.label}')">→ deploy</span>`:''}
+      </div>
+      <div class="rc-bar"><div class="rc-fill" style="width:${ax*100}%;background:${col}"></div></div>
+      <div class="rc-svg">${buildMiniRadar(z.label, agents, ax)}</div>`;
+  });
+}
+
+function buildMiniRadar(roomLabel, agents, anxiety) {
+  const W=180, H=90, CX=90, CY=45, RAD=36;
+  const rings=[0.4,0.7,1.0];
+  let svg = '';
+
+  // Rings
+  rings.forEach(r => {
+    svg += `<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-dasharray="2,4" stroke-opacity="0.5"/>`;
+  });
+
+  // Nodes
+  agents.forEach((a,i) => {
+    const rel = engine.playerRelations[a.id] || { trustTier:0 };
+    const angle = (2*Math.PI*i/Math.max(agents.length,1)) - Math.PI/2;
+    const ringR = RAD * rings[Math.min(rel.trustTier, 2)];
+    const x = CX + Math.cos(angle) * ringR * (0.85 + Math.random()*0.12);
+    const y = CY + Math.sin(angle) * ringR * (0.85 + Math.random()*0.12);
+    const col = FC[a.faction] || '#888';
+    const r2 = a.isQueen ? 4 : a.mole ? 3 : 2;
+    const stroke = a.isQueen ? 'rgba(255,23,68,0.8)' : a.mole ? 'rgba(255,23,68,0.5)' : 'none';
+    svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="1" opacity="0.85"/>`;
+  });
+
+  // Stress arc
+  if (anxiety > 0.02) {
+    const arcAngle = anxiety * 2 * Math.PI;
+    const ex = CX + Math.cos(-Math.PI/2 + arcAngle) * RAD;
+    const ey = CY + Math.sin(-Math.PI/2 + arcAngle) * RAD;
+    const la = arcAngle > Math.PI ? 1 : 0;
+    const stCol = anxiety>.6?'#ff1744':anxiety>.35?'#ffab00':'#76ff03';
+    svg += `<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${la} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stCol}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+  }
+
+  return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${svg}</svg>`;
+}
+
+// ── SELECT ROOM ───────────────────────────────────────────────────────────────
+window.selectRoom = function(label) {
+  selectedRoom = label;
+  selectedNode = null;
+  chatHistory  = [];
+  renderGrid();
+  renderSidePanel();
+  // Ambient intercept
+  const ic = engine.getAmbientIntercept?.(label);
+  if (ic) pushMon(`[${label.slice(0,6).toUpperCase()}] ${ic}`, 'b');
+};
+
+window.doMove = function(label) {
+  const postura = engine.playerPostura || 'NEUTRALE';
+  const res = engine.moveWithPostura(label, postura);
+  if (res.success) {
+    pushMon(`→ ${label.toUpperCase()} [${postura}]${res.queenHere?' ◆ SOVEREIGN':''}`,'o');
+    if (res.queenHere) addLog(turn, `Moved to ${label}. Sovereign proximity detected.`, [], ['SOVEREIGN PROXIMITY']);
+    updateHeader(); renderGrid();
+  } else {
+    pushMon(`✗ ${res.text}`, 'a');
+  }
+};
+
+// ── SIDE PANEL ────────────────────────────────────────────────────────────────
+function renderSidePanel() {
+  const hint  = document.getElementById('sp-hint');
+  const radar = document.getElementById('sp-radar');
+  const node  = document.getElementById('sp-node');
+  const chat  = document.getElementById('sp-chat');
+
+  if (!selectedRoom) {
+    hint.style.display='flex'; radar.style.display='none'; node.style.display='none'; chat.style.display='none';
+    document.getElementById('sp-title').textContent='// SELECT A ROOM';
+    document.getElementById('sp-node-name').textContent='';
+    return;
+  }
+
+  hint.style.display = 'none';
+  radar.style.display = 'block';
+  renderSideRadar(selectedRoom);
+
+  if (selectedNode) {
+    node.style.display='flex'; node.style.flexDirection='column';
+    chat.style.display = apiKey ? 'flex' : 'none';
+    document.getElementById('sp-node-name').textContent = selectedNode.name.split(' ')[0].toUpperCase();
+    renderNodeProfile();
+  } else {
+    node.style.display='none'; chat.style.display='none';
+    document.getElementById('sp-node-name').textContent='';
+  }
+}
+
+function renderSideRadar(roomLabel) {
+  const el = document.getElementById('sp-radar');
+  if (!el || !roomLabel) return;
+
+  const agents = engine.getRoomAgents(roomLabel);
+  const room   = engine.rooms?.[roomLabel] || { anxiety:0 };
+  const ax     = room.anxiety || 0;
+  const W=280, H=160, CX=140, CY=80, RAD=62;
+  const rings  = [0.35,0.65,1.0];
+  let dots='', lines='', labels='';
+
+  // Positions
+  const positions=[];
+  agents.forEach((a,i) => {
+    const rel = engine.playerRelations[a.id]||{trustTier:0};
+    const angle = (2*Math.PI*i/Math.max(agents.length,1)) - Math.PI/2;
+    const ringR = RAD * rings[Math.min(rel.trustTier,2)];
+    const x = CX + Math.cos(angle)*ringR*(0.87+Math.random()*0.1);
+    const y = CY + Math.sin(angle)*ringR*(0.87+Math.random()*0.1);
+    positions.push({a,x,y,rel});
+  });
+
+  // Lines between roommates
+  positions.forEach((p,pi) => positions.forEach((q,qi) => {
+    if(qi<=pi)return;
+    const isMole = p.a.mole||q.a.mole;
+    lines += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}" stroke="${isMole?'#ff1744':'#1a3045'}" stroke-width="0.7" stroke-opacity="${isMole?.4:.1}" stroke-dasharray="3,3"/>`;
+  }));
+
+  // Rings + labels
+  rings.forEach((r,ri) => {
+    dots += `<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-dasharray="2,5" stroke-opacity="0.4"/>`;
+    dots += `<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="5" font-family="monospace">T${ri}</text>`;
+  });
+  dots += `<line x1="${CX-3}" y1="${CY}" x2="${CX+3}" y2="${CY}" stroke="#1a3045" stroke-width="0.5"/>`;
+  dots += `<line x1="${CX}" y1="${CY-3}" x2="${CX}" y2="${CY+3}" stroke="#1a3045" stroke-width="0.5"/>`;
+
+  // Stress arc
+  if (ax > 0.02) {
+    const arcAngle = ax*2*Math.PI;
+    const ex = CX+Math.cos(-Math.PI/2+arcAngle)*RAD;
+    const ey = CY+Math.sin(-Math.PI/2+arcAngle)*RAD;
+    const stCol = ax>.6?'#ff1744':ax>.35?'#ffab00':'#76ff03';
+    dots += `<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${arcAngle>Math.PI?1:0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stCol}" stroke-width="1.5" stroke-opacity="0.55"/>`;
+  }
+
+  // Nodes
+  positions.forEach(({a,x,y,rel}) => {
+    const col    = FC[a.faction]||'#888';
+    const isSel  = selectedNode?.id === a.id;
+    const r2     = a.isQueen ? 6 : isSel ? 6 : a.mole ? 4 : 3;
+    const stroke = isSel?'#ffffff':a.isQueen?'#ff1744':a.mole?'rgba(255,23,68,.6)':'none';
+    const sw     = isSel||a.isQueen||a.mole ? 1.5 : 0;
+    // Pulse for queen
+    const qPulse = a.isQueen && !a.queenNeutralized ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2+5}" fill="none" stroke="rgba(224,85,85,0.25)" stroke-width="1"/>` : '';
+    dots += `${qPulse}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" data-id="${a.id}"/>`;
+    if (isSel || (rel.interactionCount > 0)) {
+      const anchor = x > CX ? 'start' : 'end';
+      labels += `<text x="${(x+(x>CX?7:-7)).toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#fff':col}" font-size="6" font-family="monospace" text-anchor="${anchor}" style="pointer-events:none">${a.name.split(' ')[0]}</text>`;
+    }
+  });
+
+  // Room info text
+  const q = (engine.queens||[]).find(qd=>{ const qa=engine.agents.find(a=>a.id===qd.agentId); return qa&&qa.currentZone===roomLabel&&!qd.neutralized; });
+  const qText = q ? `<text x="4" y="12" fill="#ff1744" font-size="7" font-family="monospace">◆ SOVEREIGN IN ROOM</text>` : '';
+
+  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
+    ${lines}${dots}${labels}
+    ${qText}
+    <text x="${W-4}" y="12" fill="#2a4a5a" font-size="6" font-family="monospace" text-anchor="end">${agents.length} nodes // ${Math.round(ax*100)}% anx</text>
+  </svg>`;
+
+  // Click events su nodi
+  el.querySelectorAll('circle[data-id]').forEach(c => {
+    c.addEventListener('click', () => {
+      const id = c.getAttribute('data-id');
+      const node = engine.agents.find(a => a.id === id);
+      if (node) {
+        selectedNode = node;
+        chatHistory  = [];
+        document.getElementById('sp-title').textContent = `// ${roomLabel.toUpperCase()}`;
+        renderSidePanel();
+      }
+    });
+  });
+}
+
+// ── NODE PROFILE ──────────────────────────────────────────────────────────────
+function renderNodeProfile() {
+  const el = document.getElementById('sp-node');
+  if (!el || !selectedNode) return;
+  const n   = selectedNode;
+  const rel = engine.playerRelations[n.id] || { trustTier:0, interactionCount:0 };
+  const beacon = engine.getAgentBeacon(n);
+  const col    = FC[n.faction] || '#888';
+  const loy    = ['HOSTILE','NEUTRAL','LOYAL'];
+  const prox   = engine.getProximityContext(n.id);
+  const credits= parseInt(localStorage.getItem('loom_credits')||'100');
+
+  const tbar = [0,1,2].map(i=>`<div class="tp${rel.trustTier>i?' on':''}"></div>`).join('');
+
+  const OPS = [
+    {type:'casual_encounter',   label:'DIRECT CONTACT',  cost:20,  desc:'Reduce pressure. Open contact.'},
+    {type:'targeted_gift',      label:'ASSET LEVERAGE',  cost:40,  desc:'Boost trust. Match archetype.'},
+    {type:'encrypted_confession',label:'INTEL EXTRACT',  cost:60,  desc:'Unlock lore. Trust 1 req.', req:1},
+    {type:'bait_date',          label:'HONEY TRAP',      cost:80,  desc:'Move to your zone.'},
+    {type:'weaponized_jealousy',label:'FALSE FLAG',      cost:100, desc:'Panic sovereign.'},
+    {type:'shadow_stalking',    label:'SURVEILLANCE',    cost:50,  desc:'Track 4 turns.'},
+    {type:'wiretap',            label:'ROOM BUG',        cost:70,  desc:'Bug room 3T.'},
+    {type:'digital_gaslighting',label:'PSYOP',           cost:80,  desc:'Blacklist. High cost.'},
+    {type:'anonymous_slander',  label:'DISINFO',         cost:60,  desc:'Break clustering.'},
+  ];
+
+  const opsHtml = OPS.map(op => {
+    const chk = engine.canDoFieldOp(op.type);
+    const blk = !chk.allowed || credits < op.cost || (op.req && rel.trustTier < op.req);
+    const hint = !chk.allowed ? chk.reason : (op.req && rel.trustTier < op.req) ? `trust ${op.req} required` : credits < op.cost ? 'no credits' : '';
+    return `<div class="fop${blk?' blk':''}" onclick="doOp('${op.type}','${n.id}')" title="${hint}">
+      <span class="fn">${op.label}</span>
+      <span class="fc">${op.cost}pts${prox.sameRoom?' (-20%)':''}</span>
+      <div class="fd">${op.desc}</div>
+    </div>`;
+  }).join('');
+
+  el.innerHTML = `<div>
+    <div class="np-name" style="color:${col}">${n.name.toUpperCase()}</div>
+    <div class="np-r">${n.id} // <b style="color:${col}">${n.faction}</b></div>
+    <div class="np-r">ZONE: <b>${n.currentZone||'?'}</b>${prox.sameRoom?' <b style="color:var(--gold)">[PROXIMITY]</b>':''}</div>
+    <div class="np-r">SIGNAL: <b style="color:${beacon.color}">${beacon.icon} ${beacon.signal}</b></div>
+    <div class="np-r">STRESS: <b style="color:${n.pressure>.6?'var(--dng)':n.pressure>.3?'var(--amb)':'var(--acc3)'}">${Math.round(n.pressure*100)}%</b></div>
+    <div class="np-r">LOYALTY: <b>${loy[rel.trustTier]||'?'}</b> (${rel.interactionCount} interactions)</div>
+    <div class="tbar">${tbar}</div>
+    ${rel.interactionCount>0?`<div class="np-lore">"${n.currentLoreSnippet||'No data.'}"</div>`:'<div class="np-lore" style="color:var(--txt3)">// DOSSIER LOCKED</div>'}
+    ${n.isQueen&&!n.queenNeutralized?'<div style="font-size:8px;color:var(--dng);margin:4px 0;letter-spacing:1px">◆ SOVEREIGN — NETWORK CONTROLLER</div>':''}
+    ${n.mole?'<div style="font-size:8px;color:var(--dng);letter-spacing:1px">!! MOLE SUSPECTED</div>':''}
+    <div class="ops-lbl">// FIELD OPERATIONS</div>
+    <div class="ops-g">${opsHtml}</div>
+    ${!apiKey?'<div style="font-size:8px;color:var(--txt3);margin-top:8px;text-align:center">Connect Groq key to enable direct conversation →</div>':''}
+  </div>`;
+}
+
+// ── FIELD OPS ─────────────────────────────────────────────────────────────────
+window.doOp = function(type, targetId) {
+  const n = engine.agents.find(a=>a.id===targetId);
+  if (!n) return;
+  const res = engine.launchFieldOpWithProximity(type, targetId, n.currentZone, {});
+  if (res.success) {
+    pushMon(`◆ ${type.replace(/_/g,' ').toUpperCase()} → ${n.name.split(' ')[0]}: ${res.text}`, 'o');
+    addLog(turn, res.text, (res.completedMissions||[]).map(m=>`Mission: ${m.description}`), []);
+    if (res.success) {
+      // Aggiorna nodo selezionato
+      selectedNode = engine.agents.find(a=>a.id===targetId);
+      renderNodeProfile();
+    }
+  } else {
+    pushMon(`✗ ${res.text}`, 'a');
+  }
+  updateHeader(); checkEndgame();
+};
+
+// ── CHAT ──────────────────────────────────────────────────────────────────────
+window.sendChat = async function() {
+  if (!selectedNode || !apiKey) return;
+  const input = document.getElementById('chat-input');
+  const msg   = input.value.trim();
+  if (!msg) return;
+  input.value = '';
+
+  const btn = document.getElementById('chat-send');
+  btn.disabled = true;
+
+  addChatMsg('you', msg);
+  chatHistory.push({ role:'user', content:msg });
+
+  const rel = engine.playerRelations[selectedNode.id] || { trustTier:0 };
+  const noLore = rel.interactionCount < 1;
+
+  try {
+    const resp = await fetch('/api/chat', {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey},
+      body: JSON.stringify({
+        mode:'node',
+        node:{ name:selectedNode.name, faction:selectedNode.faction, zone:selectedNode.currentZone, stress:selectedNode.pressure },
+        trustTier: rel.trustTier,
+        lore: noLore ? '[CLASSIFIED]' : selectedNode.currentLoreSnippet,
+        message: msg,
+        history: chatHistory.slice(-8),
+      }),
+    });
+    const data = await resp.json();
+    const reply = data.reply || '[NO RESPONSE]';
+    addChatMsg('node', reply, selectedNode.name.split(' ')[0]);
+    chatHistory.push({ role:'assistant', content:reply });
+
+    // Ogni messaggio aumenta interactionCount
+    const relUpd = engine.playerRelations[selectedNode.id];
+    if (relUpd) { relUpd.interactionCount = Math.min(relUpd.interactionCount+1, 20); }
+    renderNodeProfile();
+  } catch(e) {
+    addChatMsg('sys', '[UPLINK FAILURE — retry]');
+  }
+  btn.disabled = false;
+  input.focus();
+};
+
+function addChatMsg(role, text, name='') {
+  const log = document.getElementById('chat-log');
+  const d   = document.createElement('div');
+  d.className = `cm ${role}`;
+  if (role === 'node' && name) d.style.cssText = 'color:var(--txt)';
+  if (role === 'node' && name) {
+    d.innerHTML = `<span style="color:var(--txt3);font-size:8px">${name.toUpperCase()} // </span>${text}`;
+  } else {
+    d.textContent = text;
+  }
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+}
+
+// ── POSTURA ───────────────────────────────────────────────────────────────────
+window.setPostura = function(p) {
+  const res = engine.setPostura(p);
+  if (!res.success) { pushMon(`✗ ${res.text}`, 'a'); return; }
+  ['BASE','OMBRA','NEUTRALE','VISIBILE'].forEach(k => document.getElementById(`pb-${k}`)?.classList.remove('active'));
+  document.getElementById(`pb-${p}`)?.classList.add('active');
+  pushMon(`◆ POSTURE → ${p}${p==='OMBRA'?' (−15 credits)':''}`, 'o');
+  updateHeader(); renderGrid();
+};
+
+// ── ADVANCE TURN ──────────────────────────────────────────────────────────────
+window.advanceTurn = async function() {
+  if (gameEnded) return;
+  const btn = document.getElementById('advance-btn');
+  btn.disabled=true; btn.classList.add('proc'); btn.textContent='⟳ PROCESSING...';
+
+  engine.tick(); turn++;
+
+  if (turn%3===0) {
+    (engine.queens||[]).forEach(q=>engine.checkQueenProgress(q));
+  }
+
+  const mid = engine.checkMidgameEvent?.();
+  if (mid) {
+    const who = mid.action?.();
+    addLog(turn, mid.desc, [who?`Asset: ${who}`:''], ['MIDGAME EVENT']);
+    pushMon(`!! MIDGAME — ${mid.desc.slice(0,50)}`, 'a');
+  }
+
+  const zones = engine.config?.zones||[];
+  if (zones.length && Math.random()<.55) {
+    const z = zones[Math.floor(Math.random()*zones.length)];
+    const ic = engine.getAmbientIntercept?.(z.label);
+    if (ic) pushMon(`[${z.label.slice(0,6).toUpperCase()}] ${ic}`, 'b');
+  }
+
+  let narrative = FALLBACK_TURNS[turn%FALLBACK_TURNS.length];
+  const fevs    = FALLBACK_EVENTS?.[turn%(FALLBACK_EVENTS?.length||1)]||[];
+
+  if (apiKey) {
+    try {
+      const qs = (engine.queens||[]).map(q=>`${q.realName}:${q.neutralized?'DONE':`alert${q.alertLevel}`}`).join(', ');
+      const r  = await fetch('/api/chat',{
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey},
+        body:JSON.stringify({mode:'narrative',turn,events:fevs,suspicion:engine.networkSuspicion,playerRoom:engine.playerRoom||'BASE',queensStatus:qs}),
+      });
+      const d = await r.json();
+      if (d.narrative) narrative = d.narrative;
+    } catch(_){}
+  }
+
+  addLog(turn, narrative, fevs, []);
+  updateHeader(); renderGrid();
+  if (selectedRoom) renderSideRadar(selectedRoom);
+
+  checkEndgame();
+  btn.disabled=false; btn.classList.remove('proc'); btn.textContent='▶ ADVANCE TURN';
+};
+
+// ── ENDGAME ───────────────────────────────────────────────────────────────────
+function checkEndgame() {
+  if (gameEnded) return;
+  const susp    = engine.networkSuspicion;
+  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
+  const allDone = (engine.queens||[]).length>=2 && (engine.queens||[]).every(q=>q.neutralized);
+  let ended=false,win=false,title='',sub='';
+  if (susp>=.95)    { ended=true; title='NETWORK BURNED';     sub='Suspicion critical. The network has flagged and locked your signature permanently.'; }
+  else if(credits<=0){ ended=true; title='RESOURCES DEPLETED'; sub='No credits. Operations cease. The network goes dark on your end.'; }
+  else if(allDone)  { ended=true; win=true; title='OPERATION COMPLETE'; sub='Both sovereigns neutralized. No trace of your presence remains — officially.'; }
+  if (!ended) return;
+  gameEnded=true;
+  const ov=document.getElementById('endgame');
+  const t=document.getElementById('eg-t');
+  t.textContent=title; t.style.color=win?'var(--acc3)':'var(--dng)';
+  document.getElementById('eg-s').textContent=sub;
+  document.getElementById('eg-stats').innerHTML=`
+    <div class="egs"><div class="egsk">TURNS</div><div class="egsv" style="color:var(--amb)">${turn}</div></div>
+    <div class="egs"><div class="egsk">SUSPICION</div><div class="egsv" style="color:${susp>.5?'var(--dng)':'var(--acc3)'}">${Math.round(susp*100)}%</div></div>
+    <div class="egs"><div class="egsk">QUEENS</div><div class="egsv" style="color:${allDone?'var(--acc3)':'var(--dng)'}">${(engine.queens||[]).filter(q=>q.neutralized).length}/2</div></div>`;
+  ov.className='endgame show';
+}
+
+window.resetGame = function() {
+  gameEnded=false; turn=0; selectedRoom=null; selectedNode=null; chatHistory=[];
+  document.getElementById('endgame').className='endgame';
+  document.getElementById('log-entries').innerHTML='';
+  document.getElementById('monitor').innerHTML='';
+  engine=new SwarmEngine('LOOM_CORE'); engine.init(); bindCallbacks();
+  renderGrid(); updateHeader();
+  document.getElementById('sp-hint').style.display='flex';
+  document.getElementById('sp-radar').style.display='none';
+  document.getElementById('sp-node').style.display='none';
+  document.getElementById('sp-chat').style.display='none';
+  addLog('--','New operation initiated. Network reseeded. Queens repositioned.',[],[]);
+};
+
+// ── LOG / MONITOR ─────────────────────────────────────────────────────────────
+function addLog(t,narr,evs,als) {
+  const el=document.getElementById('log-entries');
+  const evH=(evs||[]).map(e=>`<div class="lev">${e}</div>`).join('');
+  const alH=(Array.isArray(als)?als:[als]).filter(Boolean).map(a=>`<div class="lal">${a}</div>`).join('');
+  el.insertAdjacentHTML('afterbegin',`<div class="le"><div class="lts">TURN ${t} — ${new Date().toLocaleTimeString()}</div><div class="lnarr">${narr}</div>${evH}${alH}</div>`);
+}
+
+function pushMon(text,type='') {
+  const m=document.getElementById('monitor');
+  const d=document.createElement('div');
+  d.className=`mi ${type==='a'?'a':type==='o'?'o':type==='b'?'b':''}`;
+  d.textContent=text;
+  m.insertBefore(d,m.firstChild);
+  while(m.children.length>80) m.removeChild(m.lastChild);
+}
 </script>
 </body>
 </html>
