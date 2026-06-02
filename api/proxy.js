@@ -27,20 +27,25 @@ const PROVIDERS = {
     }),
   },
   gemini: {
-    buildUrl: (key) => `https://generativelanguage.googleapis.com/v1beta/openai/chat/completions`,
-    buildHeaders: (key) => ({
+    buildUrl: (key) => `https://generativelanguage.googleapis.com/v1beta/models/${'{MODEL}'}/generateContent?key=${key}`,
+    buildHeaders: () => ({
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`,
     }),
     buildBody: (body) => ({
-      model: body.model,
-      max_tokens: body.max_tokens,
-      messages: body.system
-        ? [{ role: 'system', content: body.system }, ...body.messages]
-        : body.messages,
+      contents: (body.system
+        ? [{ role: 'user', parts: [{ text: body.system }] }, { role: 'model', parts: [{ text: 'Understood.' }] }]
+        : []
+      ).concat(
+        body.messages.map(m => ({
+          role: m.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: m.content }],
+        }))
+      ),
+      generationConfig: { maxOutputTokens: body.max_tokens || 1000 },
     }),
+    buildUrlWithModel: (key, body) => `https://generativelanguage.googleapis.com/v1beta/models/${body.model}:generateContent?key=${key}`,
     parseResponse: (data) => ({
-      content: [{ type: 'text', text: data.choices?.[0]?.message?.content || '' }],
+      content: [{ type: 'text', text: data.candidates?.[0]?.content?.parts?.[0]?.text || '' }],
     }),
   },
   mistral: {
@@ -98,7 +103,11 @@ export default async function handler(req, res) {
   if (!p) return res.status(400).json({ error: `Unknown provider: ${provider}` });
 
   try {
-    const url = p.buildUrl ? p.buildUrl(apiKey) : p.url;
+    const url = p.buildUrlWithModel
+      ? p.buildUrlWithModel(apiKey, req.body)
+      : p.buildUrl
+        ? p.buildUrl(apiKey)
+        : p.url;
     const response = await fetch(url, {
       method: 'POST',
       headers: p.buildHeaders(apiKey),
