@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>L.O.O.M. // SWARM CORE — v1.0 Alpha</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
+  *{box-sizing:border-box;margin:0;padding:0}
+  :root{
+    --bg:#050a0e;--bg2:#080f14;--bg3:#0c1620;--panel:#0a1520;
+    --brd:#1a3045;--brd2:#0f2035;
+    --acc:#00e5ff;--acc2:#ff3d00;--acc3:#76ff03;
+    --amb:#ffab00;--pur:#ea80fc;
+    --txt:#b0c8d8;--txt2:#5a8099;--txt3:#2a4a5a;
+    --dng:#ff1744;--wrn:#ff6d00;
+    --mono:'Share Tech Mono',monospace;
+    --head:'Orbitron',monospace;
+    --body:'Courier Prime',monospace;
+  }
+  body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;min-height:100vh;overflow-x:hidden}
+  .scanline{position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:999}
+  .crt{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%);pointer-events:none;z-index:998}
+  .app{max-width:1100px;margin:0 auto;padding:12px}
+
+  .hdr{border:1px solid var(--brd);background:var(--panel);padding:10px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
+  .hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
+  .hdr-title{font-family:var(--head);font-size:18px;color:var(--acc);font-weight:900;letter-spacing:4px}
+  .hdr-acronym{font-family:var(--mono);font-size:9px;color:var(--txt2);letter-spacing:2px;margin-top:2px}
+  .hdr-acronym span{color:var(--acc)}
+  .hdr-sub{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-top:3px}
+  .hdr-right{text-align:right}
+  .turn-counter{font-family:var(--head);font-size:14px;color:var(--amb)}
+  .sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc3);box-shadow:0 0 6px var(--acc3);margin-right:4px;animation:blink 1.2s infinite}
+  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+  .api-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
+  .api-panel label{font-size:10px;color:var(--txt2);letter-spacing:1px;white-space:nowrap}
+  .api-input{flex:1;background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:11px;padding:5px 8px;outline:none}
+  .api-input:focus{border-color:var(--acc)}
+
+  .btn{background:transparent;border:1px solid var(--brd);color:var(--txt);font-family:var(--mono);font-size:11px;padding:5px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+  .btn:hover{border-color:var(--acc);color:var(--acc)}
+  .btn-acc{border-color:var(--acc);color:var(--acc)}
+  .btn-acc:hover{background:rgba(0,229,255,.1)}
+  .btn:disabled{opacity:.3;cursor:not-allowed}
+
+  .tri-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+  .pow{background:var(--panel);border:1px solid var(--brd);padding:8px 12px;text-align:center}
+  .pow-lbl{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:2px}
+  .pow-name{font-family:var(--head);font-size:11px;letter-spacing:1px;margin-bottom:6px}
+  .pbar-bg{background:var(--bg);height:4px}
+  .pbar-fill{height:4px;transition:width .5s}
+  .pow-val{font-size:11px;font-weight:700;margin-top:4px}
+
+  .econ-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:8px}
+  .econ-blk{background:var(--bg2);border:1px solid var(--brd2);padding:7px 12px;display:flex;align-items:center;justify-content:space-between}
+  .econ-k{font-size:9px;color:var(--txt2);letter-spacing:1px}
+  .econ-v{font-family:var(--head);font-size:13px}
+
+  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}
+  .room-card{background:var(--panel);border:1px solid var(--brd);padding:10px 12px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden}
+  .room-card:hover{border-color:var(--acc)}
+  .room-id{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:2px}
+  .room-name{font-family:var(--head);font-size:10px;color:var(--acc);margin-bottom:4px;letter-spacing:1px}
+  .room-name-it{font-size:8px;color:var(--txt3);letter-spacing:1px;margin-bottom:6px;font-style:italic}
+  .room-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px}
+  .stat-mini{font-size:9px;color:var(--txt2)}
+  .stat-mini span{display:block;font-size:12px;color:var(--txt);font-family:var(--head)}
+  .sbar-bg{background:var(--bg);height:3px;margin-top:4px}
+  .sbar{height:3px;transition:width .5s,background .3s}
+  .room-tag{display:inline-block;font-size:9px;padding:1px 6px;border:1px solid;letter-spacing:1px;margin-top:4px}
+
+  .ops-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px}
+  .ops-title{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:8px}
+  .ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+  .op-btn{background:var(--bg2);border:1px solid var(--brd2);color:var(--txt);font-family:var(--mono);font-size:10px;padding:7px 10px;cursor:pointer;text-align:left;letter-spacing:.5px;transition:all .15s;display:flex;flex-direction:column;gap:2px}
+  .op-btn:hover{border-color:var(--acc);color:var(--acc)}
+  .op-btn.active-op{border-color:var(--acc3);color:var(--acc3)}
+  .op-btn:disabled{opacity:.25;cursor:not-allowed}
+  .op-code{font-size:9px;color:var(--txt3);letter-spacing:1px}
+  .op-desc{font-size:9px;color:var(--txt2)}
+
+  .adv-btn{width:100%;background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:12px;padding:12px;cursor:pointer;letter-spacing:3px;transition:all .2s;margin-bottom:8px}
+  .adv-btn:hover{background:rgba(118,255,3,.08)}
+  .adv-btn:disabled{opacity:.25;cursor:not-allowed}
+
+  .log-panel{background:var(--bg);border:1px solid var(--brd2);padding:10px 14px;min-height:140px;max-height:200px;overflow-y:auto;margin-bottom:8px}
+  .log-title{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:8px}
+  .log-entry{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--brd2);animation:fadeIn .3s}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
+  .log-ts{font-size:9px;color:var(--txt3)}
+  .log-txt{font-size:11px;color:var(--txt);margin-top:2px;font-family:var(--body)}
+  .log-ev{font-size:10px;color:var(--txt2)}
+  .log-ev::before{content:'> ';color:var(--acc3)}
+  .log-al{color:var(--dng);font-size:10px}
+  .log-al::before{content:'!! '}
+
+  .alerts-panel{min-height:20px;margin-bottom:8px}
+  .alert-chip{display:inline-block;background:rgba(255,23,68,.08);border:1px solid var(--dng);color:var(--dng);font-size:10px;padding:3px 10px;margin:2px;letter-spacing:1px;animation:pulse 2s infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+
+  .nodes-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px}
+  .nodes-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
+  .node-chip{background:var(--bg2);border:1px solid var(--brd2);padding:5px 6px;font-size:9px;line-height:1.3}
+  .node-chip.mole{border-color:var(--dng)}
+  .node-chip.tier0{opacity:.5}
+  .node-id{color:var(--txt3);font-size:8px}
+  .node-nm{color:var(--txt)}
+  .node-rm{color:var(--txt2);font-size:8px}
+  .ndot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:2px;vertical-align:middle}
+
+  .loading-overlay{position:fixed;inset:0;background:rgba(5,10,14,.95);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px}
+  .loading-txt{font-family:var(--head);font-size:13px;color:var(--acc);letter-spacing:3px}
+  .loading-bar{width:200px;height:2px;background:var(--brd);position:relative;overflow:hidden}
+  .loading-fill{height:100%;background:var(--acc);animation:la 1.2s infinite}
+  @keyframes la{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
+  .sec-lbl{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:6px;border-bottom:1px solid var(--brd2);padding-bottom:4px}
+  ::-webkit-scrollbar{width:4px}
+  ::-webkit-scrollbar-track{background:var(--bg)}
+  ::-webkit-scrollbar-thumb{background:var(--brd)}
+</style>
+</head>
+<body>
+
+<div class="scanline"></div>
+<div class="crt"></div>
+
+<div id="loadingOverlay" class="loading-overlay">
+  <div class="loading-txt">L.O.O.M. // SWARM CORE</div>
+  <div style="font-size:10px;color:var(--txt2);letter-spacing:2px;text-align:center;line-height:1.8">
+    LOCAL OPINION OVERHAUL MONITOR<br>
+    INITIALIZING CLASSIFIED GRID...
+  </div>
+  <div class="loading-bar"><div class="loading-fill"></div></div>
+</div>
+
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="hdr">
+    <div>
+      <div class="hdr-title">L.O.O.M. // SWARM CORE</div>
+      <div class="hdr-acronym">
+        <span>L</span>ocal &nbsp;<span>O</span>pinion &nbsp;<span>O</span>verhaul &nbsp;<span>M</span>onitor
+      </div>
+      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE &nbsp;|&nbsp; BYO-API PUBLIC TRIAL</div>
+    </div>
+    <div class="hdr-right">
+      <div class="turn-counter">TURN <span id="turnNum">01</span></div>
+      <div style="font-size:9px;color:var(--txt2);margin-top:2px"><span class="sdot"></span>SECURE UPLINK ESTABLISHED</div>
+    </div>
+  </div>
+
+  <!-- API KEY -->
+  <div class="api-panel">
+    <label>ANTHROPIC API KEY //</label>
+    <input class="api-input" type="password" id="apiKey" placeholder="sk-ant-api03-..." />
+    <button class="btn btn-acc" onclick="saveKey()">CONNECT</button>
+    <span id="keyStatus" style="font-size:10px;color:var(--txt2)">NO KEY LOADED</span>
+  </div>
+
+  <!-- POWER TRIANGLE -->
+  <div class="tri-bar">
+    <div class="pow">
+      <div class="pow-lbl">THE DIRECTORY</div>
+      <div class="pow-name" style="color:var(--acc)">INTEL</div>
+      <div class="pbar-bg"><div class="pbar-fill" id="barIntel" style="background:var(--acc);width:40%"></div></div>
+      <div class="pow-val" style="color:var(--acc)" id="valIntel">40</div>
+    </div>
+    <div class="pow">
+      <div class="pow-lbl">THE MINISTRY</div>
+      <div class="pow-name" style="color:var(--pur)">DIPLOMACY</div>
+      <div class="pbar-bg"><div class="pbar-fill" id="barDiplomacy" style="background:var(--pur);width:35%"></div></div>
+      <div class="pow-val" style="color:var(--pur)" id="valDiplomacy">35</div>
+    </div>
+    <div class="pow">
+      <div class="pow-lbl">THE AGENCY</div>
+      <div class="pow-name" style="color:var(--acc2)">SANCTION</div>
+      <div class="pbar-bg"><div class="pbar-fill" id="barSanction" style="background:var(--acc2);width:25%"></div></div>
+      <div class="pow-val" style="color:var(--acc2)" id="valSanction">25</div>
+    </div>
+  </div>
+
+  <!-- ECONOMY -->
+  <div class="econ-bar">
+    <div class="econ-blk">
+      <span class="econ-k">DATA TOKENS //</span>
+      <span class="econ-v" style="color:var(--amb)" id="valCash">1200</span>
+    </div>
+    <div class="econ-blk">
+      <span class="econ-k">GLOBAL REPUTATION //</span>
+      <span class="econ-v" style="color:var(--acc3)" id="valRep">50</span>
+    </div>
+    <div class="econ-blk">
+      <span class="econ-k">INSPECTOR RISK //</span>
+      <span class="econ-v" style="color:var(--acc2)" id="valRisk">20%</span>
+    </div>
+  </div>
+
+  <!-- ALERTS -->
+  <div class="alerts-panel" id="alertsPanel"></div>
+
+  <!-- ROOMS -->
+  <div class="sec-lbl">// OPERATIONS GRID — 6 CLASSIFIED ROOMS</div>
+  <div class="main-grid" id="roomsGrid"></div>
+
+  <!-- OPERATIONS -->
+  <div class="ops-panel">
+    <div class="ops-title">// FIELD DIRECTIVES — SELECT AND COMMIT TO TURN</div>
+    <div class="ops-grid" id="opsGrid"></div>
+  </div>
+
+  <!-- ADVANCE TURN -->
+  <button class="adv-btn" id="advanceBtn" onclick="doAdvanceTurn()">
+    ▶ ADVANCE TURN — GLOBAL SYNCHRONIZATION
+  </button>
+
+  <!-- LOG -->
+  <div class="log-panel" id="logPanel">
+    <div class="log-title">// OPERATIONS LOG — ENCRYPTED ARCHIVE</div>
+    <div id="logEntries"></div>
+  </div>
+
+  <!-- NODES -->
+  <div class="nodes-panel">
+    <div class="sec-lbl">// NODE NETWORK — 50 SIMULATED ENTITIES</div>
+    <div style="font-size:9px;color:var(--txt2);margin-bottom:6px">
+      <span style="color:var(--acc)">&#9679;</span> REGULAR &nbsp;
+      <span style="color:var(--pur)">&#9679;</span> PREMIUM &nbsp;
+      <span style="color:var(--acc2)">&#9679;</span> COMPETITOR &nbsp;
+      <span style="color:var(--amb)">&#9679;</span> INSPECTOR &nbsp;
+      <span style="color:var(--dng)">&#9632;</span> MOLE SUSPECTED
+    </div>
+    <div class="nodes-grid" id="nodesGrid"></div>
+  </div>
+
+</div>
+
+<script>
+const ROOMS=[
+  {id:'R01',key:'Server Room',       itKey:'La Stanza dei Server',     tag:'SERVER',   color:'var(--acc)'},
+  {id:'R02',key:'The Embassy',       itKey:"L'Ambasciata",             tag:'EMBASSY',  color:'var(--pur)'},
+  {id:'R03',key:'Encrypted Channel', itKey:'Il Canale Criptato',       tag:'DARKNET',  color:'var(--acc2)'},
+  {id:'R04',key:'Black Site',        itKey:"L'Isolamento Burocratico", tag:'BLACKSITE',color:'var(--wrn)'},
+  {id:'R05',key:'Press Room',        itKey:'La Sala Stampa',           tag:'PRESS',    color:'var(--amb)'},
+  {id:'R06',key:'External Safehouse',itKey:'La Safehouse Esterna',     tag:'SAFEHOUSE',color:'var(--acc3)'},
+];
+
+const OPS=[
+  {code:'complimentary_drink', label:'Firewall Update',     desc:'Server Room stress -15%. Boosts Intel.'},
+  {code:'priority_voucher',    label:'Asylum Grant',        desc:'Routes premium asset to The Embassy.'},
+  {code:'shift_scheduling',    label:'Field Infiltration',  desc:'Reallocates stressed agent to Safehouse.'},
+  {code:'reroute_traffic',     label:'Channel Rerouting',   desc:'Ejects problematic node/mole. Agency heat +.'},
+  {code:'guest_survey',        label:'Stream Interception', desc:'Wiretaps Channel/Server. Extracts keys.'},
+  {code:'market_audit',        label:'Internal Report',     desc:'Hands competitor to NSA. Drops inspector risk.'},
+  {code:'targeted_campaign',   label:'Controlled Leak',     desc:'Disinformation into Press Room. Freezes ops.'},
+  {code:'brand_promotion',     label:'Blackout Signal',     desc:'Rival infra down. External nodes to Safehouse.'},
+];
+
+const FACTIONS=['regular','premium','competitor','inspector'];
+const FC={regular:'var(--acc)',premium:'var(--pur)',competitor:'var(--acc2)',inspector:'var(--amb)'};
+const NAMES=['Volkov','Chen','Harari','Osei','Petrov','Nkrumah','Lenz','Saito','Moreau','Dubois','Kowalski','Russo','Ferreira','Nakamura','Adeyemi','Svensson','Müller','Kofi','Dragan','Ivanovic','Berkov','Shin','Castellano','Yildiz','Okafor','Patel','Brennan','Fonseca','Renard','Andrade','Vogel','Santos','Bassi','Mehta','Park','Lindqvist','Tremblay','Okonkwo','Leblanc','Czerny','Watanabe','Ngozi','Popescu','Reyes','Aziz','Takeda','Mendez','Blum','Sato','Koroma'];
+
+function mkNodes(){
+  return NAMES.map((n,i)=>({
+    id:'N'+String(i+1).padStart(3,'0'),
+    name:n,
+    faction:FACTIONS[i<20?0:i<30?1:i<42?2:3],
+    room:ROOMS[i%6].itKey,
+    stress:parseFloat((Math.random()*.5).toFixed(2)),
+    loyalty:Math.floor(Math.random()*3),
+    mole:Math.random()<.12,
+  }));
+}
+
+let gs={
+  turn:1,cash:1200,reputation:50,inspectorRisk:.20,
+  intel:40,diplomacy:35,sanction:25,
+  rooms:Object.fromEntries(ROOMS.map(r=>[r.itKey,{
+    stress:parseFloat((Math.random()*.4).toFixed(2)),
+    occupancy:5+Math.floor(Math.random()*10),
+    revenue:50+Math.floor(Math.random()*150),
+  }])),
+  nodes:mkNodes(),
+  alerts:[],
+  pendingOps:[],
+};
+
+let apiKey='';
+let loading=false;
+
+function saveKey(){
+  apiKey=document.getElementById('apiKey').value.trim();
+  const s=document.getElementById('keyStatus');
+  s.textContent=apiKey?'KEY ACTIVE':'NO KEY LOADED';
+  s.style.color=apiKey?'var(--acc3)':'var(--txt2)';
+}
+
+function sc(s){
+  if(s<.4)return'var(--acc3)';
+  if(s<.7)return'var(--amb)';
+  return'var(--dng)';
+}
+
+function renderPowers(){
+  [{n:'Intel',v:gs.intel},{n:'Diplomacy',v:gs.diplomacy},{n:'Sanction',v:gs.sanction}].forEach(p=>{
+    document.getElementById('bar'+p.n).style.width=Math.min(p.v,100)+'%';
+    document.getElementById('val'+p.n).textContent=Math.round(p.v);
+  });
+  document.getElementById('valCash').textContent=gs.cash;
+  document.getElementById('valRep').textContent=gs.reputation;
+  document.getElementById('valRisk').textContent=Math.round(gs.inspectorRisk*100)+'%';
+  document.getElementById('turnNum').textContent=String(gs.turn).padStart(2,'0');
+}
+
+function renderRooms(){
+  const g=document.getElementById('roomsGrid');
+  g.innerHTML='';
+  ROOMS.forEach(r=>{
+    const rd=gs.rooms[r.itKey]||{stress:0,occupancy:0,revenue:0};
+    const c=sc(rd.stress);
+    g.innerHTML+=`<div class="room-card">
+      <div class="room-id">${r.id}</div>
+      <div class="room-name" style="color:${r.color}">${r.key.toUpperCase()}</div>
+      <div class="room-name-it">${r.itKey}</div>
+      <div class="room-stats">
+        <div class="stat-mini">STRESS<span style="color:${c}">${Math.round(rd.stress*100)}%</span></div>
+        <div class="stat-mini">NODES<span>${rd.occupancy}</span></div>
+        <div class="stat-mini">REVENUE<span style="color:var(--amb)">${rd.revenue}t</span></div>
+      </div>
+      <div class="sbar-bg"><div class="sbar" style="width:${rd.stress*100}%;background:${c}"></div></div>
+      <div class="room-tag" style="color:${r.color};border-color:${r.color}">${r.tag}</div>
+    </div>`;
+  });
+}
+
+function renderOps(){
+  const g=document.getElementById('opsGrid');
+  g.innerHTML='';
+  OPS.forEach(op=>{
+    const active=gs.pendingOps.includes(op.code);
+    g.innerHTML+=`<button class="op-btn${active?' active-op':''}" onclick="toggleOp('${op.code}')" ${loading?'disabled':''}>
+      <span class="op-code">[${op.code.toUpperCase()}]</span>
+      <span style="font-size:11px">${op.label}</span>
+      <span class="op-desc">${op.desc}</span>
+    </button>`;
+  });
+}
+
+function renderAlerts(){
+  document.getElementById('alertsPanel').innerHTML=gs.alerts.map(a=>`<span class="alert-chip">!! ${a}</span>`).join('');
+}
+
+function renderNodes(){
+  const g=document.getElementById('nodesGrid');
+  g.innerHTML='';
+  gs.nodes.slice(0,50).forEach(n=>{
+    const fc=FC[n.faction]||'#888';
+    const rm=ROOMS.find(r=>r.itKey===n.room);
+    g.innerHTML+=`<div class="node-chip${n.mole?' mole':''}${n.loyalty===0?' tier0':''}">
+      <div class="node-id">${n.id} <span class="ndot" style="background:${fc}"></span></div>
+      <div class="node-nm">${n.name}</div>
+      <div class="node-rm">${rm?rm.tag:n.room}</div>
+      <div style="font-size:8px;color:${n.loyalty===0?'var(--dng)':n.loyalty===2?'var(--acc3)':'var(--txt3)'}">T${n.loyalty}${n.mole?' [MOLE]':''}</div>
+    </div>`;
+  });
+}
+
+function renderAll(){renderPowers();renderRooms();renderOps();renderAlerts();renderNodes();}
+
+function toggleOp(code){
+  const i=gs.pendingOps.indexOf(code);
+  if(i>=0)gs.pendingOps.splice(i,1);
+  else gs.pendingOps.push(code);
+  renderOps();
+}
+
+function addLog(turn,txt,events,alerts){
+  const lp=document.getElementById('logEntries');
+  const ev=(events||[]).map(e=>`<div class="log-ev">${e}</div>`).join('');
+  const al=(Array.isArray(alerts)?alerts:[alerts]).filter(Boolean).map(a=>`<div class="log-al">${a}</div>`).join('');
+  lp.insertAdjacentHTML('afterbegin',`<div class="log-entry">
+    <div class="log-ts">TURN ${turn} — ${new Date().toLocaleTimeString()}</div>
+    <div class="log-txt">${txt}</div>
+    <div>${ev}${al}</div>
+  </div>`);
+  document.getElementById('logPanel').scrollTop=0;
+}
+
+function setLoading(v){
+  loading=v;
+  const btn=document.getElementById('advanceBtn');
+  btn.disabled=v;
+  btn.textContent=v?'⟳ PROCESSING — ENGINE ACTIVE...':'▶ ADVANCE TURN — GLOBAL SYNCHRONIZATION';
+  renderOps();
+}
+
+async function doAdvanceTurn(){
+  if(!apiKey){alert('Insert your Anthropic API key to advance the turn.');return;}
+  setLoading(true);
+
+  const snap=JSON.stringify({
+    turn:gs.turn,cash:gs.cash,reputation:gs.reputation,
+    inspectorRisk:gs.inspectorRisk,
+    intel:gs.intel,diplomacy:gs.diplomacy,sanction:gs.sanction,
+    rooms:gs.rooms,
+    pendingOperations:gs.pendingOps,
+    nodesSummary:gs.nodes.slice(0,15).map(n=>({id:n.id,name:n.name,faction:n.faction,room:n.room,stress:n.stress,loyalty:n.loyalty,mole:n.mole})),
+  },null,2);
+
+  const sys=`You are the Core Simulation Engine for "L.O.O.M. // SWARM CORE" (v1.0 Alpha - Local Opinion Overhaul Monitor), a text-based data-driven espionage and political cyber-thriller simulator.
+
+THE 6 ROOMS (use these exact Italian keys in roomUpdates):
+- "La Stanza dei Server" = Server Room
+- "L'Ambasciata" = The Embassy
+- "Il Canale Criptato" = Encrypted Channel
+- "L'Isolamento Burocratico" = Black Site / Detention
+- "La Sala Stampa" = Press Room
+- "La Safehouse Esterna" = External Safehouse (revenue always 0)
+
+NODE FACTIONS: regular (field agents), premium (diplomats/high-tier), competitor (rogue cells/moles), inspector (NSA auditors).
+
+PLAYER DIRECTIVES:
+- complimentary_drink = Firewall Update → Server Room stress -15%, Intel +3-5
+- priority_voucher = Asylum Grant → Routes premium to Embassy, Diplomacy +3-5
+- shift_scheduling = Field Infiltration → Reallocates stressed regular to Safehouse
+- reroute_traffic = Channel Rerouting → Ejects mole, Sanction +3-5, inspectorRisk +0.05
+- guest_survey = Stream Interception → Wiretap, cash +50-150
+- market_audit = Internal Report → Hands competitor to NSA, inspectorRisk → 0
+- targeted_campaign = Controlled Leak → Disinformation in Press Room, reputation ±
+- brand_promotion = Blackout Signal → Rival infra down, Intel +5
+
+GLOBAL DRIFTS (30% chance, pick at most one): "SCALE-5 DATA BREACH", "NATIONAL SECURITY AUDIT", "INTERNATIONAL DIPLOMATIC CRISIS", "DDOS CYBER ATTACK"
+
+Rules: stress drifts +0.03 to +0.08 per room per turn unless countered. Mole nodes increase local stress. Apply all queued operations. Move 1-3 nodes between rooms. Write log in English cold cyber-thriller jargon (1-3 sentences).
+
+Respond ONLY with raw JSON, no markdown fences.
+
+JSON SCHEMA:
+{
+  "log": "string",
+  "events": ["string"],
+  "roomUpdates": {
+    "La Stanza dei Server":      {"stress":0.0,"occupancy":0,"revenue":0},
+    "L'Ambasciata":              {"stress":0.0,"occupancy":0,"revenue":0},
+    "Il Canale Criptato":        {"stress":0.0,"occupancy":0,"revenue":0},
+    "L'Isolamento Burocratico":  {"stress":0.0,"occupancy":0,"revenue":0},
+    "La Sala Stampa":            {"stress":0.0,"occupancy":0,"revenue":0},
+    "La Safehouse Esterna":      {"stress":0.0,"occupancy":0,"revenue":0}
+  },
+  "nodeMovements": [{"id":"N001","name":"string","from":"string","to":"string","stress":0.0,"loyalty":0}],
+  "alerts": [],
+  "cashDelta": 0,
+  "reputationDelta": 0,
+  "intelDelta": 0,
+  "diplomacyDelta": 0,
+  "sanctionDelta": 0,
+  "inspectorRisk": 0.0
+}`;
+
+  const userMsg=`CURRENT GAME STATE:\n${snap}\n\nPENDING OPERATIONS THIS TURN: ${gs.pendingOps.join(', ')||'NONE'}\n\nProcess this turn. Apply operations. Possibly trigger one global drift (30% chance). Update all room stats — stress drifts naturally upward. Move 1-3 nodes. Respond ONLY with raw JSON.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',
+        max_tokens:1000,
+        system:sys,
+        messages:[{role:'user',content:userMsg}]
+      })
+    });
+    const data=await resp.json();
+    const raw=data.content.map(c=>c.text||'').join('').trim();
+    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+    gs.turn+=1;
+    if(result.roomUpdates){
+      Object.entries(result.roomUpdates).forEach(([k,v])=>{
+        if(gs.rooms[k])Object.assign(gs.rooms[k],v);
+      });
+    }
+    if(result.nodeMovements){
+      result.nodeMovements.forEach(mv=>{
+        const node=gs.nodes.find(n=>n.id===mv.id||n.name===mv.name);
+        if(node){
+          if(mv.to)node.room=mv.to;
+          if(mv.stress!==undefined)node.stress=mv.stress;
+          if(mv.loyalty!==undefined)node.loyalty=mv.loyalty;
+        }
+      });
+    }
+    gs.cash=Math.max(0,gs.cash+(result.cashDelta||0));
+    gs.reputation=Math.max(0,Math.min(100,gs.reputation+(result.reputationDelta||0)));
+    gs.intel=Math.max(0,Math.min(100,gs.intel+(result.intelDelta||0)));
+    gs.diplomacy=Math.max(0,Math.min(100,gs.diplomacy+(result.diplomacyDelta||0)));
+    gs.sanction=Math.max(0,Math.min(100,gs.sanction+(result.sanctionDelta||0)));
+    gs.inspectorRisk=Math.max(0,Math.min(1,result.inspectorRisk??gs.inspectorRisk));
+    gs.alerts=result.alerts||[];
+    gs.pendingOps=[];
+
+    addLog(gs.turn-1,result.log||'—',result.events,result.alerts);
+    renderAll();
+  }catch(e){
+    addLog(gs.turn,`[ERROR] ${e.message}`,[],'UPLINK FAILURE');
+    gs.alerts=['SYSTEM ERROR'];
+    renderAlerts();
+  }
+  setLoading(false);
+}
+
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    document.getElementById('loadingOverlay').style.display='none';
+    renderAll();
+    addLog('--','System initialized. Operations grid online. 50 active nodes detected across 6 classified rooms. Awaiting directives.',['Grid stabilized','Node network nominal','Directory uplink: ACTIVE'],[]);
+  },2200);
+});
+</script>
+</body>
+</html>
