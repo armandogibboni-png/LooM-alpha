@@ -216,9 +216,9 @@ export class SwarmEngine {
     zones.forEach(z => {
       this.rooms[z.label] = { anxiety: 0.1, agents: [], alertActive: false, bugged: false, bugTurns: 0 };
     });
-    // Distribuzione iniziale agenti nelle stanze
+    // Initial agent distribution across zones
     this._distributeAgentsToRooms();
-    // Posizione iniziale player: prima stanza
+    // Initial player position: first zone
     this.playerRoom = zones[0]?.label || null;
     this.activeFieldOp = null; // { type, targetId, targetRoom, turnsLeft, onCatch }
     this.freePayloadUses = 0; // dalla slot machine
@@ -420,7 +420,7 @@ export class SwarmEngine {
             (this.factionSuspicion[follower.faction] || 0) + 0.04);
           events.push({
             type: 'follower_proximity',
-            text: `[BEACON] ${follower.name.split(' ')[0]} è un follower della regina. Sospetto +4%.`,
+            text: `[SIGNAL] ${follower.name.split(' ')[0]} is a sovereign follower. Suspicion +4%.`,
             agentId: fid
           });
         }
@@ -523,7 +523,7 @@ export class SwarmEngine {
       this.playerRoom = null;
       this.playerInBase = true;
       if (this.onPosturaChange) this.onPosturaChange(postura, null);
-      return { success: true, text: 'Sei rientrato alla base. Operazioni remote disponibili.' };
+      return { success: true, text: 'Returned to base. Remote operations available.' };
     }
 
     this.playerInBase = false;
@@ -532,7 +532,7 @@ export class SwarmEngine {
     const cost = costByPostura[postura] || 0;
     if (cost > 0 && !this.spendCredits(cost)) {
       this.playerPostura = prev;
-      return { success: false, text: `Crediti insufficienti per postura OMBRA (${cost} pts).` };
+      return { success: false, text: `Insufficient credits for SHADOW posture (${cost} pts).` };
     }
 
     if (this.onPosturaChange) this.onPosturaChange(postura, this.playerRoom);
@@ -540,7 +540,7 @@ export class SwarmEngine {
   }
 
   moveWithPostura(roomLabel, postura) {
-    if (!this.rooms[roomLabel]) return { success: false, text: 'Stanza non trovata.' };
+    if (!this.rooms[roomLabel]) return { success: false, text: 'Zone not found.' };
 
     // Applica postura
     const postaraResult = this.setPostura(postura);
@@ -620,20 +620,13 @@ export class SwarmEngine {
   canDoFieldOp(type) {
     const postura = this.playerPostura || 'NEUTRALE';
     // Ops che richiedono presenza fisica — vietate in OMBRA dalla base
-    const PRESENCE_OPS = ['casual_encounter','targeted_gift','encrypted_confession',
-      'bait_date','weaponized_jealousy'];
-    // Ops vietate in BASE (richiedono presenza)
-    const BASE_BLOCKED = ['casual_encounter','targeted_gift','encrypted_confession',
-      'bait_date','weaponized_jealousy','search_belongings','safe_cracking'];
-    // Ops vietate in OMBRA (richiedono interazione diretta)
-    const OMBRA_BLOCKED = ['casual_encounter','targeted_gift','encrypted_confession',
-      'bait_date','weaponized_jealousy'];
-
-    if (this.playerInBase && BASE_BLOCKED.includes(type)) {
-      return { allowed: false, reason: 'Operazione non disponibile dalla base. Richiede presenza fisica.' };
+    const PRESENCE_OPS = ['casual_encounter','targeted_gift','encrypted_confession','bait_date','weaponized_jealousy'];
+    const OMBRA_BLOCKED = ['casual_encounter','targeted_gift','encrypted_confession','bait_date','weaponized_jealousy'];
+    if (this.playerInBase && PRESENCE_OPS.includes(type)) {
+      return { allowed: false, reason: 'Requires physical presence — deploy to a zone first.' };
     }
     if (postura === 'OMBRA' && OMBRA_BLOCKED.includes(type)) {
-      return { allowed: false, reason: 'Operazione non disponibile in ombra. Saresti rilevato.' };
+      return { allowed: false, reason: 'Not available in Shadow — direct interaction would expose you.' };
     }
     return { allowed: true };
   }
@@ -675,22 +668,22 @@ export class SwarmEngine {
             const rel = this.playerRelations[targetId];
             if (rel) rel.trustTier = Math.max(rel.trustTier, 0);
           }
-          return { text: `Incontro casuale con ${target?.name.split(' ')[0]}. Tensione calata.`, type: 'positive' };
+          return { text: `Direct contact with ${target?.name.split(' ')[0]}. Pressure reduced.`, type: 'positive' };
         }
       },
       targeted_gift: {
         cost: Math.floor(40 * costMod), turns: 0,
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           const rel = this.playerRelations[targetId];
           // Controlla se il regalo corrisponde all'archetipo (semplificato: 50% chance)
           const match = Math.random() > 0.5;
           if (match) {
             rel.trustTier = Math.min(2, rel.trustTier + 1);
-            return { text: `Il regalo ha colpito nel segno. Bond raddoppiato con ${target.name.split(' ')[0]}.`, type: 'positive' };
+            return { text: `Asset leverage landed. Trust bond strengthened with ${target.name.split(' ')[0]}.`, type: 'positive' };
           } else {
             target.pressure = Math.min(1, target.pressure + 0.2 * effectMod);
-            return { text: `Regalo sbagliato. ${target.name.split(' ')[0]} è diventato/a sospettoso/a.`, type: 'negative' };
+            return { text: `Wrong approach. ${target.name.split(' ')[0]} is now suspicious.`, type: 'negative' };
           }
         }
       },
@@ -698,18 +691,18 @@ export class SwarmEngine {
         cost: Math.floor(60 * costMod), turns: 2,
         requires: { trustTier: 1 },
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           const rel = this.playerRelations[targetId];
-          if (rel.trustTier < 1) return { text: 'Fiducia insufficiente per questa operazione.', type: 'negative' };
+          if (rel.trustTier < 1) return { text: 'Insufficient trust for this operation.', type: 'negative' };
           // Sblocca segreto gratis
           rel.interactionCount = Math.max(rel.interactionCount, 10);
-          return { text: `Confessione criptata inviata. Il segreto di ${target.name.split(' ')[0]} è sbloccato.`, type: 'positive', unlockSecret: targetId };
+          return { text: `Intel extraction sent. Dossier of ${target.name.split(' ')[0]} unlocked.`, type: 'positive', unlockSecret: targetId };
         }
       },
       bait_date: {
         cost: Math.floor(80 * costMod), turns: 3,
         exec: () => {
-          if (!target || !zoneLabel) return { text: 'Parametri mancanti.', type: 'negative' };
+          if (!target || !zoneLabel) return { text: 'Missing parameters.', type: 'negative' };
           // Sposta il target nella stanza del player
           const zones = this.config.zones || [];
           const destZone = zones.find(z => z.label === this.playerRoom) || zones[0];
@@ -719,7 +712,7 @@ export class SwarmEngine {
             target.currentZone = destZone.label;
             target.zoneChangeCooldown = 999;
           }
-          return { text: `${target.name.split(' ')[0]} è stato/a attirato/a verso ${destZone?.label}.`, type: 'positive' };
+          return { text: `${target.name.split(' ')[0]} has been redirected to ${destZone?.label}.`, type: 'positive' };
         }
       },
       weaponized_jealousy: {
@@ -733,7 +726,7 @@ export class SwarmEngine {
             const q = this.queens.find(q => q.agentId === queen.id);
             if (q) q.alertLevel = Math.min(3, q.alertLevel + 2);
           }
-          return { text: `Gelosia innescata. La regina ${target?.faction} si è spostata per il panico.`, type: 'positive' };
+          return { text: `False flag executed. Sovereign of ${target?.faction} repositioned under pressure.`, type: 'positive' };
         }
       },
       // SET 2 — INTEL
@@ -741,7 +734,7 @@ export class SwarmEngine {
         cost: Math.floor(50 * costMod), turns: 4,
         exec: () => {
           this.activeFieldOp = { type: 'shadow_stalking', targetId, targetRoom: target?.currentZone, turnsLeft: 4, effectMod };
-          return { text: `Stalking avviato su ${target?.name.split(' ')[0]}. Monitoraggio attivo per 4 turni.`, type: 'positive', ongoing: true };
+          return { text: `Surveillance initiated on ${target?.name.split(' ')[0]}. Monitoring active for 4 turns.`, type: 'positive', ongoing: true };
         }
       },
       wiretap: {
@@ -751,26 +744,26 @@ export class SwarmEngine {
             this.rooms[zoneLabel].bugged = true;
             this.rooms[zoneLabel].bugTurns = 3;
           }
-          return { text: `Intercettazione piazzata in ${zoneLabel}. Identità svelate per 3 turni.`, type: 'positive' };
+          return { text: `Room bug planted in ${zoneLabel}. Identities revealed for 3 turns.`, type: 'positive' };
         }
       },
       search_belongings: {
         cost: Math.floor(90 * costMod), turns: 5,
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           if (target.currentZone === this.playerRoom) {
-            return { text: `${target.name.split(' ')[0]} è nella tua stessa stanza. Impossibile perquisire.`, type: 'negative' };
+            return { text: `${target.name.split(' ')[0]} is in your zone. Cannot search belongings.`, type: 'negative' };
           }
           this.activeFieldOp = { type: 'search_belongings', targetId, targetRoom: target.currentZone, turnsLeft: 5, effectMod };
-          return { text: `Perquisizione avviata. Hai 5 turni prima che ${target.name.split(' ')[0]} torni.`, type: 'positive', ongoing: true };
+          return { text: `Asset search initiated. 5 turns before ${target.name.split(' ')[0]} returns.`, type: 'positive', ongoing: true };
         }
       },
       safe_cracking: {
         cost: Math.floor(150 * costMod), turns: 8,
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           const distantRoom = target.currentZone !== this.playerRoom;
-          if (!distantRoom) return { text: 'Il target deve essere lontano per questa operazione.', type: 'negative' };
+          if (!distantRoom) return { text: 'Target must be in a different zone for this operation.', type: 'negative' };
           this.activeFieldOp = { type: 'safe_cracking', targetId, targetRoom: target.currentZone, turnsLeft: 8, effectMod };
           return { text: `Cracking della cassaforte avviato. 8 turni. Alto rischio.`, type: 'negative', ongoing: true };
         }
@@ -779,34 +772,34 @@ export class SwarmEngine {
       anonymous_slander: {
         cost: Math.floor(60 * costMod), turns: 0,
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           // Rompe il clustering tra fazioni
           const otherFaction = this.factions.find(f => f !== target.faction);
           this.agents.filter(a => a.faction === target.faction).forEach(a => {
             a.feuds = [...new Set([...a.feuds, ...this.agents.filter(x=>x.faction===otherFaction).slice(0,3).map(x=>x.id)])];
           });
           this.raiseFactionSuspicion(target.faction, 0.1 * effectMod, target.id);
-          return { text: `Calunnia diffusa. Clustering tra ${target.faction} e ${otherFaction} spezzato.`, type: 'negative' };
+          return { text: `Disinfo deployed. Faction clustering between ${target.faction} and ${otherFaction} disrupted.`, type: 'negative' };
         }
       },
       digital_gaslighting: {
         cost: Math.floor(80 * costMod), turns: 0,
         exec: () => {
-          if (!target) return { text: 'Target non trovato.', type: 'negative' };
+          if (!target) return { text: 'Target not found.', type: 'negative' };
           target.pressure = 1.0;
           target.isBlacklisted = true;
           this.raiseFactionSuspicion(target.faction, 0.08 * effectMod, target.id);
-          return { text: `${target.name.split(' ')[0]} ha raggiunto il collasso psicologico. Auto-isolato.`, type: 'negative' };
+          return { text: `${target.name.split(' ')[0]} reached psychological collapse. Self-isolated.`, type: 'negative' };
         }
       },
       environmental_diversion: {
         cost: Math.floor(120 * costMod), turns: 0,
         exec: () => {
-          if (!zoneLabel) return { text: 'Specifica una stanza.', type: 'negative' };
+          if (!zoneLabel) return { text: 'Specify a zone.', type: 'negative' };
           // Forza tutti gli agenti non impegnati a muoversi nella stanza
           const zones = this.config.zones || [];
           const target_zone = zones.find(z => z.label === zoneLabel);
-          if (!target_zone) return { text: 'Stanza non trovata.', type: 'negative' };
+          if (!target_zone) return { text: 'Zone not found.', type: 'negative' };
           this.agents.filter(a => !a.isBlacklisted && !a.isQueen).slice(0, 20).forEach(a => {
             a.targetRx = target_zone.rx + (Math.random()-0.5)*0.08;
             a.targetRy = target_zone.ry + (Math.random()-0.5)*0.08;
@@ -814,13 +807,13 @@ export class SwarmEngine {
             a.zoneChangeCooldown = 200;
           });
           if (this.rooms[zoneLabel]) this.rooms[zoneLabel].anxiety = Math.min(1, this.rooms[zoneLabel].anxiety + 0.5);
-          return { text: `Diversione ambientale in ${zoneLabel}. 20 agenti dirottati.`, type: 'negative', visualEffect: 'flash_red', affectedIds: [] };
+          return { text: `Environmental diversion in ${zoneLabel}. 20 assets redirected.`, type: 'negative', visualEffect: 'flash_red', affectedIds: [] };
         }
       }
     };
 
     const op = OPS[type];
-    if (!op) return { success: false, text: 'Operazione non riconosciuta.' };
+    if (!op) return { success: false, text: 'Unknown operation.' };
 
     // Controllo etica
     const BLOCKED = ['drug','alcohol','hate','violence','sex','weapon'];
@@ -831,7 +824,7 @@ export class SwarmEngine {
 
     // Controlla crediti
     if (!this.spendCredits(op.cost)) {
-      return { success: false, text: `Crediti insufficienti (${op.cost} richiesti).` };
+      return { success: false, text: `Insufficient credits (${op.cost} required).` };
     }
 
     const result = op.exec();
@@ -1123,14 +1116,14 @@ export class SwarmEngine {
     }).length;
     queenData.followersBlacklisted = blacklisted;
     if (blacklisted >= 4) {
-      queenData.neutralized = true; queenData.neutralizeMethod = 'ISOLAMENTO';
+      queenData.neutralized = true; queenData.neutralizeMethod = 'ISOLATION';
       agent.queenNeutralized = true; return true;
     }
     const factionMission = this.activeMissions.find(
       m => m.faction === queenData.faction && m.status === 'completed'
     );
     if (queenData.secretsCollected >= 3 && factionMission) {
-      queenData.neutralized = true; queenData.neutralizeMethod = 'ESPOSIZIONE';
+      queenData.neutralized = true; queenData.neutralizeMethod = 'EXPOSURE';
       agent.queenNeutralized = true; return true;
     }
     return false;
@@ -1208,19 +1201,19 @@ export class SwarmEngine {
     switch(`${actionGroup}.${subgroup}`) {
       case 'direct.synergize':
         affected.forEach(a => { a.pressure = Math.max(0, a.pressure - 0.15); });
-        results.push({ type:'positive', text:`Allineamento attivato. ${affected.length} agenti stabilizzati.`,
+        results.push({ type:'positive', text:`Network alignment activated. ${affected.length} assets stabilized.`,
           visualEffect: 'glow_green', affectedIds: affected.map(a=>a.id) });
         break;
       case 'direct.chaos':
         affected.forEach(a => { a.pressure = Math.min(1, a.pressure + 0.20);
           this.raiseFactionSuspicion(a.faction, 0.05, a.id); });
-        results.push({ type:'negative', text:`Interferenza iniettata. ${affected.length} agenti destabilizzati.`,
+        results.push({ type:'negative', text:`Interference injected. ${affected.length} assets destabilized.`,
           visualEffect: 'flash_red', affectedIds: affected.map(a=>a.id) });
         break;
       case 'direct.emulation':
         if (targetId) { const hub = this.agents.find(a => a.id === targetId);
           if (hub) { hub.isHub = true; hub.pressure = Math.max(0, hub.pressure - 0.1); }
-          results.push({ type:'positive', text:`${hub?.name.split(' ')[0]||'Agente'} promosso a hub.`,
+          results.push({ type:'positive', text:`${hub?.name.split(' ')[0]||'Asset'} elevated to hub status.`,
             visualEffect: 'pulse_gold', affectedIds: [targetId] }); }
         break;
       case 'direct.persecution':
@@ -1233,12 +1226,12 @@ export class SwarmEngine {
               if (ally) ally.pressure = Math.min(1, ally.pressure + 0.1);
             });
           }
-          results.push({ type:'negative', text:`Isolamento avviato. Rete dell'agente compromessa.`,
+          results.push({ type:'negative', text:`Isolation initiated. Asset network compromised.`,
             visualEffect: 'flash_red', affectedIds: [targetId, ...(this.agents.find(a=>a.id===targetId)?.alliances||[])] }); }
         break;
       case 'indirect.rumor_positive':
         affected.forEach(a => { a.pressure = Math.max(0, a.pressure - 0.08); });
-        results.push({ type:'positive', text:`Rumor positivo diffuso. Tensione in calo.`,
+        results.push({ type:'positive', text:`Positive narrative deployed. Tension declining.`,
           visualEffect: 'glow_green', affectedIds: affected.map(a=>a.id) });
         // Controlla missioni disinfo
         if (zone) this.completeDismfoMission(zone);

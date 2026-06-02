@@ -198,12 +198,12 @@ export const FALLBACK_EVENTS = [
 
 // ── QUEEN NEUTRALIZATION SCENES ──────────────────────────────────────────────
 export const QUEEN_SCENES = {
-  ISOLAMENTO: [
+  ISOLATION: [
     'The network just got quieter. Not because of silence — because one voice stopped.',
     'Four burned. The sovereign\'s circle collapsed from the inside. That\'s how it\'s done.',
     'Isolation complete. She\'s still in the room. She just can\'t reach anyone anymore.',
   ],
-  ESPOSIZIONE: [
+  EXPOSURE: [
     'The dossier landed. Everything she built over three years — visible in fourteen pages.',
     'Secrets have a shelf life. This one just expired.',
     'The exposure didn\'t destroy her. It just made her irrelevant. Which is worse.',

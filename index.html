@@ -183,6 +183,29 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
 
 @media(max-width:900px){.mob{display:flex!important}#app,#loading{display:none!important}}
 .mob{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center}
+
+/* ── ONBOARDING ─────────────────────────────────────────────── */
+#onboarding{position:fixed;inset:0;background:var(--bg);z-index:9998;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px}
+#onboarding.hidden{display:none}
+.ob-wrap{max-width:680px;width:100%}
+.ob-logo{font-family:var(--head);font-size:22px;color:var(--acc);letter-spacing:6px;margin-bottom:2px}
+.ob-ver{font-size:8px;color:var(--txt3);letter-spacing:3px;margin-bottom:28px}
+.ob-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+.ob-block{background:var(--panel);border:1px solid var(--brd);padding:14px 16px}
+.ob-block-title{font-size:8px;color:var(--txt3);letter-spacing:2px;margin-bottom:8px}
+.ob-block p{font-size:10px;color:var(--txt2);line-height:1.8}
+.ob-block b{color:var(--txt);font-weight:normal}
+.ob-mission{background:rgba(255,23,68,.05);border:1px solid var(--dng);padding:14px 16px;margin-bottom:20px}
+.ob-mission-title{font-size:8px;color:var(--dng);letter-spacing:2px;margin-bottom:8px}
+.ob-mission p{font-size:10px;color:var(--txt2);line-height:1.8}
+.ob-mission b{color:var(--dng)}
+.ob-groq{background:rgba(118,255,3,.04);border:1px solid var(--acc3);padding:10px 14px;margin-bottom:20px;display:flex;align-items:center;gap:12px}
+.ob-groq-label{font-size:8px;color:var(--acc3);letter-spacing:2px;white-space:nowrap}
+.ob-groq p{font-size:9px;color:var(--txt2);line-height:1.6}
+.ob-groq a{color:var(--acc3);text-decoration:none}.ob-groq a:hover{text-decoration:underline}
+.ob-start{width:100%;background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:11px;padding:12px;cursor:pointer;letter-spacing:4px;transition:all .2s}
+.ob-start:hover{background:rgba(0,229,255,.07)}
+
 </style>
 </head>
 <body>
@@ -214,7 +237,70 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
   </div>
 </div>
 
-<div id="app">
+
+<!-- ONBOARDING -->
+<div id="onboarding">
+  <div class="ob-wrap">
+    <div class="ob-logo">L.O.O.M.</div>
+    <div class="ob-ver">LOCAL OPINION OVERHAUL MONITOR // SWARM CORE v2.2</div>
+
+    <div class="ob-mission">
+      <div class="ob-mission-title">// MISSION BRIEFING</div>
+      <p>
+        Two <b>Sovereigns</b> control this network.<br>
+        They decide who gets in, who gets out, and who disappears.<br><br>
+        Your objective: <b>neutralize both</b> before your cover is burned.<br>
+        You don't destroy them. You <b>dismantle their influence</b> — quietly, from the inside.
+      </p>
+    </div>
+
+    <div class="ob-grid">
+      <div class="ob-block">
+        <div class="ob-block-title">// HOW TO NEUTRALIZE A SOVEREIGN</div>
+        <p>
+          <b>Burn 4 of their followers</b> via PSYOP or DISINFO.<br>
+          Or <b>collect 3 secrets</b> via Intel Extract and Asset Search.<br><br>
+          Both sovereigns must be neutralized before <b>network suspicion reaches 95%</b>.
+        </p>
+      </div>
+      <div class="ob-block">
+        <div class="ob-block-title">// HOW THE NETWORK WORKS</div>
+        <p>
+          Nodes are <b>encrypted</b> until you find them.<br>
+          Deploy to a zone → nodes are revealed.<br>
+          Interact → unlock dossiers, build trust, access intel.<br><br>
+          <b>One of them is a mole.</b> Behavioral clues appear in the log each turn.
+        </p>
+      </div>
+      <div class="ob-block">
+        <div class="ob-block-title">// POSTURES</div>
+        <p>
+          <b>BASE</b> — remote ops only. Suspicion decays slowly.<br>
+          <b>SHADOW</b> — invisible in zone, costs 15 credits.<br>
+          <b>STANDARD</b> — normal presence. Default risk.<br>
+          <b>EXPOSED</b> — you are noticed. Trust builds faster. High risk.
+        </p>
+      </div>
+      <div class="ob-block">
+        <div class="ob-block-title">// HOW TO LOSE</div>
+        <p>
+          <b>Suspicion ≥ 95%</b> — the network has your profile. Game over.<br>
+          <b>Credits reach 0</b> — no resources, operations cease.<br><br>
+          Wrong mole accusation costs you. Right accusation earns 250 credits and reduces suspicion.
+        </p>
+      </div>
+    </div>
+
+    <div class="ob-groq">
+      <div class="ob-groq-label">⚡ AI OPTIONAL</div>
+      <p>Connect a free Groq key after launch to enable <b>AI-generated narrative</b> and <b>direct conversation with nodes</b>. Get one at <a href="https://console.groq.com" target="_blank">console.groq.com</a> — free, no card required.</p>
+    </div>
+
+    <button class="ob-start" onclick="startGame()">◆ BEGIN INFILTRATION</button>
+  </div>
+</div>
+
+<div id="app" style="display:none">
   <div id="header">
     <div id="hdr-main">
       <div style="display:flex;align-items:center;gap:16px">
@@ -295,6 +381,19 @@ let chatHistory={}, gameEnded=false, turn=0, pendingAccuse=null;
 let needsRender = true; // dirty flag
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
+
+window.startGame = function() {
+  document.getElementById('onboarding').classList.add('hidden');
+  document.getElementById('app').style.display = '';
+  // Avvia engine e loading ora
+  setTimeout(() => {
+    document.getElementById('loading').style.display = 'none';
+    needsRender = true;
+    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
+    addLog('--','Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.',[],[]);
+  }, 2000);
+};
+
 window.addEventListener('DOMContentLoaded', () => {
   engine = new SwarmEngine('LOOM_CORE');
   engine.init();
@@ -307,6 +406,7 @@ window.addEventListener('DOMContentLoaded', () => {
   })();
 
   setTimeout(() => {
+    if(document.getElementById('app').style.display==='none')return;
     document.getElementById('loading').style.display = 'none';
     needsRender = true;
     SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
