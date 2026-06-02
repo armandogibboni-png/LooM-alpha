@@ -382,30 +382,34 @@ let needsRender = true; // dirty flag
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 
-window.startGame = function() {
-  document.getElementById('onboarding').classList.add('hidden');
-  document.getElementById('loading').style.display = 'flex';
-  document.getElementById('app').style.display = '';
-  setTimeout(() => {
-    document.getElementById('loading').style.display = 'none';
-    needsRender = true;
-    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
-    addLog('--','Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.',[],[]);
-  }, 1800);
-};
-
 window.addEventListener('DOMContentLoaded', () => {
+  // Pre-init engine in background while user reads onboarding
   engine = new SwarmEngine('LOOM_CORE');
   engine.init();
   bindCallbacks();
 
-  // Render loop — solo visivo, NON tick
+  // Render loop — visual only, no tick
   (function renderLoop() {
-    if (needsRender) { renderGrid(); renderQueenHeader(); updateHeader(); needsRender=false; }
+    if (needsRender) {
+      try { renderGrid(); renderQueenHeader(); updateHeader(); } catch(e) { console.error('Render error:', e); }
+      needsRender = false;
+    }
     requestAnimationFrame(renderLoop);
   })();
 
-  // Init complete — game starts on BEGIN INFILTRATION click
+  // startGame exposed after DOM is ready so all functions are available
+  window.startGame = function() {
+    document.getElementById('onboarding').classList.add('hidden');
+    document.getElementById('app').style.display = '';
+    // Small delay to let the browser paint the app before we populate it
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        needsRender = true;
+        SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*280));
+        addLog('--', 'Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.', [], []);
+      });
+    });
+  };
 });
 
 function bindCallbacks() {
