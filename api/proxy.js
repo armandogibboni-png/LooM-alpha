@@ -16,10 +16,17 @@ const PROVIDERS = {
     parse: (d) => ({ content: [{ type: 'text', text: d.choices?.[0]?.message?.content || '' }] }),
   },
   gemini: {
-    url: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
-    headers: (key) => ({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${key}` }),
-    body: (b) => ({ model: b.model, max_tokens: b.max_tokens, messages: b.system ? [{ role: 'system', content: b.system }, ...b.messages] : b.messages }),
-    parse: (d) => ({ content: [{ type: 'text', text: d.choices?.[0]?.message?.content || '' }] }),
+    // Gemini nativo: key nell'URL, body in formato contents/parts
+    urlFn: (key, body) => `https://generativelanguage.googleapis.com/v1beta/models/${body.model}:generateContent?key=${key}`,
+    headers: () => ({ 'Content-Type': 'application/json' }),
+    body: (b) => ({
+      contents: (b.system
+        ? [{ role: 'user', parts: [{ text: b.system }] }, { role: 'model', parts: [{ text: 'Understood.' }] }]
+        : []
+      ).concat(b.messages.map(m => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] }))),
+      generationConfig: { maxOutputTokens: b.max_tokens || 1000 },
+    }),
+    parse: (d) => ({ content: [{ type: 'text', text: d.candidates?.[0]?.content?.parts?.[0]?.text || '' }] }),
   },
   mistral: {
     url: 'https://api.mistral.ai/v1/chat/completions',
@@ -51,7 +58,9 @@ module.exports = async function handler(req, res) {
   if (!p) return res.status(400).json({ error: `Unknown provider: ${providerKey}` });
 
   try {
-    const response = await fetch(p.url, {
+    // Gemini usa URL dinamico con la key embedded
+    const url = p.urlFn ? p.urlFn(apiKey, req.body) : p.url;
+    const response = await fetch(url, {
       method: 'POST',
       headers: p.headers(apiKey),
       body: JSON.stringify(p.body(req.body)),
