@@ -3,709 +3,603 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L.O.O.M. // SWARM CORE — v1.0 Alpha</title>
+<title>L.O.O.M. // SWARM CORE — v2.0</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&family=Courier+Prime:wght@400;700&display=swap');
-  *{box-sizing:border-box;margin:0;padding:0}
-  :root{
-    --bg:#050a0e;--bg2:#080f14;--bg3:#0c1620;--panel:#0a1520;
-    --brd:#1a3045;--brd2:#0f2035;
-    --acc:#00e5ff;--acc2:#ff3d00;--acc3:#76ff03;
-    --amb:#ffab00;--pur:#ea80fc;
-    --txt:#b0c8d8;--txt2:#5a8099;--txt3:#2a4a5a;
-    --dng:#ff1744;--wrn:#ff6d00;
-    --mono:'Share Tech Mono',monospace;
-    --head:'Orbitron',monospace;
-    --body:'Courier Prime',monospace;
-  }
-  body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;min-height:100vh;overflow-x:hidden}
-  .scanline{position:fixed;top:0;left:0;right:0;bottom:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.08) 2px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:999}
-  .crt{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%);pointer-events:none;z-index:998}
-  .app{max-width:1100px;margin:0 auto;padding:12px}
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#050a0e;--bg2:#080f14;--panel:#0a1520;
+  --brd:#1a3045;--brd2:#0f2035;
+  --acc:#00e5ff;--acc2:#ff3d00;--acc3:#76ff03;
+  --amb:#ffab00;--pur:#ea80fc;
+  --txt:#b0c8d8;--txt2:#5a8099;--txt3:#2a4a5a;
+  --dng:#ff1744;--wrn:#ff6d00;--gold:#c8a97e;
+  --mono:'Share Tech Mono',monospace;
+  --head:'Orbitron',monospace;
+}
+body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;min-height:100vh;overflow:hidden}
+.scanline{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:999}
+.crt{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45) 100%);pointer-events:none;z-index:998}
 
-  .hdr{border:1px solid var(--brd);background:var(--panel);padding:10px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
-  .hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
-  .hdr-title{font-family:var(--head);font-size:18px;color:var(--acc);font-weight:900;letter-spacing:4px}
-  .hdr-acronym{font-family:var(--mono);font-size:9px;color:var(--txt2);letter-spacing:2px;margin-top:2px}
-  .hdr-acronym span{color:var(--acc)}
-  .hdr-sub{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-top:3px}
-  .hdr-right{text-align:right}
-  .turn-counter{font-family:var(--head);font-size:14px;color:var(--amb)}
-  .sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc3);box-shadow:0 0 6px var(--acc3);margin-right:4px;animation:blink 1.2s infinite}
-  @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+#app{display:grid;grid-template-columns:1fr 320px;grid-template-rows:48px 1fr 180px;height:100vh}
+#header{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;padding:0 16px;position:relative;overflow:hidden}
+#header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
+#canvas-wrap{position:relative;overflow:hidden;background:var(--bg)}
+#swarm-canvas{display:block;width:100%;height:100%}
+#sidebar{background:var(--bg2);border-left:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
+#log-panel{grid-column:1/-1;background:var(--bg);border-top:1px solid var(--brd);display:flex;overflow:hidden}
 
-  .api-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-  .api-panel label{font-size:10px;color:var(--txt2);letter-spacing:1px;white-space:nowrap}
-  .api-input{flex:1;background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:11px;padding:5px 8px;outline:none}
-  .api-input:focus{border-color:var(--acc)}
+.hdr-title{font-family:var(--head);font-size:16px;color:var(--acc);letter-spacing:4px;font-weight:900}
+.hdr-stats{display:flex;gap:20px;align-items:center}
+.hdr-stat{font-size:10px;color:var(--txt2);letter-spacing:1px}
+.hdr-stat b{color:var(--txt);font-family:var(--head);font-size:12px;margin-left:4px;font-weight:normal}
+.hdr-stat b.warn{color:var(--amb)} .hdr-stat b.danger{color:var(--dng)} .hdr-stat b.ok{color:var(--acc3)}
+.hdr-right{display:flex;align-items:center;gap:12px}
+.sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc3);box-shadow:0 0 6px var(--acc3);margin-right:4px;animation:blink 1.2s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-  .btn{background:transparent;border:1px solid var(--brd);color:var(--txt);font-family:var(--mono);font-size:11px;padding:5px 12px;cursor:pointer;letter-spacing:1px;transition:all .15s}
-  .btn:hover{border-color:var(--acc);color:var(--acc)}
-  .btn-acc{border-color:var(--acc);color:var(--acc)}
-  .btn-acc:hover{background:rgba(0,229,255,.1)}
-  .btn:disabled{opacity:.3;cursor:not-allowed}
+#key-bar{display:flex;align-items:center;gap:5px}
+#key-bar input{background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:10px;padding:3px 8px;outline:none;width:190px}
+#key-bar input:focus{border-color:var(--acc)}
+#key-bar button{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px}
+#key-status{font-size:9px;color:var(--txt3);white-space:nowrap}
 
-  .tri-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}
-  .pow{background:var(--panel);border:1px solid var(--brd);padding:6px 10px;text-align:center}
-  .pow-lbl{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:2px}
-  .pow-name{font-family:var(--head);font-size:11px;letter-spacing:1px;margin-bottom:6px}
-  .pbar-bg{background:var(--bg);height:4px}
-  .pbar-fill{height:4px;transition:width .5s}
-  .pow-val{font-size:11px;font-weight:700;margin-top:4px}
+#suspicion-bar{position:absolute;top:0;left:0;right:0;height:3px;z-index:5}
+#suspicion-fill{height:3px;background:var(--acc3);transition:width .5s,background .3s;width:10%}
+#player-pos{position:absolute;bottom:10px;left:10px;font-size:9px;color:var(--gold);letter-spacing:1px;background:rgba(5,10,14,.85);padding:4px 8px;border:1px solid rgba(200,169,126,.3)}
+#advance-wrap{position:absolute;bottom:10px;right:10px}
+#advance-btn{background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:10px;padding:8px 18px;cursor:pointer;letter-spacing:2px;transition:all .2s}
+#advance-btn:hover{background:rgba(118,255,3,.08)}
+#advance-btn:disabled{opacity:.3;cursor:not-allowed}
+#advance-btn.proc{color:var(--txt2);border-color:var(--txt3);animation:pulse .8s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  .econ-bar{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;margin-bottom:5px}
-  .econ-blk{background:var(--bg2);border:1px solid var(--brd2);padding:5px 10px;display:flex;align-items:center;justify-content:space-between}
-  .econ-k{font-size:9px;color:var(--txt2);letter-spacing:1px}
-  .econ-v{font-family:var(--head);font-size:13px}
+#sidebar-tabs{display:flex;border-bottom:1px solid var(--brd)}
+.stab{flex:1;padding:8px 2px;text-align:center;font-size:9px;letter-spacing:1px;color:var(--txt3);cursor:pointer;border:none;background:transparent;border-bottom:2px solid transparent;transition:all .15s}
+.stab:hover,.stab.active{color:var(--acc);border-bottom-color:var(--acc);background:rgba(0,229,255,.03)}
+#sidebar-content{flex:1;overflow-y:auto;padding:0}
+#sidebar-content::-webkit-scrollbar{width:3px}
+#sidebar-content::-webkit-scrollbar-thumb{background:var(--brd)}
 
-  .main-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
-  .room-card{background:var(--panel);border:1px solid var(--brd);padding:7px 10px;cursor:pointer;transition:border-color .15s;position:relative;overflow:hidden}
-  .room-card:hover{border-color:var(--acc)}
-  .room-id{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:2px}
-  .room-name{font-family:var(--head);font-size:10px;color:var(--acc);margin-bottom:4px;letter-spacing:1px}
-  .room-name-it{font-size:8px;color:var(--txt3);letter-spacing:1px;margin-bottom:6px;font-style:italic}
-  .room-stats{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:6px}
-  .stat-mini{font-size:9px;color:var(--txt2)}
-  .stat-mini span{display:block;font-size:12px;color:var(--txt);font-family:var(--head)}
-  .sbar-bg{background:var(--bg);height:3px;margin-top:4px}
-  .sbar{height:3px;transition:width .5s,background .3s}
-  .room-tag{display:inline-block;font-size:9px;padding:1px 6px;border:1px solid;letter-spacing:1px;margin-top:4px}
+.postura-strip{display:flex;gap:0;border-bottom:1px solid var(--brd)}
+.pbtn{flex:1;padding:6px 2px;text-align:center;font-size:8px;letter-spacing:.5px;border:none;border-right:1px solid var(--brd2);background:transparent;color:var(--txt3);cursor:pointer;transition:all .15s}
+.pbtn:last-child{border-right:none}
+.pbtn:hover{color:var(--txt);background:rgba(255,255,255,.02)}
+.pbtn.active{color:var(--acc);background:rgba(0,229,255,.06)}
+.pbtn.active.ps-ombra{color:var(--pur);background:rgba(234,128,252,.05)}
+.pbtn.active.ps-visibile{color:var(--dng);background:rgba(255,23,68,.05)}
+.pbtn.active.ps-base{color:var(--gold);background:rgba(200,169,126,.05)}
 
-  .ops-panel{background:var(--panel);border:1px solid var(--brd);padding:7px 12px;margin-bottom:5px}
-  .ops-title{font-size:9px;color:var(--txt2);letter-spacing:2px;margin-bottom:8px}
-  .ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:5px}
-  .op-btn{background:var(--bg2);border:1px solid var(--brd2);color:var(--txt);font-family:var(--mono);font-size:10px;padding:5px 8px;cursor:pointer;text-align:left;letter-spacing:.5px;transition:all .15s;display:flex;flex-direction:column;gap:1px}
-  .op-btn:hover{border-color:var(--acc);color:var(--acc)}
-  .op-btn.active-op{border-color:var(--acc3);color:var(--acc3)}
-  .op-btn:disabled{opacity:.25;cursor:not-allowed}
-  .op-code{font-size:9px;color:var(--txt3);letter-spacing:1px}
-  .op-desc{font-size:9px;color:var(--txt2)}
+.tab-content{display:none;padding:6px}
+.tab-content.active{display:block}
 
-  .adv-btn{width:100%;background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:11px;padding:8px;cursor:pointer;letter-spacing:3px;transition:all .2s;margin-bottom:5px}
-  .adv-btn:hover{background:rgba(118,255,3,.08)}
-  .adv-btn:disabled{opacity:.25;cursor:not-allowed}
+.room-item{padding:7px 10px;border-bottom:1px solid var(--brd2);cursor:pointer;transition:background .1s;position:relative}
+.room-item:hover{background:rgba(0,229,255,.02)}
+.room-item.player-here{border-left:2px solid var(--gold)}
+.ri-name{font-size:10px;color:var(--acc);letter-spacing:1px;margin-bottom:3px}
+.ri-meta{display:flex;gap:8px;font-size:9px;color:var(--txt2)}
+.ri-bar-bg{height:2px;background:var(--brd2);margin-top:4px}
+.ri-bar-fill{height:2px;transition:width .5s,background .3s}
+.move-btn{font-size:8px;padding:2px 6px;border:1px solid var(--brd2);background:transparent;color:var(--txt3);cursor:pointer;margin-top:4px;letter-spacing:.5px;transition:all .15s}
+.move-btn:hover{border-color:var(--acc);color:var(--acc)}
 
-  .log-panel{background:var(--bg);border:1px solid var(--brd2);padding:8px 12px;min-height:100px;max-height:160px;overflow-y:auto;margin-bottom:5px}
-  .log-title{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:8px}
-  .log-entry{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--brd2);animation:fadeIn .3s}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:none}}
-  .log-ts{font-size:9px;color:var(--txt3)}
-  .log-txt{font-size:11px;color:var(--txt);margin-top:2px;font-family:var(--body)}
-  .log-ev{font-size:10px;color:var(--txt2)}
-  .log-ev::before{content:'> ';color:var(--acc3)}
-  .log-al{color:var(--dng);font-size:10px}
-  .log-al::before{content:'!! '}
+.node-profile{padding:10px}
+.np-name{font-family:var(--head);font-size:11px;margin-bottom:5px}
+.np-row{font-size:9px;color:var(--txt2);margin-bottom:2px}
+.np-row b{color:var(--txt);font-weight:normal}
+.np-lore{font-size:10px;color:var(--txt2);margin:8px 0;line-height:1.6;font-style:italic;border-left:2px solid var(--brd2);padding-left:8px}
+.trust-bar{display:flex;gap:3px;margin:6px 0}
+.tp{width:20px;height:5px;background:var(--brd2)}
+.tp.on{background:var(--gold)}
+.ops-section{margin-top:8px}
+.ops-title{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:5px}
+.ops-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.fop{background:var(--bg);border:1px solid var(--brd2);padding:6px 7px;cursor:pointer;transition:all .15s;min-height:58px}
+.fop:hover:not(.blocked){border-color:var(--acc)}
+.fop.blocked{opacity:.3;cursor:not-allowed;pointer-events:none}
+.fop-name{font-size:9px;font-weight:600;color:var(--txt);display:block;margin-bottom:2px}
+.fop-cost{font-size:8px;color:var(--amb);display:block;margin-bottom:2px}
+.fop-desc{font-size:8px;color:var(--txt3);line-height:1.3}
 
-  .alerts-panel{min-height:20px;margin-bottom:8px}
-  .alert-chip{display:inline-block;background:rgba(255,23,68,.08);border:1px solid var(--dng);color:var(--dng);font-size:10px;padding:3px 10px;margin:2px;letter-spacing:1px;animation:pulse 2s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.6}}
+.queen-card{background:var(--panel);border:1px solid var(--dng);padding:9px;margin:6px;margin-bottom:0}
+.queen-card.done{border-color:var(--acc3);opacity:.65}
+.qc-name{font-size:10px;color:var(--dng);letter-spacing:1px;margin-bottom:4px}
+.qc-done .qc-name{color:var(--acc3)}
+.qc-row{font-size:9px;color:var(--txt2);margin-bottom:2px}
+.alert-pips{display:flex;gap:3px;margin-top:5px}
+.apip{width:14px;height:5px;background:var(--brd2)}
+.apip.lit{background:var(--dng)}
 
-  .nodes-panel{background:var(--panel);border:1px solid var(--brd);padding:7px 12px;margin-bottom:5px}
-  .nodes-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-top:6px}
-  .node-chip{background:var(--bg2);border:1px solid var(--brd2);padding:5px 6px;font-size:9px;line-height:1.3}
-  .node-chip.mole{border-color:var(--dng)}
-  .node-chip.tier0{opacity:.5}
-  .node-id{color:var(--txt3);font-size:8px}
-  .node-nm{color:var(--txt)}
-  .node-rm{color:var(--txt2);font-size:8px}
-  .ndot{display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:2px;vertical-align:middle}
+#log-main{flex:1;overflow-y:auto;padding:8px 12px}
+#log-main::-webkit-scrollbar{width:3px}
+#log-main::-webkit-scrollbar-thumb{background:var(--brd)}
+#monitor-wrap{width:210px;border-left:1px solid var(--brd2);overflow-y:auto;background:var(--bg2);padding:4px 6px}
+#monitor-wrap::-webkit-scrollbar{width:2px}
+.log-e{margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--brd2);animation:fi .3s}
+@keyframes fi{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
+.log-ts{font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:3px}
+.log-narr{font-size:11px;color:var(--txt);line-height:1.6;margin-bottom:3px}
+.log-ev{font-size:9px;color:var(--txt2)}
+.log-ev::before{content:'> ';color:var(--acc3)}
+.log-al{font-size:9px;color:var(--dng)}
+.log-al::before{content:'!! '}
+.mon-item{font-size:9px;padding:3px 0;border-bottom:1px solid var(--brd2);color:var(--txt3);line-height:1.4;animation:fi .2s}
+.mon-item.beacon{color:var(--acc)}
+.mon-item.alert{color:var(--dng)}
+.mon-item.op{color:var(--gold)}
 
-  .loading-overlay{position:fixed;inset:0;background:rgba(5,10,14,.95);display:flex;align-items:center;justify-content:center;z-index:9999;flex-direction:column;gap:12px}
-  .loading-txt{font-family:var(--head);font-size:13px;color:var(--acc);letter-spacing:3px}
-  .loading-bar{width:200px;height:2px;background:var(--brd);position:relative;overflow:hidden}
-  .loading-fill{height:100%;background:var(--acc);animation:la 1.2s infinite}
-  @keyframes la{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
-  .sec-lbl{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:6px;border-bottom:1px solid var(--brd2);padding-bottom:4px}
-  ::-webkit-scrollbar{width:4px}
-  ::-webkit-scrollbar-track{background:var(--bg)}
-  ::-webkit-scrollbar-thumb{background:var(--brd)}
+#loading-overlay{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px}
+.lo-title{font-family:var(--head);font-size:20px;color:var(--acc);letter-spacing:5px}
+.lo-sub{font-size:9px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.2}
+.lo-bar{width:240px;height:2px;background:var(--brd);overflow:hidden}
+.lo-fill{height:100%;background:var(--acc);animation:la 1.2s infinite}
+@keyframes la{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
+
+#endgame{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;padding:40px;text-align:center}
+#endgame.show{display:flex}
+#eg-title{font-family:var(--head);font-size:22px;letter-spacing:5px}
+#eg-sub{font-size:11px;color:var(--txt2);max-width:480px;line-height:1.8}
+#eg-stats{display:flex;gap:12px}
+.eg-s{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;text-align:center}
+.eg-sk{font-size:8px;color:var(--txt3);letter-spacing:2px;margin-bottom:3px}
+.eg-sv{font-family:var(--head);font-size:15px}
+#eg-btn{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:10px;padding:9px 24px;cursor:pointer;letter-spacing:3px;margin-top:4px}
+#eg-btn:hover{background:rgba(0,229,255,.06)}
+
+@media(max-width:900px){.mobile-wall{display:flex!important}#app{display:none}}
+.mobile-wall{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:32px;text-align:center}
+.mw-t{font-family:var(--head);font-size:15px;color:var(--acc);letter-spacing:3px}
+.mw-s{font-size:11px;color:var(--txt2);line-height:1.8;max-width:260px}
 </style>
 </head>
 <body>
+<div class="scanline"></div><div class="crt"></div>
 
-<div class="scanline"></div>
-<div class="crt"></div>
-
-<div id="loadingOverlay" class="loading-overlay">
-  <div class="loading-txt">L.O.O.M. // SWARM CORE</div>
-  <div style="font-size:10px;color:var(--txt2);letter-spacing:2px;text-align:center;line-height:1.8">
-    LOCAL OPINION OVERHAUL MONITOR<br>
-    INITIALIZING CLASSIFIED GRID...
-  </div>
-  <div class="loading-bar"><div class="loading-fill"></div></div>
+<div class="mobile-wall">
+  <div class="mw-t">DESKTOP ONLY</div>
+  <div class="mw-s">L.O.O.M. requires a desktop (900px+). Open on a laptop to access the network.</div>
 </div>
 
-<div class="app">
+<div id="loading-overlay">
+  <div class="lo-title">L.O.O.M.</div>
+  <div class="lo-sub">SWARM CORE v2.0<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES ACROSS 6 ZONES</div>
+  <div class="lo-bar"><div class="lo-fill"></div></div>
+</div>
 
-  <!-- HEADER -->
-  <div class="hdr">
-    <div>
-      <div class="hdr-title">L.O.O.M. // SWARM CORE</div>
-      <div class="hdr-acronym">
-        <span>L</span>ocal &nbsp;<span>O</span>pinion &nbsp;<span>O</span>verhaul &nbsp;<span>M</span>onitor
+<div id="endgame">
+  <div id="eg-title">OPERATION TERMINATED</div>
+  <div id="eg-sub"></div>
+  <div id="eg-stats"></div>
+  <button id="eg-btn" onclick="resetGame()">↺ NEW OPERATION</button>
+</div>
+
+<div id="app">
+  <div id="header">
+    <div style="display:flex;align-items:center;gap:20px">
+      <div>
+        <div class="hdr-title">L.O.O.M.</div>
+        <div style="font-size:8px;color:var(--txt3);letter-spacing:2px">LOCAL OPINION OVERHAUL MONITOR // SWARM CORE v2.0</div>
       </div>
-      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE &nbsp;|&nbsp; FREE WITH GROQ</div>
+      <div class="hdr-stats">
+        <div class="hdr-stat">CREDITS<b id="h-credits">100</b></div>
+        <div class="hdr-stat">SUSPICION<b id="h-susp">10%</b></div>
+        <div class="hdr-stat">TURN<b id="h-turn">00</b></div>
+        <div class="hdr-stat">QUEENS<b id="h-queens">2 ACTIVE</b></div>
+        <div class="hdr-stat">POSTURE<b id="h-posture">BASE</b></div>
+      </div>
     </div>
     <div class="hdr-right">
-      <div class="turn-counter">TURN <span id="turnNum">01</span></div>
-      <div style="font-size:9px;color:var(--txt2);margin-top:2px"><span class="sdot"></span>SECURE UPLINK ESTABLISHED</div>
-    </div>
-  </div>
-
-  <!-- GROQ API KEY -->
-  <div style="background:var(--panel);border:1px solid var(--brd);padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
-    <span style="font-size:9px;color:var(--txt2);letter-spacing:1px;white-space:nowrap">GROQ KEY //</span>
-    <input type="password" id="apiKey" placeholder="gsk_... — free at console.groq.com"
-      style="flex:1;background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:11px;padding:5px 8px;outline:none" />
-    <button onclick="saveKey()" style="background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:10px;padding:4px 12px;cursor:pointer;letter-spacing:1px;white-space:nowrap">CONNECT</button>
-    <span id="keyStatus" style="font-size:9px;color:var(--txt2);white-space:nowrap">NO KEY</span>
-  </div>
-
-  <!-- POWER TRIANGLE -->
-  <div class="tri-bar">
-    <div class="pow">
-      <div class="pow-lbl">THE DIRECTORY</div>
-      <div class="pow-name" style="color:var(--acc)">INTEL</div>
-      <div class="pbar-bg"><div class="pbar-fill" id="barIntel" style="background:var(--acc);width:40%"></div></div>
-      <div class="pow-val" style="color:var(--acc)" id="valIntel">40</div>
-    </div>
-    <div class="pow">
-      <div class="pow-lbl">THE MINISTRY</div>
-      <div class="pow-name" style="color:var(--pur)">DIPLOMACY</div>
-      <div class="pbar-bg"><div class="pbar-fill" id="barDiplomacy" style="background:var(--pur);width:35%"></div></div>
-      <div class="pow-val" style="color:var(--pur)" id="valDiplomacy">35</div>
-    </div>
-    <div class="pow">
-      <div class="pow-lbl">THE AGENCY</div>
-      <div class="pow-name" style="color:var(--acc2)">SANCTION</div>
-      <div class="pbar-bg"><div class="pbar-fill" id="barSanction" style="background:var(--acc2);width:25%"></div></div>
-      <div class="pow-val" style="color:var(--acc2)" id="valSanction">25</div>
-    </div>
-  </div>
-
-  <!-- ECONOMY -->
-  <div class="econ-bar">
-    <div class="econ-blk">
-      <span class="econ-k">DATA TOKENS //</span>
-      <span class="econ-v" style="color:var(--amb)" id="valCash">1200</span>
-    </div>
-    <div class="econ-blk">
-      <span class="econ-k">GLOBAL REPUTATION //</span>
-      <span class="econ-v" style="color:var(--acc3)" id="valRep">50</span>
-    </div>
-    <div class="econ-blk">
-      <span class="econ-k">INSPECTOR RISK //</span>
-      <span class="econ-v" style="color:var(--acc2)" id="valRisk">20%</span>
-    </div>
-  </div>
-
-  <!-- ALERTS -->
-  <div class="alerts-panel" id="alertsPanel"></div>
-
-  <!-- ROOMS -->
-  <div class="sec-lbl">// OPERATIONS GRID — 6 CLASSIFIED ROOMS</div>
-  <div class="main-grid" id="roomsGrid"></div>
-
-  <!-- OPERATIONS -->
-  <div class="ops-panel">
-    <div class="ops-title">// FIELD DIRECTIVES — SELECT AND COMMIT TO TURN</div>
-    <div class="ops-grid" id="opsGrid"></div>
-  </div>
-
-  <!-- ADVANCE TURN -->
-  <button class="adv-btn" id="advanceBtn" onclick="doAdvanceTurn()">
-    ▶ ADVANCE TURN — GLOBAL SYNCHRONIZATION
-  </button>
-
-  <!-- LOG -->
-  <div class="log-panel" id="logPanel">
-    <div class="log-title">// OPERATIONS LOG — ENCRYPTED ARCHIVE</div>
-    <div id="logEntries"></div>
-  </div>
-
-  <!-- ROOM DETAIL PANEL (aperto al click della room card) -->
-  <div id="roomDetailPanel" style="display:none;background:var(--panel);border:1px solid var(--brd);padding:8px 12px;margin-bottom:5px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div style="display:flex;align-items:center;gap:8px">
-        <span id="rdTag" style="font-size:9px;letter-spacing:2px;font-family:'Orbitron',monospace"></span>
-        <span id="rdName" style="font-size:11px;color:var(--txt)"></span>
-        <span style="font-size:9px;color:var(--txt3)">— NODE RADAR</span>
+      <div id="key-bar">
+        <span style="font-size:9px;color:var(--txt3)">GROQ //</span>
+        <input type="password" id="api-key" placeholder="gsk_... (optional — flavor text only)">
+        <button onclick="saveKey()">CONNECT</button>
+        <span id="key-status">NO KEY</span>
       </div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span style="font-size:9px;color:var(--txt3)">
-          <span style="color:#00e5ff">&#9679;</span> REG &nbsp;
-          <span style="color:#ea80fc">&#9679;</span> PREM &nbsp;
-          <span style="color:#ff3d00">&#9679;</span> COMP &nbsp;
-          <span style="color:#ffab00">&#9679;</span> INSP &nbsp;
-          <span style="color:#ff1744">&#9632;</span> MOLE
-        </span>
-        <button onclick="closeRoomDetail()" style="background:transparent;border:1px solid var(--brd2);color:var(--txt3);font-family:var(--mono);font-size:9px;padding:2px 8px;cursor:pointer;letter-spacing:1px">✕ CLOSE</button>
-      </div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
-      <div id="rdRadar" style="background:var(--bg2);border:1px solid var(--brd2);padding:4px"></div>
-      <div id="nodeDetail" style="background:var(--bg);border:1px solid var(--brd2);padding:8px 12px;min-height:120px;display:flex;align-items:center;justify-content:center">
-        <span style="font-size:9px;color:var(--txt3);letter-spacing:1px">CLICK A NODE TO PROFILE</span>
-      </div>
+      <div style="font-size:9px;color:var(--txt2)"><span class="sdot"></span>ENGINE ACTIVE</div>
     </div>
   </div>
 
+  <div id="canvas-wrap">
+    <canvas id="swarm-canvas"></canvas>
+    <div id="suspicion-bar"><div id="suspicion-fill"></div></div>
+    <div id="player-pos">📍 BASE</div>
+    <div id="advance-wrap"><button id="advance-btn" onclick="advanceTurn()">▶ ADVANCE TURN</button></div>
+  </div>
+
+  <div id="sidebar">
+    <div id="sidebar-tabs">
+      <button class="stab active" onclick="showTab('rooms')" id="tab-rooms">ROOMS</button>
+      <button class="stab" onclick="showTab('node')" id="tab-node">NODE</button>
+      <button class="stab" onclick="showTab('queens')" id="tab-queens">QUEENS</button>
+    </div>
+    <div class="postura-strip">
+      <button class="pbtn ps-base active" id="pb-BASE" onclick="setPostura('BASE')">🏠 BASE</button>
+      <button class="pbtn ps-ombra" id="pb-OMBRA" onclick="setPostura('OMBRA')">👤 SHADOW</button>
+      <button class="pbtn" id="pb-NEUTRALE" onclick="setPostura('NEUTRALE')">🚶 STD</button>
+      <button class="pbtn ps-visibile" id="pb-VISIBILE" onclick="setPostura('VISIBILE')">👁 EXP</button>
+    </div>
+    <div id="sidebar-content">
+      <div class="tab-content active" id="tc-rooms"></div>
+      <div class="tab-content" id="tc-node"><div style="font-size:9px;color:var(--txt3);padding:20px;text-align:center;letter-spacing:1px">CLICK A NODE ON THE RADAR<br><br>TO ACCESS ITS PROFILE AND<br>LAUNCH FIELD OPERATIONS</div></div>
+      <div class="tab-content" id="tc-queens"></div>
+    </div>
+  </div>
+
+  <div id="log-panel">
+    <div id="log-main"><div id="log-entries"></div></div>
+    <div id="monitor-wrap"></div>
+  </div>
 </div>
 
-<script>
-const ROOMS=[
-  {id:'R01',key:'Server Room',       tag:'SERVER',   color:'var(--acc)'},
-  {id:'R02',key:'The Embassy',       tag:'EMBASSY',  color:'var(--pur)'},
-  {id:'R03',key:'Encrypted Channel', tag:'DARKNET',  color:'var(--acc2)'},
-  {id:'R04',key:'Black Site',        tag:'BLACKSITE',color:'var(--wrn)'},
-  {id:'R05',key:'Press Room',        tag:'PRESS',    color:'var(--amb)'},
-  {id:'R06',key:'External Safehouse',tag:'SAFEHOUSE',color:'var(--acc3)'},
-];
+<script type="module">
+import { SwarmEngine }  from './engine.js';
+import { RadarRenderer } from './radar.js';
+import { SCENARIO_INTRO, FALLBACK_TURNS, FALLBACK_EVENTS } from './prose.js';
 
-const OPS=[
-  {code:'complimentary_drink', label:'Firewall Update',     desc:'Server Room stress -15%. Boosts Intel.'},
-  {code:'priority_voucher',    label:'Asylum Grant',        desc:'Routes premium asset to The Embassy.'},
-  {code:'shift_scheduling',    label:'Field Infiltration',  desc:'Reallocates stressed agent to Safehouse.'},
-  {code:'reroute_traffic',     label:'Channel Rerouting',   desc:'Ejects problematic node/mole. Agency heat +.'},
-  {code:'guest_survey',        label:'Stream Interception', desc:'Wiretaps Channel/Server. Extracts keys.'},
-  {code:'market_audit',        label:'Internal Report',     desc:'Hands competitor to NSA. Drops inspector risk.'},
-  {code:'targeted_campaign',   label:'Controlled Leak',     desc:'Disinformation into Press Room. Freezes ops.'},
-  {code:'brand_promotion',     label:'Blackout Signal',     desc:'Rival infra down. External nodes to Safehouse.'},
-];
+let engine, radar, apiKey = '', selectedNode = null, currentTab = 'rooms', gameEnded = false, turn = 0;
 
-const FACTIONS=['regular','premium','competitor','inspector'];
-const FC={regular:'var(--acc)',premium:'var(--pur)',competitor:'var(--acc2)',inspector:'var(--amb)'};
-const NAMES=['Volkov','Chen','Harari','Osei','Petrov','Nkrumah','Lenz','Saito','Moreau','Dubois','Kowalski','Russo','Ferreira','Nakamura','Adeyemi','Svensson','Müller','Kofi','Dragan','Ivanovic','Berkov','Shin','Castellano','Yildiz','Okafor','Patel','Brennan','Fonseca','Renard','Andrade','Vogel','Santos','Bassi','Mehta','Park','Lindqvist','Tremblay','Okonkwo','Leblanc','Czerny','Watanabe','Ngozi','Popescu','Reyes','Aziz','Takeda','Mendez','Blum','Sato','Koroma'];
+// ── INIT ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  engine = new SwarmEngine('LOOM_CORE');
+  engine.init();
+  bindCallbacks();
 
-function mkNodes(){
-  return NAMES.map((n,i)=>({
-    id:'N'+String(i+1).padStart(3,'0'),
-    name:n,
-    faction:FACTIONS[i<20?0:i<30?1:i<42?2:3],
-    room:ROOMS[i%6].key,
-    stress:parseFloat((Math.random()*.5).toFixed(2)),
-    loyalty:Math.floor(Math.random()*3),
-    mole:Math.random()<.12,
-  }));
+  const canvas = document.getElementById('swarm-canvas');
+  const wrap   = document.getElementById('canvas-wrap');
+  const resize = () => { canvas.width = wrap.clientWidth; canvas.height = wrap.clientHeight; engine.scalePositions(canvas.width, canvas.height); };
+  window.addEventListener('resize', resize); resize();
+
+  radar = new RadarRenderer('swarm-canvas', engine,
+    n => { selectedNode = n; showTab('node'); renderNodeTab(); },
+    ()  => { selectedNode = null; }
+  );
+
+  let last = 0;
+  (function loop(ts) {
+    engine.tick();
+    if (ts - last > 80) { radar.render(); last = ts; }
+    updateHeader();
+    if (!gameEnded) requestAnimationFrame(loop);
+  })(0);
+
+  setTimeout(() => {
+    document.getElementById('loading-overlay').style.display = 'none';
+    renderRoomsTab(); renderQueensTab();
+    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*350));
+    addLog('--', 'Engine online. 200 nodes seeded. 6 zones active. Two queens in position.', ['Network nominal','Infiltration protocol: ARMED'], []);
+  }, 2600);
+});
+
+function bindCallbacks() {
+  engine.onCreditsChange   = () => updateHeader();
+  engine.onQueenAlert      = q  => pushMon(`!! SOVEREIGN — ${q.realName} alert ${q.alertLevel}`, 'alert');
+  engine.onRoomAlert       = r  => pushMon(`⚠ ${r} — anxiety spike`, 'alert');
+  engine.onCaught          = a  => { pushMon(`!! CAUGHT — ${a.name.split(' ')[0]}`, 'alert'); addLog(turn, `Exposure event. ${a.name.split(' ')[0]} detected you.`, [], ['COVER COMPROMISED']); };
+  engine.onFieldOpComplete = op => pushMon(`◆ OP COMPLETE — ${op.type}`, 'op');
+  engine.onProximityEvent  = e  => pushMon(e.text, e.type === 'queen_proximity' ? 'alert' : 'beacon');
 }
 
-let gs={
-  turn:1,cash:1200,reputation:50,inspectorRisk:.20,
-  intel:40,diplomacy:35,sanction:25,
-  rooms:Object.fromEntries(ROOMS.map(r=>[r.key,{
-    stress:parseFloat((Math.random()*.4).toFixed(2)),
-    occupancy:5+Math.floor(Math.random()*10),
-    revenue:50+Math.floor(Math.random()*150),
-  }])),
-  nodes:mkNodes(),
-  alerts:[],
-  pendingOps:[],
+// ── HEADER ───────────────────────────────────────────────────────────────────
+function sc(v, lo, hi) { return v > hi ? 'danger' : v > lo ? 'warn' : 'ok'; }
+
+function updateHeader() {
+  const susp = engine.networkSuspicion || 0;
+  const credits = parseInt(localStorage.getItem('loom_credits') || '100');
+  const qActive = (engine.queens||[]).filter(q => !q.neutralized).length;
+
+  set('h-credits', credits, credits < 50 ? 'warn' : '');
+  set('h-susp', Math.round(susp*100)+'%', sc(susp, 0.4, 0.7));
+  set('h-turn', String(turn).padStart(2,'0'), '');
+  set('h-queens', qActive > 0 ? `${qActive} ACTIVE` : 'NEUTRALIZED ✓', qActive > 0 ? 'danger' : 'ok');
+  set('h-posture', (engine.playerInBase ? 'BASE' : (engine.playerPostura||'STD')), '');
+
+  const fill = document.getElementById('suspicion-fill');
+  fill.style.width = (susp*100) + '%';
+  fill.style.background = susp > 0.7 ? 'var(--dng)' : susp > 0.4 ? 'var(--amb)' : 'var(--acc3)';
+
+  document.getElementById('player-pos').textContent = engine.playerInBase ? '📍 BASE' : `📍 ${engine.playerRoom || 'TRANSIT'}`;
+}
+
+function set(id, val, cls) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = val;
+  el.className = cls || '';
+}
+
+// ── TABS ─────────────────────────────────────────────────────────────────────
+window.showTab = function(tab) {
+  currentTab = tab;
+  ['rooms','node','queens'].forEach(t => {
+    document.getElementById(`tc-${t}`).classList.toggle('active', t === tab);
+    document.getElementById(`tab-${t}`).classList.toggle('active', t === tab);
+  });
+  if (tab === 'rooms')  renderRoomsTab();
+  if (tab === 'node')   renderNodeTab();
+  if (tab === 'queens') renderQueensTab();
 };
 
-let apiKey='';
-let loading=false;
-
-function saveKey(){
-  apiKey=document.getElementById('apiKey').value.trim();
-  const s=document.getElementById('keyStatus');
-  s.textContent=apiKey?'GROQ ACTIVE':'NO KEY';
-  s.style.color=apiKey?'var(--acc3)':'var(--txt2)';
-}
-
-
-function sc(s){
-  if(s<.4)return'var(--acc3)';
-  if(s<.7)return'var(--amb)';
-  return'var(--dng)';
-}
-
-function renderPowers(){
-  [{n:'Intel',v:gs.intel},{n:'Diplomacy',v:gs.diplomacy},{n:'Sanction',v:gs.sanction}].forEach(p=>{
-    document.getElementById('bar'+p.n).style.width=Math.min(p.v,100)+'%';
-    document.getElementById('val'+p.n).textContent=Math.round(p.v);
-  });
-  document.getElementById('valCash').textContent=gs.cash;
-  document.getElementById('valRep').textContent=gs.reputation;
-  document.getElementById('valRisk').textContent=Math.round(gs.inspectorRisk*100)+'%';
-  document.getElementById('turnNum').textContent=String(gs.turn).padStart(2,'0');
-}
-
-let selectedRoom=null;
-
-function renderRooms(){
-  const g=document.getElementById('roomsGrid');
-  g.innerHTML='';
-  ROOMS.forEach(r=>{
-    const rd=gs.rooms[r.key]||{stress:0,occupancy:0,revenue:0};
-    const c=sc(rd.stress);
-    const isActive=selectedRoom&&selectedRoom.id===r.id;
-    const nodeCount=gs.nodes.filter(n=>n.room===r.key).length;
-    const moleCount=gs.nodes.filter(n=>n.room===r.key&&n.mole).length;
-    g.innerHTML+=`<div class="room-card${isActive?' room-card-active':''}" onclick="selectRoom('${r.id}')" style="cursor:pointer;border-color:${isActive?r.color.replace('var(--acc)','#00e5ff').replace('var(--pur)','#ea80fc').replace('var(--acc2)','#ff3d00').replace('var(--wrn)','#ff6d00').replace('var(--amb)','#ffab00').replace('var(--acc3)','#76ff03'):''}">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
-        <div class="room-id">${r.id}</div>
-        <div class="room-tag" style="color:${r.color};border-color:${r.color};margin-top:0">${r.tag}</div>
+// ── ROOMS ─────────────────────────────────────────────────────────────────────
+function renderRoomsTab() {
+  const c = document.getElementById('tc-rooms');
+  const zones = engine.config?.zones || [];
+  c.innerHTML = zones.map(z => {
+    const room = engine.rooms?.[z.label] || { anxiety: 0 };
+    const agents = engine.getRoomAgents(z.label);
+    const ax = room.anxiety || 0;
+    const isPlayer = engine.playerRoom === z.label && !engine.playerInBase;
+    const hasQ = (engine.queens||[]).some(q => { const a = engine.agents.find(x=>x.id===q.agentId); return a && a.currentZone===z.label && !q.neutralized; });
+    const col = ax > 0.6 ? 'var(--dng)' : ax > 0.35 ? 'var(--amb)' : 'var(--acc3)';
+    const moles = agents.filter(a => a.mole).length;
+    return `<div class="room-item${isPlayer?' player-here':''}" onclick="onRoomClick('${z.label}')">
+      <div class="ri-name">${z.label.toUpperCase()}${hasQ?' <span style="color:var(--dng)">◆</span>':''}</div>
+      <div class="ri-meta">
+        <span style="color:${col}">${Math.round(ax*100)}% anx</span>
+        <span>${agents.length} nodes</span>
+        ${moles?`<span style="color:var(--dng)">${moles}M</span>`:''}
+        ${isPlayer?'<span style="color:var(--gold)">YOU</span>':''}
       </div>
-      <div class="room-name" style="color:${r.color}">${r.key.toUpperCase()}</div>
-      <div class="room-stats" style="margin-top:6px">
-        <div class="stat-mini">STRESS<span style="color:${c}">${Math.round(rd.stress*100)}%</span></div>
-        <div class="stat-mini">NODES<span>${nodeCount}${moleCount?` <span style="color:var(--dng);font-size:9px">+${moleCount}M</span>`:''}</span></div>
-        <div class="stat-mini">REV<span style="color:var(--amb)">${rd.revenue}t</span></div>
-      </div>
-      <div class="sbar-bg" style="margin-top:6px"><div class="sbar" style="width:${rd.stress*100}%;background:${c}"></div></div>
-      <div style="font-size:8px;color:var(--txt3);margin-top:4px;letter-spacing:.5px">${isActive?'▼ RADAR OPEN':'▶ CLICK TO SCAN'}</div>
+      <div class="ri-bar-bg"><div class="ri-bar-fill" style="width:${ax*100}%;background:${col}"></div></div>
+      ${!isPlayer && !engine.playerInBase ? `<button class="move-btn" onclick="doMove(event,'${z.label}')">→ ENTER</button>` : ''}
+      ${engine.playerInBase ? `<button class="move-btn" onclick="doMove(event,'${z.label}')">→ DEPLOY</button>` : ''}
     </div>`;
-  });
-}
-
-function selectRoom(rid){
-  const room=ROOMS.find(r=>r.id===rid);
-  if(!room)return;
-  if(selectedRoom&&selectedRoom.id===rid){
-    selectedRoom=null;
-    selectedNode=null;
-    document.getElementById('roomDetailPanel').style.display='none';
-    renderRooms();
-    return;
-  }
-  selectedRoom=room;
-  selectedNode=null;
-  openRoomDetail(room);
-  renderRooms();
-}
-
-function closeRoomDetail(){
-  selectedRoom=null;
-  selectedNode=null;
-  document.getElementById('roomDetailPanel').style.display='none';
-  renderRooms();
-}
-
-function openRoomDetail(room){
-  const panel=document.getElementById('roomDetailPanel');
-  const rColor=room.color.replace('var(--acc)','#00e5ff').replace('var(--pur)','#ea80fc').replace('var(--acc2)','#ff3d00').replace('var(--wrn)','#ff6d00').replace('var(--amb)','#ffab00').replace('var(--acc3)','#76ff03');
-  document.getElementById('rdTag').textContent=room.tag;
-  document.getElementById('rdTag').style.color=rColor;
-  document.getElementById('rdName').textContent=room.key;
-  panel.style.display='block';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-  renderRoomRadar(room);
-}
-
-function renderOps(){
-  const g=document.getElementById('opsGrid');
-  g.innerHTML='';
-  OPS.forEach(op=>{
-    const active=gs.pendingOps.includes(op.code);
-    g.innerHTML+=`<button class="op-btn${active?' active-op':''}" onclick="toggleOp('${op.code}')" ${loading?'disabled':''}>
-      <span class="op-code">[${op.code.toUpperCase()}]</span>
-      <span style="font-size:11px">${op.label}</span>
-      <span class="op-desc">${op.desc}</span>
-    </button>`;
-  });
-}
-
-function renderAlerts(){
-  document.getElementById('alertsPanel').innerHTML=gs.alerts.map(a=>`<span class="alert-chip">!! ${a}</span>`).join('');
-}
-
-const FC_HEX={regular:'#00e5ff',premium:'#ea80fc',competitor:'#ff3d00',inspector:'#ffab00'};
-let selectedNode=null;
-
-function getNodeRelations(node){
-  const roomMates=gs.nodes.filter(n=>n.room===node.room&&n.id!==node.id);
-  const sameFactRooms=gs.nodes.filter(n=>n.faction===node.faction&&n.id!==node.id&&n.room!==node.room);
-  const moles=gs.nodes.filter(n=>n.mole&&n.id!==node.id&&n.room===node.room);
-  return{roomMates,sameFactRooms,moles};
-}
-
-function renderNodes(){
-  if(selectedRoom) renderRoomRadar(selectedRoom);
-}
-
-function renderRoomRadar(r){
-  const g=document.getElementById('rdRadar');
-  if(!g)return;
-  g.innerHTML='';
-  {
-    const roomNodes=gs.nodes.filter(n=>n.room===r.key);
-    const W=260,H=220,CX=130,CY=110,RAD=88;
-    const rings=[0.35,0.65,1.0];
-    let svgDots='',svgLines='',svgLabels='';
-    const positions=[];
-    roomNodes.forEach((n,i)=>{
-      const angle=(2*Math.PI*i/Math.max(roomNodes.length,1))-(Math.PI/2);
-      const ringR=RAD*rings[Math.min(n.loyalty,2)];
-      const x=CX+Math.cos(angle)*ringR*(0.85+Math.random()*0.15);
-      const y=CY+Math.sin(angle)*ringR*(0.85+Math.random()*0.15);
-      positions.push({n,x,y,angle});
-    });
-    // web lines between roommates
-    positions.forEach((a,ai)=>{
-      positions.forEach((b,bi)=>{
-        if(bi<=ai)return;
-        const isMoleLink=a.n.mole||b.n.mole;
-        const opacity=isMoleLink?'0.5':'0.12';
-        const stroke=isMoleLink?'#ff1744':'#1a3045';
-        const dash=isMoleLink?'3,2':'4,3';
-        svgLines+=`<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${stroke}" stroke-width="0.8" stroke-opacity="${opacity}" stroke-dasharray="${dash}"/>`;
-      });
-    });
-    // radar rings
-    rings.forEach((r,ri)=>{
-      const labels=['T0','T1','T2'];
-      svgDots+=`<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-opacity="0.4" stroke-dasharray="2,4"/>`;
-      svgDots+=`<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="6" font-family="Share Tech Mono">${labels[ri]}</text>`;
-    });
-    // center cross
-    svgDots+=`<line x1="${CX-4}" y1="${CY}" x2="${CX+4}" y2="${CY}" stroke="#1a3045" stroke-width="0.5"/>`;
-    svgDots+=`<line x1="${CX}" y1="${CY-4}" x2="${CX}" y2="${CY+4}" stroke="#1a3045" stroke-width="0.5"/>`;
-    // node dots
-    positions.forEach(({n,x,y})=>{
-      const col=FC_HEX[n.faction]||'#888';
-      const isSel=selectedNode&&selectedNode.id===n.id;
-      const isRelated=selectedNode&&selectedNode.id!==n.id&&n.room===selectedNode.room;
-      const r2=isSel?5:n.mole?4:3;
-      const opacity=selectedNode&&!isSel&&!isRelated?'0.25':'1';
-      const stroke=isSel?'#ffffff':n.mole?'#ff1744':'none';
-      const sw=isSel?1.5:n.mole?1:0;
-      svgDots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" onclick="clickNode('${n.id}')"/>`;
-      if(isSel||isRelated||!selectedNode){
-        const lx=x>CX?x+6:x-6;
-        const anchor=x>CX?'start':'end';
-        svgLabels+=`<text x="${lx.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#ffffff':col}" fill-opacity="${opacity}" font-size="6" font-family="Share Tech Mono" text-anchor="${anchor}" style="cursor:pointer;pointer-events:none">${n.name.slice(0,6)}</text>`;
-      }
-    });
-    // stress arc on outer ring
-    const rd=gs.rooms[r.key]||{stress:0};
-    const stress=rd.stress||0;
-    const arcAngle=stress*2*Math.PI;
-    const ex=CX+Math.cos(-Math.PI/2+arcAngle)*RAD;
-    const ey=CY+Math.sin(-Math.PI/2+arcAngle)*RAD;
-    const largeArc=arcAngle>Math.PI?1:0;
-    const stressCol=stress<0.4?'#76ff03':stress<0.7?'#ffab00':'#ff1744';
-    if(stress>0.01){
-      svgDots+=`<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stressCol}" stroke-width="1.5" stroke-opacity="0.6"/>`;
-    }
-
-    const rColor=r.color.replace('var(--acc)','#00e5ff').replace('var(--pur)','#ea80fc').replace('var(--acc2)','#ff3d00').replace('var(--wrn)','#ff6d00').replace('var(--amb)','#ffab00').replace('var(--acc3)','#76ff03');
-
-    g.innerHTML=`<div style="position:relative">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;padding:0 2px">
-        <span style="font-size:8px;color:var(--txt3)">${roomNodes.length} nodes in room</span>
-        <span style="font-size:8px;color:${rColor}">${gs.nodes.filter(n=>n.room===r.key&&n.mole).length>0?'⚠ MOLE DETECTED':''}</span>
-      </div>
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">
-        ${svgLines}${svgDots}${svgLabels}
-      </svg>
-    </div>`;
-  }
-  renderNodeDetail();
-}
-
-function clickNode(id){
-  const node=gs.nodes.find(n=>n.id===id);
-  if(!node)return;
-  if(selectedNode&&selectedNode.id===id){
-    selectedNode=null;
-    document.getElementById('nodeDetail').style.display='none';
-  } else {
-    selectedNode=node;
-  }
-  renderNodes();
-}
-
-function renderNodeDetail(){
-  if(!selectedNode)return;
-  const d=document.getElementById('nodeDetail');
-  d.style.display='block';
-  const n=selectedNode;
-  const {roomMates,sameFactRooms,moles}=getNodeRelations(n);
-  const col=FC_HEX[n.faction]||'#888';
-  const room=ROOMS.find(r=>r.key===n.room);
-  const loyLbl=['DEFECTOR','ACTIVE ASSET','BLACK OPS OPERATOR'];
-  const relLines=roomMates.slice(0,8).map(r=>{
-    const rc=FC_HEX[r.faction]||'#888';
-    return `<span style="color:${rc};margin-right:8px;font-size:9px">${r.name}${r.mole?' [M]':''}</span>`;
   }).join('');
-  const netLines=sameFactRooms.slice(0,5).map(r=>`<span style="color:var(--txt2);margin-right:8px;font-size:9px">${r.name}@${ROOMS.find(rm=>rm.key===r.room)?.tag||'?'}</span>`).join('');
-  d.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">NODE PROFILE</div>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;color:${col}">${n.name.toUpperCase()}</div>
-      <div style="font-size:9px;color:var(--txt2);margin-top:2px">${n.id} // ${n.faction.toUpperCase()}</div>
-      <div style="font-size:9px;color:var(--txt2);margin-top:1px">LOCATION: ${room?room.tag:'?'}</div>
-      <div style="font-size:9px;margin-top:2px;color:${n.loyalty===0?'var(--dng)':n.loyalty===2?'var(--acc3)':'var(--txt)'}">${loyLbl[n.loyalty]||'UNKNOWN'}</div>
-      <div style="font-size:9px;margin-top:2px;color:${n.stress>0.7?'var(--dng)':n.stress>0.4?'var(--amb)':'var(--acc3)'}">STRESS: ${Math.round(n.stress*100)}%</div>
-      ${n.mole?'<div style="font-size:9px;color:var(--dng);margin-top:3px;letter-spacing:1px">!! MOLE SUSPECTED</div>':''}
-    </div>
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">ROOM CONNECTIONS (${roomMates.length})</div>
-      <div style="line-height:1.8">${relLines||'<span style="color:var(--txt3);font-size:9px">ISOLATED</span>'}</div>
-      ${moles.length?`<div style="font-size:9px;color:var(--dng);margin-top:4px">!! ${moles.length} MOLE(S) IN ROOM</div>`:''}
-    </div>
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">FACTION NETWORK (${sameFactRooms.length})</div>
-      <div style="line-height:1.8">${netLines||'<span style="color:var(--txt3);font-size:9px">NO EXTERNAL CONTACTS</span>'}</div>
+}
+
+window.onRoomClick = function(label) {
+  const intercept = engine.getAmbientIntercept?.(label);
+  if (intercept) pushMon(`[${label.slice(0,6).toUpperCase()}] ${intercept}`, 'beacon');
+  const agents = engine.getRoomAgents(label);
+  if (agents[0] && radar) radar.triggerPing(agents[0].id, 'gossip');
+};
+
+window.doMove = function(e, label) {
+  e.stopPropagation();
+  const postura = engine.playerPostura || 'NEUTRALE';
+  const res = engine.moveWithPostura(label, postura);
+  if (res.success) {
+    const label2 = { OMBRA:'SHADOW', NEUTRALE:'STD', VISIBILE:'EXPOSED' };
+    pushMon(`→ MOVED TO ${label.toUpperCase()} [${label2[postura]||postura}]${res.queenHere?' — ◆ SOVEREIGN PROXIMITY':''}`,'op');
+    if (res.queenHere) addLog(turn, `Sovereign proximity in ${label}. Alert level rising.`, [], ['SOVEREIGN NEARBY']);
+    renderRoomsTab(); updateHeader();
+  } else {
+    pushMon(`✗ ${res.text}`, 'alert');
+  }
+};
+
+// ── NODE TAB ─────────────────────────────────────────────────────────────────
+function renderNodeTab() {
+  const c = document.getElementById('tc-node');
+  if (!selectedNode) return;
+  const n = selectedNode;
+  const rel = engine.playerRelations[n.id] || { trustTier:0, interactionCount:0 };
+  const beacon = engine.getAgentBeacon(n);
+  const col = engine.config.factionColors?.[n.faction] || '#888';
+  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
+  const loyLbl = ['HOSTILE','NEUTRAL','LOYAL'];
+  const prox = engine.getProximityContext(n.id);
+
+  const tbar = [0,1,2].map(i=>`<div class="tp${rel.trustTier>i?' on':''}"></div>`).join('');
+
+  const OPS_DEF = [
+    {type:'casual_encounter',   label:'DIRECT CONTACT',  cost:20, desc:'Reduce pressure. Open contact.'},
+    {type:'targeted_gift',      label:'ASSET LEVERAGE',  cost:40, desc:'Boost trust tier. Match archetype.'},
+    {type:'encrypted_confession',label:'INTEL EXTRACT',  cost:60, desc:'Unlock lore. Requires trust 1.', req:1},
+    {type:'bait_date',          label:'HONEY TRAP',      cost:80, desc:'Move target to your zone.'},
+    {type:'weaponized_jealousy',label:'FALSE FLAG',      cost:100,desc:'Panic queen. Disrupt faction.'},
+    {type:'shadow_stalking',    label:'SURVEILLANCE',    cost:50, desc:'Track for 4 turns.'},
+    {type:'wiretap',            label:'ROOM BUG',        cost:70, desc:'Bug room. Reveals nodes 3T.'},
+    {type:'digital_gaslighting',label:'PSYOP',           cost:80, desc:'Blacklist. High suspicion cost.'},
+    {type:'anonymous_slander',  label:'DISINFO',         cost:60, desc:'Break faction clustering.'},
+  ];
+
+  const opsHtml = OPS_DEF.map(op => {
+    const chk = engine.canDoFieldOp(op.type);
+    const noAfford = credits < op.cost;
+    const noTrust  = op.req && rel.trustTier < op.req;
+    const blocked  = !chk.allowed || noAfford || noTrust;
+    const hint = !chk.allowed ? chk.reason : noTrust ? `Requires trust ${op.req}` : noAfford ? 'Insufficient credits' : '';
+    return `<div class="fop${blocked?' blocked':''}" onclick="${blocked?'':` doOp('${op.type}','${n.id}')`}" title="${hint}">
+      <span class="fop-name">${op.label}</span>
+      <span class="fop-cost">${op.cost} pts${prox.sameRoom?' -20%':''}</span>
+      <div class="fop-desc">${op.desc}</div>
+    </div>`;
+  }).join('');
+
+  c.innerHTML = `<div class="node-profile">
+    <div class="np-name" style="color:${col}">${n.name.toUpperCase()}</div>
+    <div class="np-row">${n.id} // <b style="color:${col}">${n.faction}</b></div>
+    <div class="np-row">ZONE: <b>${n.currentZone||'?'}</b>${prox.sameRoom?' <b style="color:var(--gold)">[PROXIMITY]</b>':''}</div>
+    <div class="np-row">BEACON: <b style="color:${beacon.color}">${beacon.icon} ${beacon.signal}</b></div>
+    <div class="np-row">STRESS: <b style="color:${n.pressure>0.6?'var(--dng)':n.pressure>0.3?'var(--amb)':'var(--acc3)'}">${Math.round(n.pressure*100)}%</b></div>
+    <div class="np-row">INTERACTIONS: <b>${rel.interactionCount}</b></div>
+    <div class="np-row">LOYALTY: <b>${loyLbl[rel.trustTier]||'UNKNOWN'}</b></div>
+    <div class="trust-bar">${tbar}</div>
+    ${rel.interactionCount > 0 ? `<div class="np-lore">"${n.currentLoreSnippet||'No additional data.'}"</div>` : '<div class="np-lore" style="color:var(--txt3)">// DOSSIER LOCKED — interact to unlock</div>'}
+    ${n.isQueen&&!n.queenNeutralized?'<div style="font-size:9px;color:var(--dng);margin:4px 0;letter-spacing:1px">◆ SOVEREIGN — NETWORK CONTROLLER</div>':''}
+    ${n.mole?'<div style="font-size:9px;color:var(--dng);letter-spacing:1px;margin-bottom:4px">!! MOLE SUSPECTED</div>':''}
+    <div class="ops-section">
+      <div class="ops-title">// FIELD OPERATIONS ON THIS NODE</div>
+      <div class="ops-grid">${opsHtml}</div>
     </div>
   </div>`;
 }
 
-function renderAll(){renderPowers();renderRooms();renderOps();renderAlerts();renderNodes();}
-
-function toggleOp(code){
-  const i=gs.pendingOps.indexOf(code);
-  if(i>=0)gs.pendingOps.splice(i,1);
-  else gs.pendingOps.push(code);
-  renderOps();
-}
-
-function addLog(turn,txt,events,alerts){
-  const lp=document.getElementById('logEntries');
-  const ev=(events||[]).map(e=>`<div class="log-ev">${e}</div>`).join('');
-  const al=(Array.isArray(alerts)?alerts:[alerts]).filter(Boolean).map(a=>`<div class="log-al">${a}</div>`).join('');
-  lp.insertAdjacentHTML('afterbegin',`<div class="log-entry">
-    <div class="log-ts">TURN ${turn} — ${new Date().toLocaleTimeString()}</div>
-    <div class="log-txt">${txt}</div>
-    <div>${ev}${al}</div>
-  </div>`);
-  document.getElementById('logPanel').scrollTop=0;
-}
-
-function setLoading(v){
-  loading=v;
-  const btn=document.getElementById('advanceBtn');
-  btn.disabled=v;
-  btn.textContent=v?'⟳ PROCESSING — ENGINE ACTIVE...':'▶ ADVANCE TURN — GLOBAL SYNCHRONIZATION';
-  renderOps();
-}
-
-async function doAdvanceTurn(){
-  if(!apiKey){alert('Paste your Groq key and hit CONNECT.\nGet one free at console.groq.com');return;}
-  setLoading(true);
-
-  const snap=JSON.stringify({
-    turn:gs.turn,cash:gs.cash,reputation:gs.reputation,
-    inspectorRisk:gs.inspectorRisk,
-    intel:gs.intel,diplomacy:gs.diplomacy,sanction:gs.sanction,
-    rooms:gs.rooms,
-    pendingOperations:gs.pendingOps,
-    nodesSummary:gs.nodes.slice(0,15).map(n=>({id:n.id,name:n.name,faction:n.faction,room:n.room,stress:n.stress,loyalty:n.loyalty,mole:n.mole})),
-  },null,2);
-
-  const sys=`You are the Core Simulation Engine for "L.O.O.M. // SWARM CORE" (v1.0 Alpha - Local Opinion Overhaul Monitor), a text-based data-driven espionage and political cyber-thriller simulator.
-
-THE 6 ROOMS (use these exact English keys in roomUpdates):
-- "Server Room"
-- "The Embassy"
-- "Encrypted Channel"
-- "Black Site"
-- "Press Room"
-- "External Safehouse" (revenue always 0)
-
-NODE FACTIONS: regular (field agents), premium (diplomats/high-tier), competitor (rogue cells/moles), inspector (NSA auditors).
-
-PLAYER DIRECTIVES:
-- complimentary_drink = Firewall Update → Server Room stress -15%, Intel +3-5
-- priority_voucher = Asylum Grant → Routes premium to Embassy, Diplomacy +3-5
-- shift_scheduling = Field Infiltration → Reallocates stressed regular to Safehouse
-- reroute_traffic = Channel Rerouting → Ejects mole, Sanction +3-5, inspectorRisk +0.05
-- guest_survey = Stream Interception → Wiretap, cash +50-150
-- market_audit = Internal Report → Hands competitor to NSA, inspectorRisk → 0
-- targeted_campaign = Controlled Leak → Disinformation in Press Room, reputation ±
-- brand_promotion = Blackout Signal → Rival infra down, Intel +5
-
-GLOBAL DRIFTS (30% chance, pick at most one): "SCALE-5 DATA BREACH", "NATIONAL SECURITY AUDIT", "INTERNATIONAL DIPLOMATIC CRISIS", "DDOS CYBER ATTACK"
-
-Rules: stress drifts +0.03 to +0.08 per room per turn unless countered. Mole nodes increase local stress. Apply all queued operations. Move 1-3 nodes between rooms. Write log in English cold cyber-thriller jargon (1-3 sentences).
-
-Respond ONLY with raw JSON, no markdown fences.
-
-JSON SCHEMA:
-{
-  "log": "string",
-  "events": ["string"],
-  "roomUpdates": {
-    "Server Room":        {"stress":0.0,"occupancy":0,"revenue":0},
-    "The Embassy":        {"stress":0.0,"occupancy":0,"revenue":0},
-    "Encrypted Channel":  {"stress":0.0,"occupancy":0,"revenue":0},
-    "Black Site":         {"stress":0.0,"occupancy":0,"revenue":0},
-    "Press Room":         {"stress":0.0,"occupancy":0,"revenue":0},
-    "External Safehouse": {"stress":0.0,"occupancy":0,"revenue":0}
-  },
-  "nodeMovements": [{"id":"N001","name":"string","from":"string","to":"string","stress":0.0,"loyalty":0}],
-  "alerts": [],
-  "cashDelta": 0,
-  "reputationDelta": 0,
-  "intelDelta": 0,
-  "diplomacyDelta": 0,
-  "sanctionDelta": 0,
-  "inspectorRisk": 0.0
-}`;
-
-  const userMsg=`CURRENT GAME STATE:\n${snap}\n\nPENDING OPERATIONS THIS TURN: ${gs.pendingOps.join(', ')||'NONE'}\n\nProcess this turn. Apply operations. Possibly trigger one global drift (30% chance). Update all room stats — stress drifts naturally upward. Move 1-3 nodes. Respond ONLY with raw JSON.`;
-
-  try{
-    const resp=await fetch('/api/proxy',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey},
-      body:JSON.stringify({
-        max_tokens:1000,
-        system:sys,
-        messages:[{role:'user',content:userMsg}]
-      })
-    });
-    const data=await resp.json();
-    // Errore dal proxy o da Groq
-    if(!resp.ok || data.error || !data.content){
-      const msg=data.error?.message||data.error||`HTTP ${resp.status}`;
-      throw new Error(msg);
-    }
-    const raw=data.content.map(c=>c.text||'').join('').trim();
-    const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
-
-    gs.turn+=1;
-    if(result.roomUpdates){
-      Object.entries(result.roomUpdates).forEach(([k,v])=>{
-        if(gs.rooms[k])Object.assign(gs.rooms[k],v);
-      });
-    }
-    if(result.nodeMovements){
-      result.nodeMovements.forEach(mv=>{
-        const node=gs.nodes.find(n=>n.id===mv.id||n.name===mv.name);
-        if(node){
-          if(mv.to)node.room=mv.to;
-          if(mv.stress!==undefined)node.stress=mv.stress;
-          if(mv.loyalty!==undefined)node.loyalty=mv.loyalty;
-        }
-      });
-    }
-    gs.cash=Math.max(0,gs.cash+(result.cashDelta||0));
-    gs.reputation=Math.max(0,Math.min(100,gs.reputation+(result.reputationDelta||0)));
-    gs.intel=Math.max(0,Math.min(100,gs.intel+(result.intelDelta||0)));
-    gs.diplomacy=Math.max(0,Math.min(100,gs.diplomacy+(result.diplomacyDelta||0)));
-    gs.sanction=Math.max(0,Math.min(100,gs.sanction+(result.sanctionDelta||0)));
-    gs.inspectorRisk=Math.max(0,Math.min(1,result.inspectorRisk??gs.inspectorRisk));
-    gs.alerts=result.alerts||[];
-    gs.pendingOps=[];
-
-    addLog(gs.turn-1,result.log||'—',result.events,result.alerts);
-    renderAll();
-  }catch(e){
-    addLog(gs.turn,`[ERROR] ${e.message}`,[],'UPLINK FAILURE');
-    gs.alerts=['SYSTEM ERROR'];
-    renderAlerts();
+window.doOp = function(type, targetId) {
+  const n = engine.agents.find(a => a.id === targetId);
+  if (!n) return;
+  const res = engine.launchFieldOpWithProximity(type, targetId, n.currentZone, {});
+  if (res.success) {
+    pushMon(`◆ ${type.toUpperCase().replace(/_/g,' ')} → ${n.name.split(' ')[0]}: ${res.text}`, 'op');
+    addLog(turn, res.text, (res.completedMissions||[]).map(m=>`Mission: ${m.description}`), []);
+    if (radar) radar.triggerPing(targetId, 'gossip');
+    // Reload node profile
+    selectedNode = engine.agents.find(a => a.id === targetId);
+    renderNodeTab();
+  } else {
+    pushMon(`✗ ${res.text}`, 'alert');
   }
-  setLoading(false);
+  updateHeader();
+  checkEndgame();
+};
+
+// ── QUEENS ───────────────────────────────────────────────────────────────────
+function renderQueensTab() {
+  const c = document.getElementById('tc-queens');
+  const queens = engine.queens || [];
+  if (!queens.length) { c.innerHTML = '<div style="font-size:9px;color:var(--txt3);padding:16px">No queens.</div>'; return; }
+  c.innerHTML = queens.map(q => {
+    const qa = engine.agents.find(a => a.id === q.agentId);
+    const pips = [0,1,2,3].map(i=>`<div class="apip${q.alertLevel>i?' lit':''}"></div>`).join('');
+    return `<div class="queen-card${q.neutralized?' done':''}">
+      <div class="qc-name">${q.neutralized?'✓ ':'◆ '}${q.realName||'UNKNOWN'}</div>
+      <div class="qc-row">FACTION: ${q.faction}</div>
+      <div class="qc-row">ZONE: ${qa?.currentZone||'?'}</div>
+      <div class="qc-row">FOLLOWERS: ${(qa?.followers||[]).length}</div>
+      <div class="qc-row">SECRETS COLLECTED: ${q.secretsCollected||0}/3</div>
+      <div class="qc-row">FOLLOWERS BURNED: ${q.followersBlacklisted||0}/4</div>
+      <div class="alert-pips">${pips}</div>
+      ${q.neutralized?`<div style="font-size:9px;color:var(--acc3);margin-top:5px">NEUTRALIZED via ${q.neutralizeMethod}</div>`:''}
+      ${!q.neutralized&&qa?`<button class="move-btn" onclick="doMove(event,'${qa.currentZone}')" style="border-color:var(--dng);color:var(--dng);margin-top:6px">→ TRACK SOVEREIGN</button>`:''}
+    </div>`;
+  }).join('');
 }
 
-window.addEventListener('DOMContentLoaded',()=>{
-  setTimeout(()=>{
-    document.getElementById('loadingOverlay').style.display='none';
-    renderAll();
-    addLog('--','System initialized. Operations grid online. 50 active nodes detected across 6 classified rooms. Select a provider and connect your API key to begin.',['Grid stabilized','Node network nominal','Multi-provider uplink: READY'],[]);
-  },2200);
-});
+// ── POSTURA ───────────────────────────────────────────────────────────────────
+window.setPostura = function(p) {
+  const res = engine.setPostura(p);
+  if (!res.success) { pushMon(`✗ ${res.text}`, 'alert'); return; }
+  ['BASE','OMBRA','NEUTRALE','VISIBILE'].forEach(k => document.getElementById(`pb-${k}`)?.classList.remove('active'));
+  document.getElementById(`pb-${p}`)?.classList.add('active');
+  const lbl = {BASE:'BASE',OMBRA:'SHADOW',NEUTRALE:'STANDARD',VISIBILE:'EXPOSED'};
+  pushMon(`◆ POSTURE → ${lbl[p]||p}${p==='OMBRA'?' (−15 credits)':''}`, 'op');
+  updateHeader(); renderRoomsTab();
+};
+
+// ── ADVANCE TURN ─────────────────────────────────────────────────────────────
+window.advanceTurn = async function() {
+  if (gameEnded) return;
+  const btn = document.getElementById('advance-btn');
+  btn.disabled = true; btn.classList.add('proc'); btn.textContent = '⟳ PROCESSING...';
+
+  engine.tick(); turn++;
+
+  // Queen progress check ogni 3 turni
+  if (turn % 3 === 0) {
+    (engine.queens||[]).forEach(q => engine.checkQueenProgress(q));
+    renderQueensTab();
+  }
+
+  // Midgame event
+  const mid = engine.checkMidgameEvent?.();
+  if (mid) {
+    const who = mid.action?.();
+    addLog(turn, mid.desc, [who?`Asset: ${who}`:''], ['MIDGAME EVENT']);
+    pushMon(`!! MIDGAME — ${mid.desc.slice(0,50)}`, 'alert');
+  }
+
+  // Ambient intercept casuale
+  const zones = engine.config?.zones||[];
+  if (zones.length && Math.random() < 0.55) {
+    const z = zones[Math.floor(Math.random()*zones.length)];
+    const ic = engine.getAmbientIntercept?.(z.label);
+    if (ic) pushMon(`[${z.label.slice(0,6).toUpperCase()}] ${ic}`, 'beacon');
+  }
+
+  // Queen alert se in stessa zona
+  (engine.queens||[]).forEach(q => {
+    if (q.neutralized) return;
+    const qa = engine.agents.find(a => a.id === q.agentId);
+    if (qa && qa.currentZone === engine.playerRoom && !engine.playerInBase) {
+      q.alertLevel = Math.min(3, q.alertLevel + (turn % 5 === 0 ? 1 : 0));
+    }
+  });
+
+  // Narrative
+  let narrative = FALLBACK_TURNS[turn % FALLBACK_TURNS.length];
+  const fallbackEvs = FALLBACK_EVENTS?.[turn % (FALLBACK_EVENTS?.length||1)] || [];
+
+  if (apiKey) {
+    try {
+      const qStatus = (engine.queens||[]).map(q=>`${q.realName}:${q.neutralized?'DONE':`alert${q.alertLevel}`}`).join(', ');
+      const resp = await fetch('/api/chat', {
+        method:'POST',
+        headers:{'Content-Type':'application/json','x-api-key':apiKey},
+        body: JSON.stringify({ turn, events:fallbackEvs, suspicion:engine.networkSuspicion, playerRoom:engine.playerRoom||'BASE', queensStatus:qStatus }),
+      });
+      const d = await resp.json();
+      if (d.narrative) narrative = d.narrative;
+    } catch(_) {}
+  }
+
+  addLog(turn, narrative, fallbackEvs, []);
+  updateHeader(); renderRoomsTab();
+  if (currentTab === 'node') renderNodeTab();
+
+  checkEndgame();
+  btn.disabled = false; btn.classList.remove('proc'); btn.textContent = '▶ ADVANCE TURN';
+};
+
+// ── ENDGAME ───────────────────────────────────────────────────────────────────
+function checkEndgame() {
+  if (gameEnded) return;
+  const susp = engine.networkSuspicion;
+  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
+  const allDone = (engine.queens||[]).length >= 2 && (engine.queens||[]).every(q=>q.neutralized);
+
+  let ended=false, win=false, title='', sub='';
+  if (susp >= 0.95)  { ended=true; title='NETWORK BURNED';     sub='Suspicion critical. Every faction has your profile. The network locked you out permanently.'; }
+  else if (credits<=0){ ended=true; title='RESOURCES DEPLETED'; sub='No credits remaining. Operations cease. The network goes dark on your end.'; }
+  else if (allDone)  { ended=true; win=true; title='OPERATION COMPLETE'; sub='Both sovereigns neutralized. The network reads as clean. No trace of your presence remains — officially.'; }
+
+  if (!ended) return;
+  gameEnded = true;
+  const ov = document.getElementById('endgame');
+  const t = document.getElementById('eg-title');
+  t.textContent = title; t.style.color = win ? 'var(--acc3)' : 'var(--dng)';
+  document.getElementById('eg-sub').textContent = sub;
+  document.getElementById('eg-stats').innerHTML = `
+    <div class="eg-s"><div class="eg-sk">TURNS</div><div class="eg-sv" style="color:var(--amb)">${turn}</div></div>
+    <div class="eg-s"><div class="eg-sk">SUSPICION</div><div class="eg-sv" style="color:${susp>0.5?'var(--dng)':'var(--acc3)'}">${Math.round(susp*100)}%</div></div>
+    <div class="eg-s"><div class="eg-sk">QUEENS DOWN</div><div class="eg-sv" style="color:${allDone?'var(--acc3)':'var(--dng)'}">${(engine.queens||[]).filter(q=>q.neutralized).length}/2</div></div>`;
+  ov.className = 'endgame show';
+}
+
+window.resetGame = function() {
+  gameEnded=false; turn=0; selectedNode=null;
+  document.getElementById('endgame').className='endgame';
+  document.getElementById('log-entries').innerHTML='';
+  document.getElementById('monitor-wrap').innerHTML='';
+  engine=new SwarmEngine('LOOM_CORE'); engine.init(); bindCallbacks();
+  if (radar) radar.engine = engine;
+  updateHeader(); renderRoomsTab(); renderQueensTab();
+  addLog('--','New operation initiated. Network reseeded. Queens repositioned.',[],[]);
+};
+
+// ── LOG / MONITOR ─────────────────────────────────────────────────────────────
+function addLog(t, narr, evs, als) {
+  const el = document.getElementById('log-entries');
+  const evH = (evs||[]).map(e=>`<div class="log-ev">${e}</div>`).join('');
+  const alH = (Array.isArray(als)?als:[als]).filter(Boolean).map(a=>`<div class="log-al">${a}</div>`).join('');
+  el.insertAdjacentHTML('afterbegin',`<div class="log-e">
+    <div class="log-ts">TURN ${t} — ${new Date().toLocaleTimeString()}</div>
+    <div class="log-narr">${narr}</div>${evH}${alH}</div>`);
+}
+
+function pushMon(text, type='') {
+  const feed = document.getElementById('monitor-wrap');
+  const d = document.createElement('div');
+  d.className = `mon-item ${type}`; d.textContent = text;
+  feed.insertBefore(d, feed.firstChild);
+  while (feed.children.length > 80) feed.removeChild(feed.lastChild);
+}
+
+window.saveKey = function() {
+  apiKey = document.getElementById('api-key').value.trim();
+  const s = document.getElementById('key-status');
+  s.textContent = apiKey ? 'GROQ ACTIVE' : 'NO KEY';
+  s.style.color  = apiKey ? 'var(--acc3)' : 'var(--txt3)';
+};
 </script>
 </body>
 </html>
