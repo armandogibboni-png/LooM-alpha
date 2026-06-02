@@ -144,7 +144,7 @@
       <div class="hdr-acronym">
         <span>L</span>ocal &nbsp;<span>O</span>pinion &nbsp;<span>O</span>verhaul &nbsp;<span>M</span>onitor
       </div>
-      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE</div>
+      <div class="hdr-sub">v1.0 ALPHA &nbsp;|&nbsp; CLASSIFICATION LEVEL 5 &nbsp;|&nbsp; OPERATION ACTIVE &nbsp;|&nbsp; FREE WITH GROQ</div>
     </div>
     <div class="hdr-right">
       <div class="turn-counter">TURN <span id="turnNum">01</span></div>
@@ -152,7 +152,14 @@
     </div>
   </div>
 
-  <!-- ENGINE: GROQ via server-side env var — no key needed -->
+  <!-- GROQ API KEY -->
+  <div style="background:var(--panel);border:1px solid var(--brd);padding:8px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px">
+    <span style="font-size:9px;color:var(--txt2);letter-spacing:1px;white-space:nowrap">GROQ KEY //</span>
+    <input type="password" id="apiKey" placeholder="gsk_... — free at console.groq.com"
+      style="flex:1;background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:11px;padding:5px 8px;outline:none" />
+    <button onclick="saveKey()" style="background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:10px;padding:4px 12px;cursor:pointer;letter-spacing:1px;white-space:nowrap">CONNECT</button>
+    <span id="keyStatus" style="font-size:9px;color:var(--txt2);white-space:nowrap">NO KEY</span>
+  </div>
 
   <!-- POWER TRIANGLE -->
   <div class="tri-bar">
@@ -284,7 +291,15 @@ let gs={
   pendingOps:[],
 };
 
+let apiKey='';
 let loading=false;
+
+function saveKey(){
+  apiKey=document.getElementById('apiKey').value.trim();
+  const s=document.getElementById('keyStatus');
+  s.textContent=apiKey?'GROQ ACTIVE':'NO KEY';
+  s.style.color=apiKey?'var(--acc3)':'var(--txt2)';
+}
 
 
 function sc(s){
@@ -507,6 +522,7 @@ function setLoading(v){
 }
 
 async function doAdvanceTurn(){
+  if(!apiKey){alert('Paste your Groq key and hit CONNECT.\nGet one free at console.groq.com');return;}
   setLoading(true);
 
   const snap=JSON.stringify({
@@ -573,7 +589,7 @@ JSON SCHEMA:
   try{
     const resp=await fetch('/api/proxy',{
       method:'POST',
-      headers:{'Content-Type':'application/json'},
+      headers:{'Content-Type':'application/json','x-api-key':apiKey},
       body:JSON.stringify({
         model:selectedModel,
         max_tokens:1000,
