@@ -149,6 +149,19 @@ export class SwarmEngine {
     this.initQueens();
     this._generateMissions();
     this.initRooms();
+    this._initFeaturedCast();
+    this._posCache = {};
+    this._moleClues = {}; // agentId → count clues shown
+  }
+
+  _initFeaturedCast() {
+    // I primi 20 nodi non-queen non-recurring diventano il cast principale
+    let count = 0;
+    this.agents.forEach(a => {
+      if (a.isQueen || a.isRecurring) { a.isFeatured = true; return; }
+      if (count < 18) { a.isFeatured = true; count++; }
+      else { a.isFeatured = false; }
+    });
   }
 
   // ── PERSONAGGI RICORRENTI ─────────────────────────────────────────
@@ -540,6 +553,7 @@ export class SwarmEngine {
     this.playerVisited = this.playerVisited || new Set();
     const firstVisit = !this.playerVisited.has(roomLabel);
     this.playerVisited.add(roomLabel);
+    this.revealRoomNodes(roomLabel); // fog of war
 
     const room = this.rooms[roomLabel];
     const anxiety = room?.anxiety || 0;
@@ -882,7 +896,9 @@ export class SwarmEngine {
           const a = Math.random() * Math.PI * 2;
           agent.targetRx = newZone.rx + Math.cos(a) * spread;
           agent.targetRy = newZone.ry + Math.sin(a) * spread;
+          const prevZone = agent.currentZone;
           agent.currentZone = newZone.label;
+          if (prevZone !== newZone.label) this.invalidatePosCache(prevZone);
           agent.zoneChangeCooldown = agent.isQueen
             ? 600 + Math.floor(Math.random() * 400)
             : 200 + Math.floor(Math.random() * 400);
@@ -1317,8 +1333,153 @@ export class SwarmEngine {
     const queenMod = agent.isQueen ? 0.5 : 1; // regine rispondono più in fretta (più pericolose)
     return (1200 + (agent.ghostProbability * 3500) + (agent.pressure * 2000)) * queenMod;
   }
+  // ── FOG OF WAR ────────────────────────────────────────────────────
+  revealNode(agentId) {
+    const rel = this.playerRelations[agentId];
+    if (rel) rel.revealed = true;
+  }
+
+  isNodeRevealed(agentId) {
+    const rel = this.playerRelations[agentId];
+    return !!(rel?.revealed || rel?.interactionCount > 0);
+  }
+
+  // Quando player entra in una stanza, rivela tutti i featured node presenti
+  revealRoomNodes(roomLabel) {
+    const agents = this.getRoomAgents(roomLabel);
+    agents.forEach(a => { if (a.isFeatured) this.revealNode(a.id); });
+  }
+
+  // ── MOLE ACCUSATION ───────────────────────────────────────────────
+  accuseNode(agentId) {
+    const agent = this.agents.find(a => a.id === agentId);
+    if (!agent) return { error: true };
+    if (agent.mole && !agent.isBlacklisted) {
+      agent.isBlacklisted = true;
+      agent.moleExposed = true;
+      // Reward
+      this.raiseFactionSuspicion(agent.faction, -0.25, null);
+      this.networkSuspicion = Math.max(0.05, this.networkSuspicion - 0.15);
+      this.addCredits(250, 'Mole exposed');
+      return { correct: true, agent };
+    } else {
+      // Wrong: burn trust, spike suspicion
+      this.raiseFactionSuspicion(agent.faction, 0.20, agentId);
+      const rel = this.playerRelations[agentId];
+      if (rel) { rel.trustTier = 0; }
+      return { correct: false, agent };
+    }
+  }
+
+  // ── QUEEN STAGES ──────────────────────────────────────────────────
+  getQueenStage(queenData) {
+    if (queenData.neutralized) return 'NEUTRALIZED';
+    if (!this.isNodeRevealed(queenData.agentId)) return 'UNKNOWN';
+    const fb = queenData.followersBlacklisted || 0;
+    const sc = queenData.secretsCollected || 0;
+    if (fb >= 4 || sc >= 3) return 'EXPOSED';
+    if (fb >= 2 || sc >= 1) return 'PRESSURED';
+    return 'IDENTIFIED';
+  }
+
+  getQueenStageProgress(queenData) {
+    const fb = queenData.followersBlacklisted || 0;
+    const sc = queenData.secretsCollected || 0;
+    return { followers: fb, followersMax: 4, secrets: sc, secretsMax: 3 };
+  }
+
+  // ── TURN INTEL GENERATION ─────────────────────────────────────────
+  generateTurnIntel() {
+    const intel = [];
+
+    // Mole behavioral clues (25% chance per mole per turn)
+    this.agents.filter(a => a.mole && !a.isBlacklisted && !a.moleExposed && a.isFeatured).forEach(m => {
+      if (Math.random() < 0.28) {
+        const clue = this._buildMoleClue(m);
+        if (clue) {
+          intel.push({ type: 'mole_clue', text: clue, agentId: m.id });
+          this._moleClues[m.id] = (this._moleClues[m.id] || 0) + 1;
+        }
+      }
+    });
+
+    // Queen movement (only if identified)
+    this.queens.forEach(q => {
+      if (q.neutralized) return;
+      const qa = this.agents.find(a => a.id === q.agentId);
+      if (!qa || !this.isNodeRevealed(q.agentId)) return;
+      if (Math.random() < 0.45) {
+        const stage = this.getQueenStage(q);
+        intel.push({ type: 'queen', text: `[${stage}] ${qa.name.split(' ')[0]} — ${qa.currentZone}. Alert: ${q.alertLevel}/3.`, agentId: q.agentId });
+      }
+    });
+
+    // Featured node movements (only revealed ones)
+    const revealed = this.agents.filter(a =>
+      a.isFeatured && !a.isBlacklisted && !a.isQueen && this.isNodeRevealed(a.id)
+    );
+    if (revealed.length && Math.random() < 0.5) {
+      const a = revealed[Math.floor(Math.random() * revealed.length)];
+      intel.push({ type: 'movement', text: `${a.name.split(' ')[0]} [${a.faction}] → ${a.currentZone}.`, agentId: a.id });
+    }
+
+    // Room anxiety spike
+    const zones = this.config?.zones || [];
+    zones.forEach(z => {
+      const room = this.rooms[z.label];
+      if (room && room.anxiety > 0.7 && Math.random() < 0.3) {
+        intel.push({ type: 'anxiety', text: `⚠ ${z.label} — critical anxiety (${Math.round(room.anxiety*100)}%). Network on edge.` });
+      }
+    });
+
+    return intel;
+  }
+
+  _buildMoleClue(m) {
+    const clues = [
+      `${m.name.split(' ')[0]} accessed ${m.currentZone} outside any registered schedule.`,
+      `Anomalous outbound signature. Origin narrowed to ${m.currentZone} — ${m.name.split(' ')[0]} present.`,
+      `${m.name.split(' ')[0]} — two zone changes this turn. No registered reason.`,
+      `Encrypted traffic burst. Timestamp matches ${m.name.split(' ')[0]}'s last position.`,
+      `${m.name.split(' ')[0]} requested access credentials outside their clearance level.`,
+      `${m.name.split(' ')[0]} was in ${m.currentZone} when the last suspicion spike occurred.`,
+      `Pattern analysis: ${m.name.split(' ')[0]} avoids zones where their handler is present.`,
+      `${m.name.split(' ')[0]} — contact duration with COMPETITORS nodes: above baseline.`,
+    ];
+    return clues[Math.floor(Math.random() * clues.length)];
+  }
+
+  getMoleClueCount(agentId) {
+    return this._moleClues[agentId] || 0;
+  }
+
+  // ── STABLE POSITION CACHE ─────────────────────────────────────────
+  getNodePositions(roomLabel, CX, CY, RAD) {
+    if (!this._posCache) this._posCache = {};
+    const agents = this.getRoomAgents(roomLabel);
+    const cacheKey = roomLabel + ':' + agents.map(a => a.id + a.currentZone).join(',');
+    if (this._posCache[roomLabel]?.key === cacheKey) {
+      return this._posCache[roomLabel].positions;
+    }
+    const rings = [0.35, 0.65, 1.0];
+    const positions = agents.map((a, i) => {
+      const rel = this.playerRelations[a.id] || { trustTier: 0 };
+      const angle = (2 * Math.PI * i / Math.max(agents.length, 1)) - Math.PI / 2;
+      const ringR = RAD * rings[Math.min(rel.trustTier, 2)];
+      const jitter = ((a.index || i) * 0.618033) % 0.10;
+      return {
+        id: a.id, agent: a, rel,
+        x: +(CX + Math.cos(angle) * ringR * (0.87 + jitter)).toFixed(1),
+        y: +(CY + Math.sin(angle) * ringR * (0.87 + jitter)).toFixed(1),
+      };
+    });
+    this._posCache[roomLabel] = { key: cacheKey, positions };
+    return positions;
+  }
+
+  invalidatePosCache(roomLabel) {
+    if (this._posCache && roomLabel) delete this._posCache[roomLabel];
+    else if (this._posCache) this._posCache = {};
+  }
+
 }
-
-
-
-

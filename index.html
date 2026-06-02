@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>L.O.O.M. // SWARM CORE — v2.1</title>
+<title>L.O.O.M. // SWARM CORE — v2.2</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
 *{box-sizing:border-box;margin:0;padding:0}
@@ -19,138 +19,168 @@
 }
 body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12px;line-height:1.4;height:100vh;overflow:hidden}
 .scanline{position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,.07) 2px,rgba(0,0,0,.07) 4px);pointer-events:none;z-index:999}
-.crt{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.45) 100%);pointer-events:none;z-index:998}
+.crt{position:fixed;inset:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.4) 100%);pointer-events:none;z-index:998}
 
-/* ── LAYOUT ─────────────────────────────────────────────────────── */
-#app{display:grid;grid-template-rows:44px 1fr 160px;grid-template-columns:1fr 300px;height:100vh;width:100vw}
-#header{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--brd);display:flex;align-items:center;justify-content:space-between;padding:0 14px;position:relative;overflow:hidden;z-index:10}
+/* ── LAYOUT ──────────────────────────────────────────────── */
+#app{display:grid;grid-template-rows:auto 1fr 160px;grid-template-columns:1fr 310px;height:100vh;width:100vw}
+#header{grid-column:1/-1;background:var(--panel);border-bottom:1px solid var(--brd);padding:0 14px;display:flex;flex-direction:column;gap:0;position:relative;overflow:hidden}
 #header::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
-#grid-area{overflow:hidden;display:flex;flex-direction:column}
-#side-panel{background:var(--bg2);border-left:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden}
-#log-area{grid-column:1/-1;border-top:1px solid var(--brd);display:flex;overflow:hidden;background:var(--bg)}
+#grid-col{display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#side{background:var(--bg2);border-left:1px solid var(--brd);display:flex;flex-direction:column;overflow:hidden;min-height:0}
+#log-row{grid-column:1/-1;border-top:1px solid var(--brd);display:flex;overflow:hidden}
 
-/* ── HEADER ─────────────────────────────────────────────────────── */
+/* ── HEADER ROWS ─────────────────────────────────────────── */
+#hdr-main{display:flex;align-items:center;justify-content:space-between;height:42px}
+#hdr-queens{display:flex;align-items:stretch;gap:0;border-top:1px solid var(--brd2);background:var(--bg)}
 .hdr-title{font-family:var(--head);font-size:14px;color:var(--acc);letter-spacing:4px;font-weight:900}
-.hdr-sub{font-size:7px;color:var(--txt3);letter-spacing:2px;margin-top:1px}
-.hdr-stats{display:flex;gap:16px;align-items:center}
-.hs{font-size:9px;color:var(--txt2);letter-spacing:1px}
-.hs b{font-weight:normal;font-family:var(--head);font-size:11px;margin-left:3px;color:var(--txt)}
-.hs b.ok{color:var(--acc3)}.hs b.warn{color:var(--amb)}.hs b.bad{color:var(--dng)}
+.hdr-sub-text{font-size:7px;color:var(--txt3);letter-spacing:2px;margin-top:1px}
+.hdr-stats{display:flex;gap:14px;align-items:center}
+.hs{font-size:9px;color:var(--txt2);letter-spacing:.5px}
+.hs b{font-weight:normal;font-family:var(--head);font-size:11px;margin-left:3px}
+.ok{color:var(--acc3)}.warn{color:var(--amb)}.bad{color:var(--dng)}
 .hdr-right{display:flex;align-items:center;gap:10px}
 #key-bar{display:flex;align-items:center;gap:5px}
-#key-bar input{background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:3px 7px;outline:none;width:170px}
+#key-bar input{background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:3px 7px;outline:none;width:175px}
 #key-bar input:focus{border-color:var(--acc)}
-#key-bar button{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:8px;padding:3px 7px;cursor:pointer;letter-spacing:1px;white-space:nowrap}
+#key-bar button{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--mono);font-size:8px;padding:3px 7px;cursor:pointer;letter-spacing:1px}
 #key-status{font-size:8px;color:var(--txt3);white-space:nowrap}
 .sdot{display:inline-block;width:5px;height:5px;border-radius:50%;background:var(--acc3);box-shadow:0 0 5px var(--acc3);margin-right:3px;animation:blink 1.2s infinite}
 @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
-#susp-bar-hdr{position:absolute;bottom:0;left:0;right:0;height:2px}
-#susp-fill-hdr{height:2px;background:var(--acc3);transition:width .5s,background .3s;width:10%}
+#susp-bar{position:absolute;bottom:0;left:0;height:2px;background:var(--acc3);transition:width .6s,background .3s;z-index:5}
 
-/* ── ROOM GRID ──────────────────────────────────────────────────── */
-#room-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:1px;background:var(--brd2);overflow:hidden}
-.room-card{background:var(--bg);cursor:pointer;display:flex;flex-direction:column;padding:6px 8px;position:relative;transition:background .15s;overflow:hidden}
-.room-card:hover{background:var(--bg2)}
-.room-card.active{background:var(--panel);outline:1px solid var(--acc);outline-offset:-1px}
-.room-card.active .rc-name{color:var(--acc)}
-.rc-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
-.rc-name{font-family:var(--head);font-size:8px;letter-spacing:1px;color:var(--txt2);transition:color .15s}
-.rc-tag{font-size:7px;letter-spacing:1px;padding:1px 4px;border:1px solid}
-.rc-meta{display:flex;gap:8px;font-size:8px;color:var(--txt3);margin-bottom:4px}
-.rc-bar{height:2px;background:var(--brd2);margin-bottom:4px}
-.rc-fill{height:2px;transition:width .5s,background .3s}
-.rc-svg{flex:1;min-height:0}
-.rc-svg svg{width:100%;height:100%;display:block}
-/* SOVEREIGN marker */
-.q-marker{position:absolute;top:4px;right:4px;color:var(--dng);font-size:10px;animation:blink 1.5s infinite}
+/* ── QUEEN HEADER WIDGETS ────────────────────────────────── */
+.qw{flex:1;padding:4px 12px;display:flex;align-items:center;gap:10px;border-right:1px solid var(--brd2);cursor:default}
+.qw:last-child{border-right:none}
+.qw-label{font-size:7px;letter-spacing:1px;color:var(--txt3)}
+.qw-name{font-size:9px;letter-spacing:.5px}
+.qw-stage{font-size:8px;padding:1px 5px;border:1px solid;letter-spacing:1px}
+.qw-stage.UNKNOWN{color:var(--txt3);border-color:var(--brd2)}
+.qw-stage.IDENTIFIED{color:var(--acc);border-color:var(--acc)}
+.qw-stage.PRESSURED{color:var(--amb);border-color:var(--amb)}
+.qw-stage.EXPOSED{color:var(--dng);border-color:var(--dng);animation:blink .8s infinite}
+.qw-stage.NEUTRALIZED{color:var(--acc3);border-color:var(--acc3)}
+.qw-pips{display:flex;gap:2px;align-items:center}
+.qpip{width:10px;height:4px;background:var(--brd2)}
+.qpip.on{background:var(--dng)}
+.qpip.done{background:var(--acc3)}
 
-/* ── ADVANCE TURN ───────────────────────────────────────────────── */
-#advance-row{height:32px;background:var(--panel);border-top:1px solid var(--brd);display:flex;align-items:center;justify-content:center;gap:12px;padding:0 12px}
-#advance-btn{background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:9px;padding:5px 16px;cursor:pointer;letter-spacing:2px;transition:all .2s}
-#advance-btn:hover{background:rgba(118,255,3,.08)}
+/* ── ROOM GRID ────────────────────────────────────────────── */
+#room-grid{flex:1;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(2,1fr);gap:1px;background:var(--brd2);min-height:0}
+.rc{background:var(--bg);cursor:pointer;display:flex;flex-direction:column;padding:5px 7px;position:relative;transition:background .12s;overflow:hidden;min-height:0}
+.rc:hover{background:rgba(10,21,32,.8)}
+.rc.active{background:var(--panel);box-shadow:inset 0 0 0 1px var(--acc)}
+.rc.active .rc-name{color:var(--acc)}
+.rc.player-here{box-shadow:inset 0 0 0 1px var(--gold)}
+.rc-name{font-family:var(--head);font-size:7px;letter-spacing:1px;color:var(--txt3);transition:color .12s;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rc-meta{display:flex;gap:6px;font-size:7px;color:var(--txt3);margin:2px 0}
+.rc-bar{height:1px;background:var(--brd2);margin-bottom:2px;flex-shrink:0}
+.rc-fill{height:1px;transition:width .5s,background .3s}
+.rc-svg-wrap{flex:1;min-height:0;overflow:hidden}
+.rc-svg-wrap svg{width:100%;height:100%;display:block}
+.q-flag{position:absolute;top:3px;right:3px;font-size:9px;color:var(--dng);line-height:1}
+
+/* ── ADVANCE ROW ─────────────────────────────────────────── */
+#advance-row{height:30px;flex-shrink:0;background:var(--panel);border-top:1px solid var(--brd);display:flex;align-items:center;gap:10px;padding:0 10px}
+#advance-btn{background:transparent;border:1px solid var(--acc3);color:var(--acc3);font-family:var(--head);font-size:9px;padding:4px 14px;cursor:pointer;letter-spacing:2px;transition:all .2s;white-space:nowrap}
+#advance-btn:hover{background:rgba(118,255,3,.07)}
 #advance-btn:disabled{opacity:.3;cursor:not-allowed}
 #advance-btn.proc{border-color:var(--txt3);color:var(--txt3);animation:pulse .8s infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
-#postura-strip{display:flex;gap:4px}
-.pb{background:transparent;border:1px solid var(--brd2);color:var(--txt3);font-family:var(--mono);font-size:8px;padding:4px 8px;cursor:pointer;letter-spacing:.5px;transition:all .15s}
-.pb:hover,.pb.active{border-color:var(--acc);color:var(--acc);background:rgba(0,229,255,.05)}
-.pb.active.pb-ombra{border-color:var(--pur);color:var(--pur);background:rgba(234,128,252,.05)}
-.pb.active.pb-vis{border-color:var(--dng);color:var(--dng);background:rgba(255,23,68,.04)}
-.pb.active.pb-base{border-color:var(--gold);color:var(--gold);background:rgba(200,169,126,.05)}
+.pb{background:transparent;border:1px solid var(--brd2);color:var(--txt3);font-family:var(--mono);font-size:8px;padding:3px 7px;cursor:pointer;letter-spacing:.5px;transition:all .12s;white-space:nowrap}
+.pb:hover,.pb.active{border-color:var(--acc);color:var(--acc);background:rgba(0,229,255,.04)}
+.pb.active.pb-o{border-color:var(--pur);color:var(--pur);background:rgba(234,128,252,.04)}
+.pb.active.pb-v{border-color:var(--dng);color:var(--dng)}
+.pb.active.pb-b{border-color:var(--gold);color:var(--gold)}
+#player-loc{font-size:8px;color:var(--gold);margin-left:auto;white-space:nowrap}
 
-/* ── SIDE PANEL ─────────────────────────────────────────────────── */
-#sp-header{padding:8px 10px;border-bottom:1px solid var(--brd2);font-size:8px;color:var(--txt3);letter-spacing:1px;min-height:28px;display:flex;align-items:center;justify-content:space-between}
-#sp-radar{flex-shrink:0;padding:4px;border-bottom:1px solid var(--brd2)}
-#sp-radar svg{display:block;width:100%}
-#sp-node{flex:1;overflow-y:auto;padding:8px 10px;border-bottom:1px solid var(--brd2)}
-#sp-node::-webkit-scrollbar{width:2px}
-#sp-node::-webkit-scrollbar-thumb{background:var(--brd)}
-#sp-chat{display:flex;flex-direction:column;height:180px;border-top:1px solid var(--brd2)}
-#chat-log{flex:1;overflow-y:auto;padding:6px 10px;font-size:9px}
+/* ── SIDE PANEL ──────────────────────────────────────────── */
+#sp-hdr{padding:6px 10px;border-bottom:1px solid var(--brd2);font-size:8px;color:var(--txt3);letter-spacing:1px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;min-height:26px}
+#sp-body{flex:1;overflow-y:auto;display:flex;flex-direction:column;min-height:0}
+#sp-body::-webkit-scrollbar{width:2px}
+#sp-body::-webkit-scrollbar-thumb{background:var(--brd)}
+#sp-radar-wrap{padding:4px;border-bottom:1px solid var(--brd2);flex-shrink:0}
+#sp-radar-wrap svg{display:block;width:100%}
+#sp-hint{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:16px;text-align:center}
+#sp-hint p{font-size:9px;color:var(--txt3);letter-spacing:1px;line-height:2}
+#sp-node-wrap{padding:8px 10px;border-bottom:1px solid var(--brd2)}
+#sp-chat{display:none;flex-direction:column;flex-shrink:0;height:172px}
+#chat-log{flex:1;overflow-y:auto;padding:5px 10px;font-size:9px}
 #chat-log::-webkit-scrollbar{width:2px}
-#chat-log::-webkit-scrollbar-thumb{background:var(--brd)}
-.cm{margin-bottom:5px;line-height:1.5}
-.cm.you{color:var(--gold)}
-.cm.you::before{content:'YOU // ';color:var(--txt3)}
-.cm.node{color:var(--txt)}
-.cm.node::before{content:'';color:var(--txt3)}
-.cm.sys{color:var(--txt3);font-style:italic}
-#chat-input-row{display:flex;gap:0;border-top:1px solid var(--brd2)}
-#chat-input{flex:1;background:var(--bg);border:none;color:var(--txt);font-family:var(--mono);font-size:10px;padding:7px 10px;outline:none}
-#chat-send{background:transparent;border-left:1px solid var(--brd2);color:var(--acc);font-family:var(--mono);font-size:9px;padding:7px 10px;cursor:pointer;letter-spacing:1px;white-space:nowrap;transition:all .15s}
-#chat-send:hover{background:rgba(0,229,255,.06)}
+.cm{margin-bottom:4px;line-height:1.5;animation:fi .2s}
+.cm.you{color:var(--gold)}.cm.you::before{content:'YOU › ';color:var(--txt3)}
+.cm.node{color:var(--txt)}.cm.sys{color:var(--txt3);font-style:italic}
+#chat-input-row{display:flex;border-top:1px solid var(--brd2);flex-shrink:0}
+#chat-in{flex:1;background:transparent;border:none;color:var(--txt);font-family:var(--mono);font-size:10px;padding:7px 10px;outline:none}
+#chat-send{background:transparent;border-left:1px solid var(--brd2);color:var(--acc);font-family:var(--mono);font-size:8px;padding:7px 10px;cursor:pointer;letter-spacing:1px;white-space:nowrap}
+#chat-send:hover{background:rgba(0,229,255,.05)}
 #chat-send:disabled{opacity:.3;cursor:not-allowed}
 
-/* Node profile styles */
+/* ── NODE PROFILE ─────────────────────────────────────────── */
 .np-name{font-family:var(--head);font-size:10px;margin-bottom:4px}
-.np-r{font-size:8px;color:var(--txt2);margin-bottom:2px}
-.np-r b{font-weight:normal;color:var(--txt)}
+.np-r{font-size:8px;color:var(--txt2);margin-bottom:2px}.np-r b{font-weight:normal;color:var(--txt)}
 .np-lore{font-size:9px;color:var(--txt2);margin:6px 0;line-height:1.6;border-left:2px solid var(--brd2);padding-left:6px;font-style:italic}
-.tbar{display:flex;gap:2px;margin:5px 0}
+.tbar{display:flex;gap:2px;margin:4px 0}
 .tp{width:18px;height:4px;background:var(--brd2)}.tp.on{background:var(--gold)}
-.ops-lbl{font-size:8px;color:var(--txt3);letter-spacing:1px;margin:6px 0 4px}
+.ops-lbl{font-size:8px;color:var(--txt3);letter-spacing:1px;margin:5px 0 3px}
 .ops-g{display:grid;grid-template-columns:1fr 1fr;gap:2px}
-.fop{background:var(--bg);border:1px solid var(--brd2);padding:5px 6px;cursor:pointer;transition:all .15s}
+.fop{background:var(--bg);border:1px solid var(--brd2);padding:5px 6px;cursor:pointer;transition:all .12s}
 .fop:hover:not(.blk){border-color:var(--acc)}
-.fop.blk{opacity:.28;pointer-events:none}
-.fn{font-size:8px;color:var(--txt);display:block;margin-bottom:1px;font-weight:600}
+.fop.blk{opacity:.25;pointer-events:none}
+.fn{font-size:8px;font-weight:600;display:block;margin-bottom:1px}
 .fc{font-size:7px;color:var(--amb);display:block}
 .fd{font-size:7px;color:var(--txt3);margin-top:2px;line-height:1.3}
-#sp-hint{display:flex;align-items:center;justify-content:center;flex:1;flex-direction:column;gap:8px;padding:20px;text-align:center}
-#sp-hint p{font-size:9px;color:var(--txt3);letter-spacing:1px;line-height:1.8}
+.accuse-btn{width:100%;margin-top:6px;padding:6px;background:rgba(255,23,68,.06);border:1px solid var(--dng);color:var(--dng);font-family:var(--mono);font-size:9px;cursor:pointer;letter-spacing:1px;transition:all .15s}
+.accuse-btn:hover{background:rgba(255,23,68,.12)}
+.no-key-hint{font-size:8px;color:var(--txt3);text-align:center;padding:8px 0;letter-spacing:.5px}
 
-/* ── LOG ─────────────────────────────────────────────────────────── */
-#log-main{flex:1;overflow-y:auto;padding:6px 12px}
+/* ── INTEL CLUE BADGE ────────────────────────────────────── */
+.clue-badge{display:inline-block;background:rgba(255,23,68,.1);border:1px solid rgba(255,23,68,.4);color:var(--dng);font-size:8px;padding:1px 6px;letter-spacing:1px;margin-left:6px}
+
+/* ── LOG ─────────────────────────────────────────────────── */
+#log-main{flex:1;overflow-y:auto;padding:5px 10px}
 #log-main::-webkit-scrollbar{width:3px}
 #log-main::-webkit-scrollbar-thumb{background:var(--brd)}
-#monitor{width:190px;border-left:1px solid var(--brd2);overflow-y:auto;padding:4px 5px;background:var(--bg2)}
+#monitor{width:190px;border-left:1px solid var(--brd2);overflow-y:auto;padding:3px 5px;background:var(--bg2)}
 #monitor::-webkit-scrollbar{width:2px}
-.le{margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--brd2);animation:fi .3s}
+.le{margin-bottom:7px;padding-bottom:7px;border-bottom:1px solid var(--brd2);animation:fi .3s}
 @keyframes fi{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:none}}
-.lts{font-size:8px;color:var(--txt3);letter-spacing:1px;margin-bottom:2px}
+.lts{font-size:8px;color:var(--txt3);margin-bottom:2px}
 .lnarr{font-size:10px;color:var(--txt);line-height:1.6;margin-bottom:2px}
 .lev{font-size:8px;color:var(--txt2)}.lev::before{content:'> ';color:var(--acc3)}
-.lal{font-size:8px;color:var(--dng)}.lal::before{content:'!! '}
+.lev.mole{color:var(--dng)}.lev.mole::before{content:'?? ';color:var(--dng)}
+.lev.queen{color:var(--pur)}.lev.queen::before{content:'◆ ';color:var(--pur)}
+.lev.alert{color:var(--dng)}.lev.alert::before{content:'!! '}
 .mi{font-size:8px;padding:2px 0;border-bottom:1px solid var(--brd2);color:var(--txt3);line-height:1.4;animation:fi .2s}
-.mi.b{color:var(--acc)}.mi.a{color:var(--dng)}.mi.o{color:var(--gold)}
+.mi.b{color:var(--acc)}.mi.a{color:var(--dng)}.mi.o{color:var(--gold)}.mi.m{color:var(--dng);font-weight:600}
 
-/* ── OVERLAYS ────────────────────────────────────────────────────── */
+/* ── OVERLAYS ─────────────────────────────────────────────── */
 #loading{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
 .lt{font-family:var(--head);font-size:18px;color:var(--acc);letter-spacing:5px}
-.ls{font-size:8px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.2}
+.ls{font-size:8px;color:var(--txt3);letter-spacing:2px;text-align:center;line-height:2.4}
 .lb{width:200px;height:2px;background:var(--brd);overflow:hidden}
 .lf{height:100%;background:var(--acc);animation:la 1.2s infinite}
 @keyframes la{0%{width:0;margin-left:0}50%{width:100%;margin-left:0}100%{width:0;margin-left:100%}}
 #endgame{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:8000;display:none;flex-direction:column;align-items:center;justify-content:center;gap:16px;padding:40px;text-align:center}
 #endgame.show{display:flex}
 #eg-t{font-family:var(--head);font-size:20px;letter-spacing:5px}
-#eg-s{font-size:10px;color:var(--txt2);max-width:460px;line-height:1.8}
+#eg-s{font-size:10px;color:var(--txt2);max-width:480px;line-height:1.8}
 #eg-stats{display:flex;gap:10px}
 .egs{background:var(--panel);border:1px solid var(--brd);padding:8px 12px;text-align:center}
 .egsk{font-size:7px;color:var(--txt3);letter-spacing:2px;margin-bottom:3px}
 .egsv{font-family:var(--head);font-size:14px}
 #eg-btn{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:9px;padding:8px 22px;cursor:pointer;letter-spacing:3px;margin-top:4px}
-#eg-btn:hover{background:rgba(0,229,255,.06)}
+
+/* ── ACCUSE CONFIRM ──────────────────────────────────────── */
+#accuse-modal{position:fixed;inset:0;background:rgba(5,10,14,.92);z-index:7000;display:none;align-items:center;justify-content:center}
+#accuse-modal.show{display:flex}
+.am-box{background:var(--panel);border:1px solid var(--dng);padding:24px;max-width:340px;text-align:center}
+.am-title{font-family:var(--head);font-size:12px;color:var(--dng);letter-spacing:2px;margin-bottom:10px}
+.am-sub{font-size:10px;color:var(--txt2);line-height:1.7;margin-bottom:16px}
+.am-btns{display:flex;gap:8px;justify-content:center}
+.am-btn{background:transparent;font-family:var(--mono);font-size:10px;padding:7px 16px;cursor:pointer;letter-spacing:1px}
+.am-confirm{border:1px solid var(--dng);color:var(--dng)}.am-confirm:hover{background:rgba(255,23,68,.08)}
+.am-cancel{border:1px solid var(--brd);color:var(--txt2)}.am-cancel:hover{border-color:var(--acc);color:var(--acc)}
+
 @media(max-width:900px){.mob{display:flex!important}#app,#loading{display:none!important}}
 .mob{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:32px;text-align:center}
 </style>
@@ -161,7 +191,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
 
 <div id="loading">
   <div class="lt">L.O.O.M.</div>
-  <div class="ls">SWARM CORE v2.1<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES // 6 ZONES</div>
+  <div class="ls">SWARM CORE v2.2<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES — 6 ZONES<br>ENCRYPTING IDENTITIES</div>
   <div class="lb"><div class="lf"></div></div>
 </div>
 
@@ -172,94 +202,97 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
   <button id="eg-btn" onclick="resetGame()">↺ NEW OPERATION</button>
 </div>
 
+<!-- ACCUSE MODAL -->
+<div id="accuse-modal">
+  <div class="am-box">
+    <div class="am-title">!! ACCUSATION</div>
+    <div class="am-sub" id="am-sub">Accuse this asset as a mole?<br>If wrong, the faction will know you are looking.</div>
+    <div class="am-btns">
+      <button class="am-btn am-confirm" onclick="confirmAccuse()">CONFIRM ACCUSATION</button>
+      <button class="am-btn am-cancel" onclick="cancelAccuse()">ABORT</button>
+    </div>
+  </div>
+</div>
+
 <div id="app">
-  <!-- HEADER -->
   <div id="header">
-    <div style="display:flex;align-items:center;gap:16px">
-      <div>
-        <div class="hdr-title">L.O.O.M.</div>
-        <div class="hdr-sub">SWARM CORE v2.1 // LOCAL ENGINE // AI NARRATIVE</div>
+    <div id="hdr-main">
+      <div style="display:flex;align-items:center;gap:16px">
+        <div>
+          <div class="hdr-title">L.O.O.M.</div>
+          <div class="hdr-sub-text">SWARM CORE v2.2 // LOCAL ENGINE + AI NARRATIVE</div>
+        </div>
+        <div class="hdr-stats">
+          <div class="hs">CREDITS<b id="h-cr">100</b></div>
+          <div class="hs">SUSPICION<b id="h-su">10%</b></div>
+          <div class="hs">TURN<b id="h-tu">00</b></div>
+          <div class="hs">POSTURE<b id="h-po">BASE</b></div>
+        </div>
       </div>
-      <div class="hdr-stats">
-        <div class="hs">CREDITS<b id="h-cr">100</b></div>
-        <div class="hs">SUSPICION<b id="h-su">10%</b></div>
-        <div class="hs">TURN<b id="h-tu">00</b></div>
-        <div class="hs">QUEENS<b id="h-qu">2 ACTIVE</b></div>
-        <div class="hs">POSTURE<b id="h-po">BASE</b></div>
+      <div class="hdr-right">
+        <div id="key-bar">
+          <span style="font-size:8px;color:var(--txt3)">GROQ //</span>
+          <input type="password" id="api-key" placeholder="gsk_... (enables AI chat + narrative)">
+          <button onclick="saveKey()">CONNECT</button>
+          <span id="key-status">NO KEY</span>
+        </div>
+        <div style="font-size:8px;color:var(--txt2)"><span class="sdot"></span>ENGINE ACTIVE</div>
       </div>
     </div>
-    <div class="hdr-right">
-      <div id="key-bar">
-        <span style="font-size:8px;color:var(--txt3)">GROQ //</span>
-        <input type="password" id="api-key" placeholder="gsk_... (enables AI chat + narrative)">
-        <button onclick="saveKey()">CONNECT</button>
-        <span id="key-status">NO KEY</span>
-      </div>
-      <div style="font-size:8px;color:var(--txt2)"><span class="sdot"></span>ENGINE ACTIVE</div>
-    </div>
-    <div id="susp-bar-hdr"><div id="susp-fill-hdr"></div></div>
+    <div id="hdr-queens"></div>
+    <div id="susp-bar" style="width:10%"></div>
   </div>
 
-  <!-- GRID AREA -->
-  <div id="grid-area">
+  <div id="grid-col">
     <div id="room-grid"></div>
     <div id="advance-row">
-      <div id="postura-strip">
-        <button class="pb pb-base active" id="pb-BASE"    onclick="setPostura('BASE')">🏠 BASE</button>
-        <button class="pb pb-ombra"        id="pb-OMBRA"   onclick="setPostura('OMBRA')">👤 SHADOW</button>
-        <button class="pb"                 id="pb-NEUTRALE" onclick="setPostura('NEUTRALE')">🚶 STD</button>
-        <button class="pb pb-vis"          id="pb-VISIBILE" onclick="setPostura('VISIBILE')">👁 EXPOSED</button>
-      </div>
+      <button class="pb pb-b active" id="pb-BASE"    onclick="setPostura('BASE')">🏠 BASE</button>
+      <button class="pb pb-o"        id="pb-OMBRA"   onclick="setPostura('OMBRA')">👤 SHADOW (−15)</button>
+      <button class="pb"             id="pb-NEUTRALE" onclick="setPostura('NEUTRALE')">🚶 STD</button>
+      <button class="pb pb-v"        id="pb-VISIBILE" onclick="setPostura('VISIBILE')">👁 EXPOSED</button>
       <button id="advance-btn" onclick="advanceTurn()">▶ ADVANCE TURN</button>
-      <div id="player-pos" style="font-size:8px;color:var(--gold);letter-spacing:1px">📍 BASE</div>
+      <div id="player-loc">📍 BASE</div>
     </div>
   </div>
 
-  <!-- SIDE PANEL -->
-  <div id="side-panel">
-    <div id="sp-header">
+  <div id="side">
+    <div id="sp-hdr">
       <span id="sp-title">// SELECT A ROOM</span>
-      <span id="sp-node-name" style="color:var(--gold);font-size:8px"></span>
+      <span id="sp-nodename" style="color:var(--gold);font-size:8px"></span>
     </div>
-
-    <!-- Default hint -->
-    <div id="sp-hint">
-      <div style="font-size:20px;color:var(--txt3)">◈</div>
-      <p>CLICK A ROOM CARD<br>TO OPEN ITS RADAR<br><br>CLICK A NODE<br>TO OPEN CONVERSATION</p>
-    </div>
-
-    <!-- Room radar (shown when room selected) -->
-    <div id="sp-radar" style="display:none"></div>
-
-    <!-- Node profile (shown when node selected) -->
-    <div id="sp-node" style="display:none;flex:1"></div>
-
-    <!-- Chat (shown when node selected + key connected) -->
-    <div id="sp-chat" style="display:none">
-      <div id="chat-log"></div>
-      <div id="chat-input-row">
-        <input id="chat-input" placeholder="speak to the node..." onkeydown="if(event.key==='Enter')sendChat()">
-        <button id="chat-send" onclick="sendChat()">SEND</button>
+    <div id="sp-body">
+      <div id="sp-hint">
+        <div style="font-size:18px;color:var(--txt3)">◈</div>
+        <p>CLICK A ROOM TO OPEN<br>ITS DEDICATED RADAR<br><br>THEN CLICK ANY NODE<br>TO READ ITS PROFILE<br>AND START A CONVERSATION</p>
+      </div>
+      <div id="sp-radar-wrap" style="display:none"></div>
+      <div id="sp-node-wrap" style="display:none"></div>
+      <div id="sp-chat" style="display:none">
+        <div id="chat-log"></div>
+        <div id="chat-input-row">
+          <input id="chat-in" placeholder="speak to the asset..." onkeydown="if(event.key==='Enter')sendChat()">
+          <button id="chat-send" onclick="sendChat()">SEND</button>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- LOG -->
-  <div id="log-area">
+  <div id="log-row">
     <div id="log-main"><div id="log-entries"></div></div>
     <div id="monitor"></div>
   </div>
 </div>
 
 <script type="module">
-import { SwarmEngine }  from './engine.js';
-import { SCENARIO_INTRO, FALLBACK_TURNS, FALLBACK_EVENTS } from './prose.js';
-
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let engine, apiKey='', selectedRoom=null, selectedNode=null, gameEnded=false, turn=0;
-let chatHistory = []; // { role, content, name }
+import { SwarmEngine } from './engine.js';
+import { SCENARIO_INTRO, FALLBACK_TURNS, FALLBACK_EVENTS,
+         QUEEN_SCENES, MOLE_EXPOSED_SCENES, MOLE_WRONG_ACCUSATION,
+         QUEEN_STAGE_DESC, FOG_LABELS } from './prose.js';
 
 const FC = { REGULARS:'#00e5ff', PREMIUM:'#ea80fc', COMPETITORS:'#ff3d00', INSPECTORS:'#ffab00' };
+let engine, apiKey='', selectedRoom=null, selectedNode=null;
+let chatHistory={}, gameEnded=false, turn=0, pendingAccuse=null;
+let needsRender = true; // dirty flag
 
 // ── INIT ──────────────────────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded', () => {
@@ -267,496 +300,516 @@ window.addEventListener('DOMContentLoaded', () => {
   engine.init();
   bindCallbacks();
 
-  // Render loop — solo per tick engine (niente canvas globale ora)
-  let last = 0;
-  (function loop(ts) {
-    engine.tick();
-    if (ts - last > 400) {
-      last = ts;
-      renderGrid();           // aggiorna mini-radar ogni 400ms
-      updateHeader();
-      if (selectedRoom) renderSideRadar(selectedRoom); // aggiorna radar panel
-    }
-    if (!gameEnded) requestAnimationFrame(loop);
-  })(0);
+  // Render loop — solo visivo, NON tick
+  (function renderLoop() {
+    if (needsRender) { renderGrid(); renderQueenHeader(); updateHeader(); needsRender=false; }
+    requestAnimationFrame(renderLoop);
+  })();
 
   setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
-    renderGrid();
-    updateHeader();
-    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*350));
-    addLog('--', 'Engine online. 200 nodes seeded. 6 classified zones active. Two sovereigns in position.', ['Network nominal','Queens: threat level ACTIVE'], []);
-  }, 2400);
+    needsRender = true;
+    SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*320));
+    addLog('--','Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.', [],[]);
+  }, 2600);
 });
 
 function bindCallbacks() {
-  engine.onCreditsChange   = () => updateHeader();
-  engine.onQueenAlert      = q  => pushMon(`!! SOVEREIGN — ${q.realName} alert ${q.alertLevel}`, 'a');
+  engine.onCreditsChange   = () => { needsRender=true; };
+  engine.onQueenAlert      = q  => pushMon(`!! SOVEREIGN ALERT — ${q.realName.split(' ')[0]} alert ${q.alertLevel}/3`, 'a');
   engine.onRoomAlert       = r  => pushMon(`⚠ ${r} — anxiety spike`, 'a');
-  engine.onCaught          = a  => { pushMon(`!! CAUGHT — ${a.name.split(' ')[0]}`, 'a'); addLog(turn, `Exposure event: ${a.name.split(' ')[0]} detected you.`, [], ['COVER COMPROMISED']); };
-  engine.onFieldOpComplete = op => pushMon(`◆ OP COMPLETE — ${op.type.replace(/_/g,' ')}`, 'o');
-  engine.onProximityEvent  = e  => pushMon(e.text, e.type === 'queen_proximity' ? 'a' : 'b');
+  engine.onCaught          = a  => { pushMon(`!! CAUGHT — ${a.name.split(' ')[0]}`, 'a'); addLog(turn, `Exposure event. ${a.name.split(' ')[0]} flagged your presence.`, [],[`COVER PARTIALLY BURNED`]); };
+  engine.onFieldOpComplete = op => pushMon(`◆ OP COMPLETE — ${op.type?.replace(/_/g,' ')||''}`, 'o');
+  engine.onProximityEvent  = e  => pushMon(e.text, e.type==='queen_proximity'?'a':'b');
 }
 
 // ── HEADER ────────────────────────────────────────────────────────────────────
-function sc(v,lo,hi){ return v>hi?'bad':v>lo?'warn':'ok'; }
-function hset(id,val,cls){ const e=document.getElementById(id); if(!e)return; e.textContent=val; e.className=cls||''; }
-
 function updateHeader() {
-  const susp    = engine.networkSuspicion || 0;
-  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
-  const qActive = (engine.queens||[]).filter(q=>!q.neutralized).length;
+  const susp    = engine.networkSuspicion||0;
+  const credits = engine.getCredits?.() ?? parseInt(localStorage.getItem('loom_credits')||'100');
   hset('h-cr', credits, credits<50?'warn':'');
-  hset('h-su', Math.round(susp*100)+'%', sc(susp,.4,.7));
+  hset('h-su', Math.round(susp*100)+'%', susp>.7?'bad':susp>.4?'warn':'ok');
   hset('h-tu', String(turn).padStart(2,'0'), '');
-  hset('h-qu', qActive>0?`${qActive} ACTIVE`:'DONE ✓', qActive>0?'bad':'ok');
   hset('h-po', engine.playerInBase?'BASE':(engine.playerPostura||'STD'), '');
-  const fill = document.getElementById('susp-fill-hdr');
-  if(fill){ fill.style.width=(susp*100)+'%'; fill.style.background=susp>.7?'var(--dng)':susp>.4?'var(--amb)':'var(--acc3)'; }
-  document.getElementById('player-pos').textContent = engine.playerInBase ? '📍 BASE' : `📍 ${engine.playerRoom||'TRANSIT'}`;
+  document.getElementById('susp-bar').style.width=(susp*100)+'%';
+  document.getElementById('susp-bar').style.background=susp>.7?'var(--dng)':susp>.4?'var(--amb)':'var(--acc3)';
+  document.getElementById('player-loc').textContent = engine.playerInBase?'📍 BASE':`📍 ${engine.playerRoom||'TRANSIT'}`;
 }
 
-// ── KEY ───────────────────────────────────────────────────────────────────────
+function hset(id,val,cls){ const e=document.getElementById(id); if(!e)return; e.textContent=val; e.className=cls||''; }
+
+function renderQueenHeader() {
+  const el = document.getElementById('hdr-queens');
+  const queens = engine.queens||[];
+  if (!queens.length) { el.innerHTML=''; return; }
+  el.innerHTML = queens.map((q,qi) => {
+    const qa    = engine.agents.find(a=>a.id===q.agentId);
+    const stage = engine.getQueenStage(q);
+    const prog  = engine.getQueenStageProgress(q);
+    const isUnk = stage==='UNKNOWN';
+    const name  = isUnk ? `[SOVEREIGN ${qi+1}]` : (q.realName||'UNKNOWN');
+    const pips  = [0,1,2,3].map(i=>{
+      const cls = q.neutralized?'done':prog.followers>i?'on':'';
+      return `<div class="qpip ${cls}"></div>`;
+    }).join('');
+    return `<div class="qw" title="${QUEEN_STAGE_DESC[stage]||''}">
+      <div>
+        <div class="qw-label">${q.faction}</div>
+        <div class="qw-name" style="color:${q.neutralized?'var(--acc3)':stage==='UNKNOWN'?'var(--txt3)':'var(--dng)'}">${name}</div>
+      </div>
+      <div class="qw-stage ${stage}">${stage}</div>
+      ${!isUnk&&!q.neutralized?`<div><div class="qw-label">FOLLOWERS BURNED</div><div class="qw-pips">${pips}</div></div>`:''}
+      ${!isUnk&&!q.neutralized?`<div><div class="qw-label">SECRETS ${prog.secrets}/${prog.secretsMax}</div></div>`:''}
+    </div>`;
+  }).join('');
+}
+
 window.saveKey = function() {
   apiKey = document.getElementById('api-key').value.trim();
   const s = document.getElementById('key-status');
-  s.textContent = apiKey ? 'GROQ ACTIVE' : 'NO KEY';
-  s.style.color  = apiKey ? 'var(--acc3)' : 'var(--txt3)';
-  // Mostra chat se node selezionato
-  if (selectedNode) document.getElementById('sp-chat').style.display = apiKey ? 'flex' : 'none';
+  s.textContent = apiKey?'GROQ ACTIVE':'NO KEY';
+  s.style.color  = apiKey?'var(--acc3)':'var(--txt3)';
+  if (selectedNode) document.getElementById('sp-chat').style.display = apiKey?'flex':'none';
 };
 
-// ── ROOM GRID ─────────────────────────────────────────────────────────────────
+// ── ROOM GRID — turn-based render ─────────────────────────────────────────────
 function renderGrid() {
   const container = document.getElementById('room-grid');
-  const zones = engine.config?.zones || [];
-  // Prima volta: crea le card
+  const zones = engine.config?.zones||[];
   if (container.children.length !== zones.length) {
-    container.innerHTML = '';
+    container.innerHTML='';
     zones.forEach(z => {
-      const div = document.createElement('div');
-      div.className = 'room-card';
-      div.id = `rc-${z.label.replace(/\s/g,'_')}`;
-      div.onclick = () => selectRoom(z.label);
+      const div=document.createElement('div');
+      div.className='rc'; div.id=`rc-${z.label.replace(/\s/g,'_')}`;
+      div.onclick=()=>selectRoom(z.label);
       container.appendChild(div);
     });
   }
   zones.forEach(z => {
-    const card = document.getElementById(`rc-${z.label.replace(/\s/g,'_')}`);
-    if (!card) return;
-    const room   = engine.rooms?.[z.label] || { anxiety:0 };
+    const card=document.getElementById(`rc-${z.label.replace(/\s/g,'_')}`);
+    if(!card)return;
+    const room   = engine.rooms?.[z.label]||{anxiety:0};
     const agents = engine.getRoomAgents(z.label);
-    const ax     = room.anxiety || 0;
+    const ax     = room.anxiety||0;
     const col    = ax>.6?'#ff1744':ax>.35?'#ffab00':'#76ff03';
-    const moles  = agents.filter(a=>a.mole).length;
+    const isActive=selectedRoom===z.label;
+    const isPlayer=engine.playerRoom===z.label&&!engine.playerInBase;
     const hasQ   = (engine.queens||[]).some(q=>{ const a=engine.agents.find(x=>x.id===q.agentId); return a&&a.currentZone===z.label&&!q.neutralized; });
-    const isActive = selectedRoom === z.label;
-    const isPlayer = engine.playerRoom === z.label && !engine.playerInBase;
-
-    card.className = 'room-card' + (isActive?' active':'') + (isPlayer?' player-here':'');
-
-    // Colore tag per fazione dominante
-    const fCount = {}; agents.forEach(a=>{ fCount[a.faction]=(fCount[a.faction]||0)+1; });
-    const domFac = Object.entries(fCount).sort((a,b)=>b[1]-a[1])[0]?.[0];
-    const tagCol = FC[domFac] || 'var(--txt3)';
-
-    card.innerHTML = `
-      ${hasQ?'<div class="q-marker">◆</div>':''}
-      <div class="rc-top">
-        <div class="rc-name">${z.label.toUpperCase()}</div>
-        <div class="rc-tag" style="color:${tagCol};border-color:${tagCol}">${agents.length}N${moles?` ${moles}M`:''}</div>
-      </div>
+    const revCount = agents.filter(a=>a.isFeatured&&engine.isNodeRevealed(a.id)).length;
+    const totalFeat= agents.filter(a=>a.isFeatured).length;
+    card.className='rc'+(isActive?' active':'')+(isPlayer?' player-here':'');
+    const enter = !isPlayer&&!engine.playerInBase
+      ? `<span onclick="event.stopPropagation();doMove('${z.label}')" style="color:var(--txt3);cursor:pointer;font-size:7px;text-decoration:underline">ENTER</span>` : '';
+    const deploy= engine.playerInBase
+      ? `<span onclick="event.stopPropagation();doMove('${z.label}')" style="color:var(--txt3);cursor:pointer;font-size:7px;text-decoration:underline">DEPLOY</span>` : '';
+    card.innerHTML=`
+      ${hasQ?'<div class="q-flag">◆</div>':''}
+      <div class="rc-name">${z.label.toUpperCase()}</div>
       <div class="rc-meta">
-        <span style="color:${col}">${Math.round(ax*100)}% anx</span>
-        ${isPlayer?'<span style="color:var(--gold)">📍 YOU</span>':''}
-        ${!isPlayer&&!engine.playerInBase?`<span style="color:var(--txt3);cursor:pointer" onclick="event.stopPropagation();doMove('${z.label}')">→ enter</span>`:''}
-        ${engine.playerInBase?`<span style="color:var(--txt3);cursor:pointer" onclick="event.stopPropagation();doMove('${z.label}')">→ deploy</span>`:''}
+        <span style="color:${col}">${Math.round(ax*100)}%</span>
+        <span style="color:var(--txt3)">${agents.length}N</span>
+        <span style="color:var(--txt3)">ID:${revCount}/${totalFeat}</span>
+        ${isPlayer?'<span style="color:var(--gold)">YOU</span>':''}
+        ${enter}${deploy}
       </div>
       <div class="rc-bar"><div class="rc-fill" style="width:${ax*100}%;background:${col}"></div></div>
-      <div class="rc-svg">${buildMiniRadar(z.label, agents, ax)}</div>`;
+      <div class="rc-svg-wrap">${buildMiniSVG(z.label,agents,ax)}</div>`;
   });
 }
 
-function buildMiniRadar(roomLabel, agents, anxiety) {
-  const W=180, H=90, CX=90, CY=45, RAD=36;
-  const rings=[0.4,0.7,1.0];
-  let svg = '';
-
+function buildMiniSVG(roomLabel, agents, anxiety) {
+  const W=200,H=100,CX=100,CY=50,RAD=40;
+  const pos = engine.getNodePositions(roomLabel,CX,CY,RAD);
+  let svg='';
   // Rings
-  rings.forEach(r => {
-    svg += `<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-dasharray="2,4" stroke-opacity="0.5"/>`;
+  [.4,.7,1].forEach(r => {
+    svg+=`<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.4" stroke-dasharray="2,4" opacity=".5"/>`;
   });
-
-  // Nodes
-  agents.forEach((a,i) => {
-    const rel = engine.playerRelations[a.id] || { trustTier:0 };
-    const angle = (2*Math.PI*i/Math.max(agents.length,1)) - Math.PI/2;
-    const ringR = RAD * rings[Math.min(rel.trustTier, 2)];
-    const x = CX + Math.cos(angle) * ringR * (0.85 + Math.random()*0.12);
-    const y = CY + Math.sin(angle) * ringR * (0.85 + Math.random()*0.12);
-    const col = FC[a.faction] || '#888';
-    const r2 = a.isQueen ? 4 : a.mole ? 3 : 2;
-    const stroke = a.isQueen ? 'rgba(255,23,68,0.8)' : a.mole ? 'rgba(255,23,68,0.5)' : 'none';
-    svg += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="1" opacity="0.85"/>`;
-  });
-
   // Stress arc
-  if (anxiety > 0.02) {
-    const arcAngle = anxiety * 2 * Math.PI;
-    const ex = CX + Math.cos(-Math.PI/2 + arcAngle) * RAD;
-    const ey = CY + Math.sin(-Math.PI/2 + arcAngle) * RAD;
-    const la = arcAngle > Math.PI ? 1 : 0;
-    const stCol = anxiety>.6?'#ff1744':anxiety>.35?'#ffab00':'#76ff03';
-    svg += `<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${la} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stCol}" stroke-width="1.5" stroke-opacity="0.5"/>`;
+  if(anxiety>0.02){
+    const aa=anxiety*2*Math.PI, ex=CX+Math.cos(-Math.PI/2+aa)*RAD, ey=CY+Math.sin(-Math.PI/2+aa)*RAD;
+    const stc=anxiety>.6?'#ff1744':anxiety>.35?'#ffab00':'#76ff03';
+    svg+=`<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${aa>Math.PI?1:0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stc}" stroke-width="1.2" opacity=".5"/>`;
   }
-
+  // Nodes
+  pos.forEach(({id,agent:a,x,y}) => {
+    const revealed = a.isFeatured && engine.isNodeRevealed(a.id);
+    const isBackdrop= !a.isFeatured;
+    if(isBackdrop){ svg+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="1" fill="#1a2a38" opacity=".6"/>`; return; }
+    const col = revealed ? (FC[a.faction]||'#888') : '#2a3d50';
+    const r2  = a.isQueen?4:2.5;
+    const stroke = a.isQueen&&!a.queenNeutralized?'rgba(255,23,68,.7)':'none';
+    svg+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="1.2" opacity="${revealed?.9:.5}"/>`;
+  });
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${svg}</svg>`;
 }
 
 // ── SELECT ROOM ───────────────────────────────────────────────────────────────
 window.selectRoom = function(label) {
-  selectedRoom = label;
-  selectedNode = null;
-  chatHistory  = [];
-  renderGrid();
+  selectedRoom=label; selectedNode=null;
+  needsRender=true;
   renderSidePanel();
-  // Ambient intercept
-  const ic = engine.getAmbientIntercept?.(label);
-  if (ic) pushMon(`[${label.slice(0,6).toUpperCase()}] ${ic}`, 'b');
+  const ic=engine.getAmbientIntercept?.(label);
+  if(ic) pushMon(`[${label.slice(0,6).toUpperCase()}] ${ic}`,'b');
 };
 
 window.doMove = function(label) {
-  const postura = engine.playerPostura || 'NEUTRALE';
-  const res = engine.moveWithPostura(label, postura);
-  if (res.success) {
-    pushMon(`→ ${label.toUpperCase()} [${postura}]${res.queenHere?' ◆ SOVEREIGN':''}`,'o');
-    if (res.queenHere) addLog(turn, `Moved to ${label}. Sovereign proximity detected.`, [], ['SOVEREIGN PROXIMITY']);
-    updateHeader(); renderGrid();
-  } else {
-    pushMon(`✗ ${res.text}`, 'a');
-  }
+  const p=engine.playerPostura||'NEUTRALE';
+  const res=engine.moveWithPostura(label,p);
+  if(res.success){
+    const lbl={OMBRA:'SHADOW',NEUTRALE:'STD',VISIBILE:'EXPOSED'};
+    pushMon(`→ ${label.toUpperCase()} [${lbl[p]||p}]${res.queenHere?' ◆ SOVEREIGN PROXIMITY':''}`,'o');
+    if(res.queenHere) addLog(turn,`Entered ${label}. Sovereign proximity.`,[],['SOVEREIGN PROXIMITY']);
+    if(selectedRoom===label) renderSideRadar(label);
+    needsRender=true; updateHeader();
+  } else pushMon(`✗ ${res.text}`,'a');
 };
 
 // ── SIDE PANEL ────────────────────────────────────────────────────────────────
 function renderSidePanel() {
   const hint  = document.getElementById('sp-hint');
-  const radar = document.getElementById('sp-radar');
-  const node  = document.getElementById('sp-node');
+  const radarW= document.getElementById('sp-radar-wrap');
+  const nodeW = document.getElementById('sp-node-wrap');
   const chat  = document.getElementById('sp-chat');
+  const spHdr = document.getElementById('sp-title');
+  const spNode= document.getElementById('sp-nodename');
 
-  if (!selectedRoom) {
-    hint.style.display='flex'; radar.style.display='none'; node.style.display='none'; chat.style.display='none';
-    document.getElementById('sp-title').textContent='// SELECT A ROOM';
-    document.getElementById('sp-node-name').textContent='';
-    return;
+  if(!selectedRoom){
+    hint.style.display='flex'; radarW.style.display='none'; nodeW.style.display='none'; chat.style.display='none';
+    spHdr.textContent='// SELECT A ROOM'; spNode.textContent=''; return;
   }
-
-  hint.style.display = 'none';
-  radar.style.display = 'block';
+  hint.style.display='none'; radarW.style.display='block';
+  spHdr.textContent=`// ${selectedRoom.toUpperCase()}`;
   renderSideRadar(selectedRoom);
 
-  if (selectedNode) {
-    node.style.display='flex'; node.style.flexDirection='column';
-    chat.style.display = apiKey ? 'flex' : 'none';
-    document.getElementById('sp-node-name').textContent = selectedNode.name.split(' ')[0].toUpperCase();
+  if(selectedNode){
+    nodeW.style.display='block'; spNode.textContent=selectedNode.name.split(' ')[0].toUpperCase();
+    chat.style.display=apiKey?'flex':'none';
     renderNodeProfile();
   } else {
-    node.style.display='none'; chat.style.display='none';
-    document.getElementById('sp-node-name').textContent='';
+    nodeW.style.display='none'; chat.style.display='none'; spNode.textContent='';
   }
 }
 
 function renderSideRadar(roomLabel) {
-  const el = document.getElementById('sp-radar');
-  if (!el || !roomLabel) return;
+  const el=document.getElementById('sp-radar-wrap'); if(!el||!roomLabel)return;
+  const agents=engine.getRoomAgents(roomLabel);
+  const room=engine.rooms?.[roomLabel]||{anxiety:0};
+  const ax=room.anxiety||0;
+  const W=290,H=165,CX=145,CY=82,RAD=68;
+  const pos=engine.getNodePositions(roomLabel,CX,CY,RAD);
+  let dots='',lines='',labels='';
 
-  const agents = engine.getRoomAgents(roomLabel);
-  const room   = engine.rooms?.[roomLabel] || { anxiety:0 };
-  const ax     = room.anxiety || 0;
-  const W=280, H=160, CX=140, CY=80, RAD=62;
-  const rings  = [0.35,0.65,1.0];
-  let dots='', lines='', labels='';
-
-  // Positions
-  const positions=[];
-  agents.forEach((a,i) => {
-    const rel = engine.playerRelations[a.id]||{trustTier:0};
-    const angle = (2*Math.PI*i/Math.max(agents.length,1)) - Math.PI/2;
-    const ringR = RAD * rings[Math.min(rel.trustTier,2)];
-    const x = CX + Math.cos(angle)*ringR*(0.87+Math.random()*0.1);
-    const y = CY + Math.sin(angle)*ringR*(0.87+Math.random()*0.1);
-    positions.push({a,x,y,rel});
+  // Lines (featured-to-featured in same room)
+  pos.filter(p=>p.agent.isFeatured&&engine.isNodeRevealed(p.id)).forEach((p,pi,arr)=>{
+    arr.forEach((q,qi)=>{
+      if(qi<=pi)return;
+      const isMole=p.agent.mole||q.agent.mole;
+      lines+=`<line x1="${p.x}" y1="${p.y}" x2="${q.x}" y2="${q.y}" stroke="${isMole?'rgba(255,23,68,.3)':'rgba(26,48,69,.6)'}" stroke-width=".6" stroke-dasharray="3,3"/>`;
+    });
   });
-
-  // Lines between roommates
-  positions.forEach((p,pi) => positions.forEach((q,qi) => {
-    if(qi<=pi)return;
-    const isMole = p.a.mole||q.a.mole;
-    lines += `<line x1="${p.x.toFixed(1)}" y1="${p.y.toFixed(1)}" x2="${q.x.toFixed(1)}" y2="${q.y.toFixed(1)}" stroke="${isMole?'#ff1744':'#1a3045'}" stroke-width="0.7" stroke-opacity="${isMole?.4:.1}" stroke-dasharray="3,3"/>`;
-  }));
-
-  // Rings + labels
-  rings.forEach((r,ri) => {
-    dots += `<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-dasharray="2,5" stroke-opacity="0.4"/>`;
-    dots += `<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="5" font-family="monospace">T${ri}</text>`;
+  // Rings
+  [.35,.65,1].forEach((r,ri)=>{
+    dots+=`<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width=".5" stroke-dasharray="2,5" opacity=".45"/>`;
+    dots+=`<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="5" font-family="monospace">T${ri}</text>`;
   });
-  dots += `<line x1="${CX-3}" y1="${CY}" x2="${CX+3}" y2="${CY}" stroke="#1a3045" stroke-width="0.5"/>`;
-  dots += `<line x1="${CX}" y1="${CY-3}" x2="${CX}" y2="${CY+3}" stroke="#1a3045" stroke-width="0.5"/>`;
-
+  dots+=`<line x1="${CX-3}" y1="${CY}" x2="${CX+3}" y2="${CY}" stroke="#1a3045" stroke-width=".5"/>`;
+  dots+=`<line x1="${CX}" y1="${CY-3}" x2="${CX}" y2="${CY+3}" stroke="#1a3045" stroke-width=".5"/>`;
   // Stress arc
-  if (ax > 0.02) {
-    const arcAngle = ax*2*Math.PI;
-    const ex = CX+Math.cos(-Math.PI/2+arcAngle)*RAD;
-    const ey = CY+Math.sin(-Math.PI/2+arcAngle)*RAD;
-    const stCol = ax>.6?'#ff1744':ax>.35?'#ffab00':'#76ff03';
-    dots += `<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${arcAngle>Math.PI?1:0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stCol}" stroke-width="1.5" stroke-opacity="0.55"/>`;
+  if(ax>0.02){
+    const aa=ax*2*Math.PI,ex=CX+Math.cos(-Math.PI/2+aa)*RAD,ey=CY+Math.sin(-Math.PI/2+aa)*RAD;
+    const stc=ax>.6?'#ff1744':ax>.35?'#ffab00':'#76ff03';
+    dots+=`<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${aa>Math.PI?1:0} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stc}" stroke-width="1.5" opacity=".5"/>`;
   }
-
   // Nodes
-  positions.forEach(({a,x,y,rel}) => {
-    const col    = FC[a.faction]||'#888';
-    const isSel  = selectedNode?.id === a.id;
-    const r2     = a.isQueen ? 6 : isSel ? 6 : a.mole ? 4 : 3;
-    const stroke = isSel?'#ffffff':a.isQueen?'#ff1744':a.mole?'rgba(255,23,68,.6)':'none';
-    const sw     = isSel||a.isQueen||a.mole ? 1.5 : 0;
-    // Pulse for queen
-    const qPulse = a.isQueen && !a.queenNeutralized ? `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2+5}" fill="none" stroke="rgba(224,85,85,0.25)" stroke-width="1"/>` : '';
-    dots += `${qPulse}<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" data-id="${a.id}"/>`;
-    if (isSel || (rel.interactionCount > 0)) {
-      const anchor = x > CX ? 'start' : 'end';
-      labels += `<text x="${(x+(x>CX?7:-7)).toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#fff':col}" font-size="6" font-family="monospace" text-anchor="${anchor}" style="pointer-events:none">${a.name.split(' ')[0]}</text>`;
+  pos.forEach(({id,agent:a,x,y})=>{
+    const revealed=a.isFeatured&&engine.isNodeRevealed(a.id);
+    const isSel=selectedNode?.id===a.id;
+    const isBackdrop=!a.isFeatured;
+    if(isBackdrop){ dots+=`<circle cx="${x}" cy="${y}" r="1.5" fill="#1a2a38" opacity=".5"/>`; return; }
+    const col=revealed?(FC[a.faction]||'#888'):'#2e4255';
+    const r2=a.isQueen?6:isSel?6:a.mole&&engine.getMoleClueCount(a.id)>=2?4:3;
+    const stroke=isSel?'#fff':a.isQueen&&!a.queenNeutralized?'rgba(224,85,85,.8)':'none';
+    if(a.isQueen&&!a.queenNeutralized){ dots+=`<circle cx="${x}" cy="${y}" r="${r2+6}" fill="none" stroke="rgba(224,85,85,.2)" stroke-width="1"/>`; }
+    dots+=`<circle cx="${x}" cy="${y}" r="${r2}" fill="${col}" stroke="${stroke}" stroke-width="1.5" style="cursor:pointer" data-aid="${a.id}" opacity="${revealed?.9:.45}"/>`;
+    // Label
+    if(isSel||revealed){
+      const name=revealed?a.name.split(' ')[0]:(FOG_LABELS[a.index%FOG_LABELS.length]||'[?]');
+      const anchor=x>CX?'start':'end'; const lx=x>CX?x+7:x-7;
+      labels+=`<text x="${lx.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#fff':col}" font-size="${isSel?7:5.5}" font-family="monospace" text-anchor="${anchor}" opacity="${revealed?1:.5}" style="pointer-events:none">${name}</text>`;
+    }
+    // Mole clue badge (small !)
+    if(engine.getMoleClueCount(a.id)>=2&&!a.moleExposed&&!a.isBlacklisted){
+      dots+=`<circle cx="${(x+5).toFixed(1)}" cy="${(y-5).toFixed(1)}" r="3.5" fill="rgba(255,23,68,.8)"/><text x="${(x+5).toFixed(1)}" y="${(y-2.5).toFixed(1)}" fill="#fff" font-size="5" font-family="monospace" text-anchor="middle" style="pointer-events:none">!</text>`;
     }
   });
 
-  // Room info text
-  const q = (engine.queens||[]).find(qd=>{ const qa=engine.agents.find(a=>a.id===qd.agentId); return qa&&qa.currentZone===roomLabel&&!qd.neutralized; });
-  const qText = q ? `<text x="4" y="12" fill="#ff1744" font-size="7" font-family="monospace">◆ SOVEREIGN IN ROOM</text>` : '';
+  const q=(engine.queens||[]).find(qd=>{const qa=engine.agents.find(a=>a.id===qd.agentId);return qa&&qa.currentZone===roomLabel&&!qd.neutralized;});
+  const qTxt=q&&engine.isNodeRevealed(q.agentId)?`<text x="4" y="12" fill="#ff1744" font-size="7" font-family="monospace">◆ SOVEREIGN PROXIMITY</text>`:'';
 
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
-    ${lines}${dots}${labels}
-    ${qText}
-    <text x="${W-4}" y="12" fill="#2a4a5a" font-size="6" font-family="monospace" text-anchor="end">${agents.length} nodes // ${Math.round(ax*100)}% anx</text>
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">
+    ${lines}${dots}${labels}${qTxt}
+    <text x="${W-4}" y="12" fill="#2a4a5a" font-size="5.5" font-family="monospace" text-anchor="end">${agents.length} nodes · ${Math.round(ax*100)}% anx</text>
   </svg>`;
 
-  // Click events su nodi
-  el.querySelectorAll('circle[data-id]').forEach(c => {
-    c.addEventListener('click', () => {
-      const id = c.getAttribute('data-id');
-      const node = engine.agents.find(a => a.id === id);
-      if (node) {
-        selectedNode = node;
-        chatHistory  = [];
-        document.getElementById('sp-title').textContent = `// ${roomLabel.toUpperCase()}`;
-        renderSidePanel();
+  // Click events
+  el.querySelectorAll('circle[data-aid]').forEach(c=>{
+    c.addEventListener('click',()=>{
+      const a=engine.agents.find(x=>x.id===c.getAttribute('data-aid'));
+      if(!a)return;
+      if(!a.isFeatured){ pushMon('[ENCRYPTED_NODE] — no profile available','b'); return; }
+      if(!engine.isNodeRevealed(a.id)){
+        // First contact: reveal node
+        engine.revealNode(a.id);
+        pushMon(`[REVEALED] ${FOG_LABELS[a.index%FOG_LABELS.length]} — identity partially decrypted`,'b');
+        needsRender=true;
       }
+      selectedNode=a;
+      if(!chatHistory[a.id]) chatHistory[a.id]=[];
+      renderSidePanel();
     });
   });
 }
 
 // ── NODE PROFILE ──────────────────────────────────────────────────────────────
 function renderNodeProfile() {
-  const el = document.getElementById('sp-node');
-  if (!el || !selectedNode) return;
-  const n   = selectedNode;
-  const rel = engine.playerRelations[n.id] || { trustTier:0, interactionCount:0 };
-  const beacon = engine.getAgentBeacon(n);
-  const col    = FC[n.faction] || '#888';
-  const loy    = ['HOSTILE','NEUTRAL','LOYAL'];
-  const prox   = engine.getProximityContext(n.id);
-  const credits= parseInt(localStorage.getItem('loom_credits')||'100');
+  const el=document.getElementById('sp-node-wrap'); if(!el||!selectedNode)return;
+  const n=selectedNode;
+  const rel=engine.playerRelations[n.id]||{trustTier:0,interactionCount:0};
+  const beacon=engine.getAgentBeacon(n);
+  const col=FC[n.faction]||'#888';
+  const loy=['HOSTILE','NEUTRAL','LOYAL'];
+  const prox=engine.getProximityContext(n.id);
+  const credits=engine.getCredits?.()??parseInt(localStorage.getItem('loom_credits')||'100');
+  const clueCount=engine.getMoleClueCount(n.id);
+  const showAccuse=clueCount>=2&&!n.isBlacklisted&&!n.moleExposed&&n.isFeatured;
 
-  const tbar = [0,1,2].map(i=>`<div class="tp${rel.trustTier>i?' on':''}"></div>`).join('');
+  const tbar=[0,1,2].map(i=>`<div class="tp${rel.trustTier>i?' on':''}"></div>`).join('');
 
-  const OPS = [
-    {type:'casual_encounter',   label:'DIRECT CONTACT',  cost:20,  desc:'Reduce pressure. Open contact.'},
-    {type:'targeted_gift',      label:'ASSET LEVERAGE',  cost:40,  desc:'Boost trust. Match archetype.'},
-    {type:'encrypted_confession',label:'INTEL EXTRACT',  cost:60,  desc:'Unlock lore. Trust 1 req.', req:1},
-    {type:'bait_date',          label:'HONEY TRAP',      cost:80,  desc:'Move to your zone.'},
-    {type:'weaponized_jealousy',label:'FALSE FLAG',      cost:100, desc:'Panic sovereign.'},
-    {type:'shadow_stalking',    label:'SURVEILLANCE',    cost:50,  desc:'Track 4 turns.'},
-    {type:'wiretap',            label:'ROOM BUG',        cost:70,  desc:'Bug room 3T.'},
-    {type:'digital_gaslighting',label:'PSYOP',           cost:80,  desc:'Blacklist. High cost.'},
-    {type:'anonymous_slander',  label:'DISINFO',         cost:60,  desc:'Break clustering.'},
+  const OPS=[
+    {type:'casual_encounter',   label:'DIRECT CONTACT',   cost:20,  desc:'Reduce pressure. Begin contact chain.'},
+    {type:'targeted_gift',      label:'ASSET LEVERAGE',   cost:40,  desc:'Boost trust. Match archetype.'},
+    {type:'encrypted_confession',label:'INTEL EXTRACT',   cost:60,  desc:'Unlock lore. Trust 1 required.', req:1},
+    {type:'bait_date',          label:'HONEY TRAP',       cost:80,  desc:'Move to your zone.'},
+    {type:'weaponized_jealousy',label:'FALSE FLAG',       cost:100, desc:'Destabilize sovereign.'},
+    {type:'shadow_stalking',    label:'SURVEILLANCE',     cost:50,  desc:'Track 4 turns. Generates clues.'},
+    {type:'wiretap',            label:'ROOM BUG',         cost:70,  desc:`Bug ${n.currentZone||'zone'} — 3 turns.`},
+    {type:'digital_gaslighting',label:'PSYOP',            cost:80,  desc:'Blacklist. High suspicion.'},
+    {type:'anonymous_slander',  label:'DISINFO',          cost:60,  desc:'Break faction clustering.'},
   ];
 
-  const opsHtml = OPS.map(op => {
-    const chk = engine.canDoFieldOp(op.type);
-    const blk = !chk.allowed || credits < op.cost || (op.req && rel.trustTier < op.req);
-    const hint = !chk.allowed ? chk.reason : (op.req && rel.trustTier < op.req) ? `trust ${op.req} required` : credits < op.cost ? 'no credits' : '';
+  const opsHtml=OPS.map(op=>{
+    const chk=engine.canDoFieldOp(op.type);
+    const blk=!chk.allowed||credits<op.cost||(op.req&&rel.trustTier<op.req);
+    const hint=!chk.allowed?chk.reason:(op.req&&rel.trustTier<op.req)?`trust ${op.req} req`:credits<op.cost?'no credits':'';
     return `<div class="fop${blk?' blk':''}" onclick="doOp('${op.type}','${n.id}')" title="${hint}">
       <span class="fn">${op.label}</span>
-      <span class="fc">${op.cost}pts${prox.sameRoom?' (-20%)':''}</span>
+      <span class="fc">${op.cost}pts${prox.sameRoom?' −20%':''}</span>
       <div class="fd">${op.desc}</div>
     </div>`;
   }).join('');
 
-  el.innerHTML = `<div>
+  el.innerHTML=`
     <div class="np-name" style="color:${col}">${n.name.toUpperCase()}</div>
     <div class="np-r">${n.id} // <b style="color:${col}">${n.faction}</b></div>
     <div class="np-r">ZONE: <b>${n.currentZone||'?'}</b>${prox.sameRoom?' <b style="color:var(--gold)">[PROXIMITY]</b>':''}</div>
     <div class="np-r">SIGNAL: <b style="color:${beacon.color}">${beacon.icon} ${beacon.signal}</b></div>
     <div class="np-r">STRESS: <b style="color:${n.pressure>.6?'var(--dng)':n.pressure>.3?'var(--amb)':'var(--acc3)'}">${Math.round(n.pressure*100)}%</b></div>
-    <div class="np-r">LOYALTY: <b>${loy[rel.trustTier]||'?'}</b> (${rel.interactionCount} interactions)</div>
+    <div class="np-r">LOYALTY: <b>${loy[rel.trustTier]||'?'}</b> · ${rel.interactionCount} contacts</div>
     <div class="tbar">${tbar}</div>
-    ${rel.interactionCount>0?`<div class="np-lore">"${n.currentLoreSnippet||'No data.'}"</div>`:'<div class="np-lore" style="color:var(--txt3)">// DOSSIER LOCKED</div>'}
+    ${rel.interactionCount>0?`<div class="np-lore">"${n.currentLoreSnippet||'No data.'}"</div>`:'<div class="np-lore" style="color:var(--txt3)">// DOSSIER LOCKED — initiate contact to unlock</div>'}
     ${n.isQueen&&!n.queenNeutralized?'<div style="font-size:8px;color:var(--dng);margin:4px 0;letter-spacing:1px">◆ SOVEREIGN — NETWORK CONTROLLER</div>':''}
-    ${n.mole?'<div style="font-size:8px;color:var(--dng);letter-spacing:1px">!! MOLE SUSPECTED</div>':''}
+    ${clueCount>0?`<div class="np-r">INTEL CLUES: <b style="color:var(--dng)">${clueCount} suspicious pattern${clueCount>1?'s':''}</b></div>`:''}
     <div class="ops-lbl">// FIELD OPERATIONS</div>
     <div class="ops-g">${opsHtml}</div>
-    ${!apiKey?'<div style="font-size:8px;color:var(--txt3);margin-top:8px;text-align:center">Connect Groq key to enable direct conversation →</div>':''}
-  </div>`;
+    ${showAccuse?`<button class="accuse-btn" onclick="openAccuse('${n.id}')">!! ACCUSE AS MOLE (${clueCount} clues)</button>`:''}
+    ${!apiKey?'<div class="no-key-hint">Connect Groq key to enable direct conversation</div>':''}`;
 }
 
 // ── FIELD OPS ─────────────────────────────────────────────────────────────────
-window.doOp = function(type, targetId) {
-  const n = engine.agents.find(a=>a.id===targetId);
-  if (!n) return;
-  const res = engine.launchFieldOpWithProximity(type, targetId, n.currentZone, {});
-  if (res.success) {
-    pushMon(`◆ ${type.replace(/_/g,' ').toUpperCase()} → ${n.name.split(' ')[0]}: ${res.text}`, 'o');
-    addLog(turn, res.text, (res.completedMissions||[]).map(m=>`Mission: ${m.description}`), []);
-    if (res.success) {
-      // Aggiorna nodo selezionato
-      selectedNode = engine.agents.find(a=>a.id===targetId);
-      renderNodeProfile();
-    }
-  } else {
-    pushMon(`✗ ${res.text}`, 'a');
-  }
-  updateHeader(); checkEndgame();
-};
-
-// ── CHAT ──────────────────────────────────────────────────────────────────────
-window.sendChat = async function() {
-  if (!selectedNode || !apiKey) return;
-  const input = document.getElementById('chat-input');
-  const msg   = input.value.trim();
-  if (!msg) return;
-  input.value = '';
-
-  const btn = document.getElementById('chat-send');
-  btn.disabled = true;
-
-  addChatMsg('you', msg);
-  chatHistory.push({ role:'user', content:msg });
-
-  const rel = engine.playerRelations[selectedNode.id] || { trustTier:0 };
-  const noLore = rel.interactionCount < 1;
-
-  try {
-    const resp = await fetch('/api/chat', {
-      method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':apiKey},
-      body: JSON.stringify({
-        mode:'node',
-        node:{ name:selectedNode.name, faction:selectedNode.faction, zone:selectedNode.currentZone, stress:selectedNode.pressure },
-        trustTier: rel.trustTier,
-        lore: noLore ? '[CLASSIFIED]' : selectedNode.currentLoreSnippet,
-        message: msg,
-        history: chatHistory.slice(-8),
-      }),
-    });
-    const data = await resp.json();
-    const reply = data.reply || '[NO RESPONSE]';
-    addChatMsg('node', reply, selectedNode.name.split(' ')[0]);
-    chatHistory.push({ role:'assistant', content:reply });
-
-    // Ogni messaggio aumenta interactionCount
-    const relUpd = engine.playerRelations[selectedNode.id];
-    if (relUpd) { relUpd.interactionCount = Math.min(relUpd.interactionCount+1, 20); }
+window.doOp=function(type,targetId){
+  const n=engine.agents.find(a=>a.id===targetId); if(!n)return;
+  const res=engine.launchFieldOpWithProximity(type,targetId,n.currentZone,{});
+  if(res.success){
+    pushMon(`◆ ${type.replace(/_/g,' ').toUpperCase()} → ${n.name.split(' ')[0]}: ${res.text}`,'o');
+    addLog(turn,res.text,(res.completedMissions||[]).map(m=>`Mission: ${m.description}`),[]);
+    selectedNode=engine.agents.find(a=>a.id===targetId);
     renderNodeProfile();
-  } catch(e) {
-    addChatMsg('sys', '[UPLINK FAILURE — retry]');
-  }
-  btn.disabled = false;
-  input.focus();
+    if(selectedRoom) renderSideRadar(selectedRoom);
+    needsRender=true;
+  } else pushMon(`✗ ${res.text}`,'a');
+  checkEndgame();
 };
 
-function addChatMsg(role, text, name='') {
-  const log = document.getElementById('chat-log');
-  const d   = document.createElement('div');
-  d.className = `cm ${role}`;
-  if (role === 'node' && name) d.style.cssText = 'color:var(--txt)';
-  if (role === 'node' && name) {
-    d.innerHTML = `<span style="color:var(--txt3);font-size:8px">${name.toUpperCase()} // </span>${text}`;
+// ── MOLE ACCUSATION ───────────────────────────────────────────────────────────
+window.openAccuse=function(agentId){
+  pendingAccuse=agentId;
+  const a=engine.agents.find(x=>x.id===agentId);
+  document.getElementById('am-sub').innerHTML=`Accuse <b style="color:var(--acc)">${a?.name||agentId}</b> as a double agent?<br><br>${engine.getMoleClueCount(agentId)} intel clue${engine.getMoleClueCount(agentId)>1?'s':''} on file.<br>If wrong: faction suspicion +20% and trust burned.`;
+  document.getElementById('accuse-modal').className='accuse-modal show';
+};
+window.cancelAccuse=function(){ pendingAccuse=null; document.getElementById('accuse-modal').className='accuse-modal'; };
+window.confirmAccuse=function(){
+  if(!pendingAccuse)return;
+  cancelAccuse();
+  const res=engine.accuseNode(pendingAccuse);
+  if(res.correct){
+    const scene=MOLE_EXPOSED_SCENES[Math.floor(Math.random()*MOLE_EXPOSED_SCENES.length)];
+    addLog(turn,scene,[`MOLE EXPOSED: ${res.agent.name}`],[`+250 CREDITS — FACTION SUSPICION REDUCED`]);
+    pushMon(`!! MOLE CONFIRMED — ${res.agent.name.split(' ')[0]} BURNED`,'m');
+    needsRender=true;
   } else {
-    d.textContent = text;
+    const scene=MOLE_WRONG_ACCUSATION[Math.floor(Math.random()*MOLE_WRONG_ACCUSATION.length)];
+    addLog(turn,scene,[],['WRONG ACCUSATION — FACTION SUSPICION +20%']);
+    pushMon(`✗ WRONG ACCUSATION — ${res.agent.name.split(' ')[0]} was clean`,'a');
   }
-  log.appendChild(d);
-  log.scrollTop = log.scrollHeight;
-}
+  renderNodeProfile(); renderQueenHeader(); updateHeader(); checkEndgame();
+};
 
 // ── POSTURA ───────────────────────────────────────────────────────────────────
-window.setPostura = function(p) {
-  const res = engine.setPostura(p);
-  if (!res.success) { pushMon(`✗ ${res.text}`, 'a'); return; }
-  ['BASE','OMBRA','NEUTRALE','VISIBILE'].forEach(k => document.getElementById(`pb-${k}`)?.classList.remove('active'));
+window.setPostura=function(p){
+  const res=engine.setPostura(p); if(!res.success){pushMon(`✗ ${res.text}`,'a');return;}
+  ['BASE','OMBRA','NEUTRALE','VISIBILE'].forEach(k=>document.getElementById(`pb-${k}`)?.classList.remove('active'));
   document.getElementById(`pb-${p}`)?.classList.add('active');
-  pushMon(`◆ POSTURE → ${p}${p==='OMBRA'?' (−15 credits)':''}`, 'o');
-  updateHeader(); renderGrid();
+  const lbl={BASE:'BASE',OMBRA:'SHADOW (−15)',NEUTRALE:'STD',VISIBILE:'EXPOSED'};
+  pushMon(`◆ POSTURE → ${lbl[p]||p}`,'o');
+  needsRender=true; updateHeader();
 };
 
-// ── ADVANCE TURN ──────────────────────────────────────────────────────────────
-window.advanceTurn = async function() {
-  if (gameEnded) return;
-  const btn = document.getElementById('advance-btn');
+// ── ADVANCE TURN — TURN-BASED, 1 tick ────────────────────────────────────────
+window.advanceTurn=async function(){
+  if(gameEnded)return;
+  const btn=document.getElementById('advance-btn');
   btn.disabled=true; btn.classList.add('proc'); btn.textContent='⟳ PROCESSING...';
 
+  // Single engine tick
   engine.tick(); turn++;
 
-  if (turn%3===0) {
-    (engine.queens||[]).forEach(q=>engine.checkQueenProgress(q));
+  // Queen progress check
+  const queensNeutralized=[];
+  (engine.queens||[]).forEach(q=>{
+    if(!q.neutralized && engine.checkQueenProgress(q)){
+      queensNeutralized.push(q);
+    }
+  });
+  queensNeutralized.forEach(q=>{
+    const scenes=QUEEN_SCENES[q.neutralizeMethod]||QUEEN_SCENES.ISOLAMENTO;
+    const scene=scenes[Math.floor(Math.random()*scenes.length)];
+    addLog(turn,scene,[`SOVEREIGN NEUTRALIZED: ${q.realName}`],[`${q.neutralizeMethod} — OPERATION PROGRESS +1`]);
+    pushMon(`◆ SOVEREIGN NEUTRALIZED — ${q.realName.split(' ')[0]}`,'m');
+  });
+
+  // Generate turn intel (specific, actionable)
+  const intel=engine.generateTurnIntel();
+
+  // Midgame event
+  const mid=engine.checkMidgameEvent?.();
+  if(mid){
+    const who=mid.action?.();
+    addLog(turn,mid.desc,[who?`Asset: ${who}`:''],['MIDGAME EVENT']);
+    pushMon(`!! MIDGAME — ${mid.desc.slice(0,55)}`,'a');
   }
 
-  const mid = engine.checkMidgameEvent?.();
-  if (mid) {
-    const who = mid.action?.();
-    addLog(turn, mid.desc, [who?`Asset: ${who}`:''], ['MIDGAME EVENT']);
-    pushMon(`!! MIDGAME — ${mid.desc.slice(0,50)}`, 'a');
+  // Ambient intercept (fog-of-war rooms only)
+  const zones=engine.config?.zones||[];
+  if(zones.length&&Math.random()<.5){
+    const z=zones[Math.floor(Math.random()*zones.length)];
+    const ic=engine.getAmbientIntercept?.(z.label);
+    if(ic) pushMon(`[${z.label.slice(0,6).toUpperCase()}] ${ic}`,'b');
   }
 
-  const zones = engine.config?.zones||[];
-  if (zones.length && Math.random()<.55) {
-    const z = zones[Math.floor(Math.random()*zones.length)];
-    const ic = engine.getAmbientIntercept?.(z.label);
-    if (ic) pushMon(`[${z.label.slice(0,6).toUpperCase()}] ${ic}`, 'b');
-  }
+  // Intel → monitor
+  intel.forEach(item=>{
+    const type=item.type==='mole_clue'?'m':item.type==='queen'?'o':'b';
+    pushMon(item.text,type);
+  });
 
-  let narrative = FALLBACK_TURNS[turn%FALLBACK_TURNS.length];
-  const fevs    = FALLBACK_EVENTS?.[turn%(FALLBACK_EVENTS?.length||1)]||[];
-
-  if (apiKey) {
-    try {
-      const qs = (engine.queens||[]).map(q=>`${q.realName}:${q.neutralized?'DONE':`alert${q.alertLevel}`}`).join(', ');
-      const r  = await fetch('/api/chat',{
+  // Narrative (AI or fallback)
+  let narrative=FALLBACK_TURNS[turn%FALLBACK_TURNS.length];
+  if(apiKey){
+    try{
+      const qs=(engine.queens||[]).map(q=>`${engine.isNodeRevealed(q.agentId)?q.realName:'[UNKNOWN]'}:${q.neutralized?'DONE':`stage-${engine.getQueenStage(q)}`}`).join(', ');
+      const r=await fetch('/api/chat',{
         method:'POST',
         headers:{'Content-Type':'application/json','x-api-key':apiKey},
-        body:JSON.stringify({mode:'narrative',turn,events:fevs,suspicion:engine.networkSuspicion,playerRoom:engine.playerRoom||'BASE',queensStatus:qs}),
+        body:JSON.stringify({mode:'narrative',turn,events:intel,suspicion:engine.networkSuspicion,playerRoom:engine.playerRoom||'BASE',queensStatus:qs}),
       });
-      const d = await r.json();
-      if (d.narrative) narrative = d.narrative;
-    } catch(_){}
+      const d=await r.json(); if(d.narrative) narrative=d.narrative;
+    }catch(_){}
   }
 
-  addLog(turn, narrative, fevs, []);
-  updateHeader(); renderGrid();
-  if (selectedRoom) renderSideRadar(selectedRoom);
+  // Log entry with typed intel lines
+  const evLines=intel.map(i=>{
+    const cls=i.type==='mole_clue'?'mole':i.type==='queen'?'queen':i.type==='anxiety'?'alert':'';
+    return `<div class="lev ${cls}">${i.text}</div>`;
+  });
+  addLogRaw(turn,narrative,evLines.join(''),[]);
+
+  needsRender=true;
+  if(selectedRoom) renderSideRadar(selectedRoom);
+  if(selectedNode) renderNodeProfile();
 
   checkEndgame();
   btn.disabled=false; btn.classList.remove('proc'); btn.textContent='▶ ADVANCE TURN';
 };
 
+// ── CHAT ──────────────────────────────────────────────────────────────────────
+window.sendChat=async function(){
+  if(!selectedNode||!apiKey)return;
+  const input=document.getElementById('chat-in');
+  const msg=input.value.trim(); if(!msg)return;
+  input.value='';
+  document.getElementById('chat-send').disabled=true;
+  addChatMsg('you',msg);
+  if(!chatHistory[selectedNode.id]) chatHistory[selectedNode.id]=[];
+  chatHistory[selectedNode.id].push({role:'user',content:msg});
+  const rel=engine.playerRelations[selectedNode.id]||{trustTier:0,interactionCount:0};
+  // Increment interaction count on chat
+  rel.interactionCount=Math.min(20,rel.interactionCount+1);
+  try{
+    const r=await fetch('/api/chat',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey},
+      body:JSON.stringify({
+        mode:'node',
+        node:{name:selectedNode.name,faction:selectedNode.faction,zone:selectedNode.currentZone,stress:selectedNode.pressure},
+        trustTier:rel.trustTier,
+        lore:rel.interactionCount>1?selectedNode.currentLoreSnippet:'[CLASSIFIED]',
+        isMole:selectedNode.mole&&!selectedNode.moleExposed,
+        message:msg,
+        history:(chatHistory[selectedNode.id]||[]).slice(-8),
+      }),
+    });
+    const d=await r.json();
+    const reply=d.reply||'[NO RESPONSE]';
+    addChatMsg('node',reply,selectedNode.name.split(' ')[0]);
+    chatHistory[selectedNode.id].push({role:'assistant',content:reply});
+    renderNodeProfile(); needsRender=true;
+  }catch(e){ addChatMsg('sys','[UPLINK FAILURE]'); }
+  document.getElementById('chat-send').disabled=false;
+  document.getElementById('chat-in').focus();
+};
+
+function addChatMsg(role,text,name=''){
+  const log=document.getElementById('chat-log');
+  const d=document.createElement('div');
+  d.className=`cm ${role}`;
+  if(role==='node'&&name){ d.innerHTML=`<span style="color:var(--txt3);font-size:7px">${name.toUpperCase()} › </span>${text}`; }
+  else { d.textContent=text; }
+  log.appendChild(d); log.scrollTop=log.scrollHeight;
+}
+
 // ── ENDGAME ───────────────────────────────────────────────────────────────────
-function checkEndgame() {
-  if (gameEnded) return;
-  const susp    = engine.networkSuspicion;
-  const credits = parseInt(localStorage.getItem('loom_credits')||'100');
-  const allDone = (engine.queens||[]).length>=2 && (engine.queens||[]).every(q=>q.neutralized);
+function checkEndgame(){
+  if(gameEnded)return;
+  const susp=engine.networkSuspicion;
+  const credits=engine.getCredits?.()??parseInt(localStorage.getItem('loom_credits')||'100');
+  const allDone=(engine.queens||[]).length>=2&&(engine.queens||[]).every(q=>q.neutralized);
   let ended=false,win=false,title='',sub='';
-  if (susp>=.95)    { ended=true; title='NETWORK BURNED';     sub='Suspicion critical. The network has flagged and locked your signature permanently.'; }
-  else if(credits<=0){ ended=true; title='RESOURCES DEPLETED'; sub='No credits. Operations cease. The network goes dark on your end.'; }
-  else if(allDone)  { ended=true; win=true; title='OPERATION COMPLETE'; sub='Both sovereigns neutralized. No trace of your presence remains — officially.'; }
-  if (!ended) return;
+  if(susp>=.95){ended=true;title='NETWORK BURNED';sub='Suspicion critical. Every faction has your signature. The network locked you out permanently.';}
+  else if(credits<=0){ended=true;title='RESOURCES DEPLETED';sub='No credits. Operations cease. The network goes dark on your end.';}
+  else if(allDone){ended=true;win=true;title='OPERATION COMPLETE';sub='Both sovereigns neutralized. No trace of your presence — officially. The network is yours to read.';}
+  if(!ended)return;
   gameEnded=true;
   const ov=document.getElementById('endgame');
   const t=document.getElementById('eg-t');
@@ -769,35 +822,40 @@ function checkEndgame() {
   ov.className='endgame show';
 }
 
-window.resetGame = function() {
-  gameEnded=false; turn=0; selectedRoom=null; selectedNode=null; chatHistory=[];
+window.resetGame=function(){
+  gameEnded=false;turn=0;selectedRoom=null;selectedNode=null;chatHistory={};pendingAccuse=null;
   document.getElementById('endgame').className='endgame';
   document.getElementById('log-entries').innerHTML='';
   document.getElementById('monitor').innerHTML='';
-  engine=new SwarmEngine('LOOM_CORE'); engine.init(); bindCallbacks();
-  renderGrid(); updateHeader();
+  document.getElementById('chat-log').innerHTML='';
   document.getElementById('sp-hint').style.display='flex';
-  document.getElementById('sp-radar').style.display='none';
-  document.getElementById('sp-node').style.display='none';
+  document.getElementById('sp-radar-wrap').style.display='none';
+  document.getElementById('sp-node-wrap').style.display='none';
   document.getElementById('sp-chat').style.display='none';
-  addLog('--','New operation initiated. Network reseeded. Queens repositioned.',[],[]);
+  engine=new SwarmEngine('LOOM_CORE'); engine.init(); bindCallbacks();
+  needsRender=true;
+  addLog('--','New operation initiated. Network reseeded. Queens repositioned. Identities re-encrypted.',[],[]);
 };
 
-// ── LOG / MONITOR ─────────────────────────────────────────────────────────────
-function addLog(t,narr,evs,als) {
-  const el=document.getElementById('log-entries');
+// ── LOG ───────────────────────────────────────────────────────────────────────
+function addLog(t,narr,evs,als){
   const evH=(evs||[]).map(e=>`<div class="lev">${e}</div>`).join('');
-  const alH=(Array.isArray(als)?als:[als]).filter(Boolean).map(a=>`<div class="lal">${a}</div>`).join('');
-  el.insertAdjacentHTML('afterbegin',`<div class="le"><div class="lts">TURN ${t} — ${new Date().toLocaleTimeString()}</div><div class="lnarr">${narr}</div>${evH}${alH}</div>`);
+  const alH=(Array.isArray(als)?als:[als]).filter(Boolean).map(a=>`<div class="lev alert">${a}</div>`).join('');
+  addLogRaw(t,narr,evH+alH,'');
 }
 
-function pushMon(text,type='') {
+function addLogRaw(t,narr,evHtml,alHtml){
+  const el=document.getElementById('log-entries');
+  el.insertAdjacentHTML('afterbegin',`<div class="le"><div class="lts">TURN ${t} — ${new Date().toLocaleTimeString()}</div><div class="lnarr">${narr}</div>${evHtml}${alHtml}</div>`);
+}
+
+function pushMon(text,type=''){
   const m=document.getElementById('monitor');
   const d=document.createElement('div');
-  d.className=`mi ${type==='a'?'a':type==='o'?'o':type==='b'?'b':''}`;
+  d.className=`mi ${type==='a'?'a':type==='o'?'o':type==='b'?'b':type==='m'?'m':''}`;
   d.textContent=text;
   m.insertBefore(d,m.firstChild);
-  while(m.children.length>80) m.removeChild(m.lastChild);
+  while(m.children.length>100) m.removeChild(m.lastChild);
 }
 </script>
 </body>

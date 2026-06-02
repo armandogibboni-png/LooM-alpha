@@ -195,3 +195,45 @@ export const FALLBACK_EVENTS = [
   ['Anomalia rilevata in Black Site.', 'Il canale criptato è silenzioso da troppo tempo.'],
   ['Asset PREMIUM si è spostato in External Safehouse.', 'Pattern di clustering insolito.'],
 ];
+
+// ── QUEEN NEUTRALIZATION SCENES ──────────────────────────────────────────────
+export const QUEEN_SCENES = {
+  ISOLAMENTO: [
+    'The network just got quieter. Not because of silence — because one voice stopped.',
+    'Four burned. The sovereign\'s circle collapsed from the inside. That\'s how it\'s done.',
+    'Isolation complete. She\'s still in the room. She just can\'t reach anyone anymore.',
+  ],
+  ESPOSIZIONE: [
+    'The dossier landed. Everything she built over three years — visible in fourteen pages.',
+    'Secrets have a shelf life. This one just expired.',
+    'The exposure didn\'t destroy her. It just made her irrelevant. Which is worse.',
+  ],
+};
+
+// ── MOLE EXPOSED SCENES ───────────────────────────────────────────────────────
+export const MOLE_EXPOSED_SCENES = [
+  'The signal was always there. You just needed to know what you were looking at.',
+  'Burned. They\'ll call it a coincidence in the official report. You know what it was.',
+  'The network adjusts. A gap where there was a node. Clean.',
+];
+
+export const MOLE_WRONG_ACCUSATION = [
+  'Wrong call. The faction noticed. Trust is a resource — you just spent some.',
+  'Clean target. The accusation created a problem that didn\'t exist before.',
+  'Incorrect. The real mole is still in position. And now they know you\'re looking.',
+];
+
+// ── QUEEN STAGE DESCRIPTIONS ─────────────────────────────────────────────────
+export const QUEEN_STAGE_DESC = {
+  UNKNOWN:    'No data. This sovereign has not been identified.',
+  IDENTIFIED: 'Located. Alert level tracked. Approach with caution.',
+  PRESSURED:  'Network weakening. Followers exposed, secrets surfacing.',
+  EXPOSED:    'Neutralization within reach. One more move.',
+  NEUTRALIZED:'Operation complete. This sovereign is no longer a threat.',
+};
+
+// ── FOG LABELS ───────────────────────────────────────────────────────────────
+export const FOG_LABELS = [
+  '[ENCRYPTED_NODE]', '[UNKNOWN_ASSET]', '[UNIDENTIFIED]',
+  '[DARK_NODE]', '[SIGNAL_UNKNOWN]', '[CLASSIFICATION_5]',
+];

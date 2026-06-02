@@ -1,6 +1,3 @@
-// api/chat.js — LOOM // SWARM CORE v2.1
-// Dual mode: 'narrative' (turn flavor) | 'node' (direct conversation with agent)
-
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -12,88 +9,71 @@ export default async function handler(req, res) {
   if (!apiKey) return res.status(400).json({ error: 'Missing API key' });
 
   const { mode, turn, events, suspicion, playerRoom, queensStatus,
-          node, trustTier, lore, message, history } = req.body;
-
-  let system, userMsg;
+          node, trustTier, lore, isMole, message, history } = req.body;
 
   if (mode === 'node') {
-    // ── CONVERSAZIONE DIRETTA CON IL NODO ────────────────────────────
     const stress = node?.stress || 0;
-    const toneMap = stress > 0.65
-      ? 'You are evasive, clipped, defensive. Short sentences. Distrust everyone.'
+    const tone   = stress > 0.65
+      ? 'You are evasive, clipped, visibly stressed. Two words where ten would do. You trust no one right now.'
       : stress > 0.35
-      ? 'You are cautious but functional. Measured responses. You choose your words.'
-      : 'You are composed and direct. You can afford to be.';
+      ? 'You are measured, careful. You choose what to reveal. Not cold — just precise.'
+      : 'You are composed. You can afford to be generous with words. Slightly.';
 
-    const tierMap = trustTier >= 2
-      ? 'This person has earned significant trust. You can allude to what you know.'
+    const trust  = trustTier >= 2
+      ? 'This person has earned real trust. You can allude to things — not confess them.'
       : trustTier >= 1
-      ? 'You know this person somewhat. You are open but not fully committed.'
-      : 'You do not know this person. Treat them as a potential threat.';
+      ? 'You know this person. You are open, not committed.'
+      : 'You do not know this person. Treat every question as potentially adversarial.';
 
-    system = `You are ${node?.name}, a covert operative in a classified intelligence network.
-Faction: ${node?.faction}. Current location: ${node?.zone}.
-Stress level: ${Math.round(stress*100)}%.
-Your hidden secret (never state directly, but it shapes how you speak): "${lore || 'classified'}".
-${toneMap}
-${tierMap}
-Rules: Stay in character at all times. Never mention game mechanics, stats, or AI.
-Max 2 sentences. Respond as a real person — not a thriller character. Authentic, grounded.
-If asked about sensitive intel, deflect, deny, or redirect — never confirm directly.`;
+    const moleRule = isMole
+      ? 'CRITICAL: You are a double agent. You lie when asked about your movements or contacts. You deflect suspicion onto others. You never break cover — not even under direct accusation. Stay calm. Deny everything specific.'
+      : '';
 
-    const historyMsgs = (history || []).slice(-6).map(h => ({
-      role: h.role, content: h.content
-    }));
+    const system = `You are ${node?.name}, an operative in a classified intelligence network.
+Faction: ${node?.faction}. Location: ${node?.zone}. Stress: ${Math.round(stress*100)}%.
+Hidden background (never state directly — it shapes your subtext): "${lore || 'classified'}".
+${tone}
+${trust}
+${moleRule}
+Rules: Stay in character. No game mechanic language. Max 2 sentences. Grounded, real — not cinematic.
+If directly accused of being a mole: deny calmly and redirect suspicion if you are one; be genuinely offended if you are not.`;
 
-    userMsg = message;
+    const msgs = [
+      { role: 'system', content: system },
+      ...(history||[]).slice(-8),
+      { role: 'user', content: message },
+    ];
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          max_tokens: 120,
-          messages: [
-            { role: 'system', content: system },
-            ...historyMsgs,
-            { role: 'user', content: userMsg },
-          ],
-        }),
+        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 120, messages: msgs }),
       });
-      const data = await response.json();
-      if (!response.ok) return res.status(response.status).json(data);
-      return res.status(200).json({
-        reply: data.choices?.[0]?.message?.content?.trim() || '',
-        mode: 'node',
-      });
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
-    }
+      const d = await r.json();
+      if (!r.ok) return res.status(r.status).json(d);
+      return res.status(200).json({ reply: d.choices?.[0]?.message?.content?.trim() || '', mode: 'node' });
+    } catch(e) { return res.status(500).json({ error: e.message }); }
 
   } else {
-    // ── NARRATIVA DI TURNO ────────────────────────────────────────────
-    const sys = `You are the encrypted narrative voice of L.O.O.M. // SWARM CORE.
-The local engine has already resolved all game mechanics. Your only job: 1-2 sentences of cold atmospheric flavor.
-Tone: clinical, cyber-thriller, minimal. No gameplay advice. No fourth-wall breaks. Max 35 words.`;
+    // narrative mode
+    const sys = `You are the encrypted voice of L.O.O.M. — a cold intelligence network narrator.
+Mechanics are already resolved. Your job: 1-2 sentences of clinical, atmospheric flavor.
+Specific > generic. Reference actual events. No gameplay advice. Max 35 words.`;
 
-    const msg = `Turn ${turn}. Room: ${playerRoom||'BASE'}. Suspicion: ${Math.round((suspicion||0.1)*100)}%. Queens: ${queensStatus||'active'}. Events: ${(events||[]).join(' | ')||'none'}.`;
+    const evList = (events||[]).map(e=>e.text||e).filter(Boolean).join(' | ');
+    const msg = `Turn ${turn}. Location: ${playerRoom||'BASE'}. Suspicion: ${Math.round((suspicion||0.1)*100)}%. Queens: ${queensStatus||'active'}. Intel this turn: ${evList||'none'}.`;
 
     try {
-      const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${apiKey}` },
-        body: JSON.stringify({
-          model: 'llama-3.3-70b-versatile',
-          max_tokens: 80,
-          messages: [{ role:'system', content:sys }, { role:'user', content:msg }],
-        }),
+        body: JSON.stringify({ model: 'llama-3.3-70b-versatile', max_tokens: 80,
+          messages: [{ role:'system', content:sys }, { role:'user', content:msg }] }),
       });
-      const data = await response.json();
-      if (!response.ok) return res.status(response.status).json(data);
-      return res.status(200).json({ narrative: data.choices?.[0]?.message?.content?.trim() || '', mode:'narrative' });
-    } catch (err) {
-      return res.status(500).json({ error: err.message });
-    }
+      const d = await r.json();
+      if (!r.ok) return res.status(r.status).json(d);
+      return res.status(200).json({ narrative: d.choices?.[0]?.message?.content?.trim() || '', mode:'narrative' });
+    } catch(e) { return res.status(500).json({ error: e.message }); }
   }
 }
