@@ -23,6 +23,31 @@
   .crt{position:fixed;top:0;left:0;right:0;bottom:0;background:radial-gradient(ellipse at center,transparent 60%,rgba(0,0,0,.5) 100%);pointer-events:none;z-index:998}
   .app{max-width:1100px;margin:0 auto;padding:12px}
 
+  /* ── DESKTOP ONLY NOTICE ─────────────────────────────────── */
+  .mobile-block{display:none;position:fixed;inset:0;background:var(--bg);z-index:10000;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:32px;text-align:center}
+  .mobile-block h2{font-family:var(--head);font-size:16px;color:var(--acc);letter-spacing:3px}
+  .mobile-block p{font-size:11px;color:var(--txt2);line-height:1.8;max-width:280px}
+  @media(max-width:700px){.mobile-block{display:flex}.app{display:none}}
+
+  /* ── ONBOARDING MODAL ────────────────────────────────────── */
+  .ob-overlay{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+  .ob-box{background:var(--panel);border:1px solid var(--acc);max-width:560px;width:100%;padding:32px;position:relative}
+  .ob-box::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
+  .ob-logo{font-family:var(--head);font-size:22px;color:var(--acc);letter-spacing:5px;margin-bottom:4px}
+  .ob-sub{font-size:9px;color:var(--txt3);letter-spacing:3px;margin-bottom:24px}
+  .ob-block{margin-bottom:16px}
+  .ob-label{font-size:9px;color:var(--acc3);letter-spacing:2px;margin-bottom:6px}
+  .ob-text{font-size:11px;color:var(--txt);line-height:1.8;font-family:var(--body)}
+  .ob-sep{border:none;border-top:1px solid var(--brd2);margin:20px 0}
+  .ob-free{background:rgba(118,255,3,.05);border:1px solid var(--acc3);padding:12px 16px;margin-bottom:20px}
+  .ob-free-title{font-size:10px;color:var(--acc3);letter-spacing:2px;margin-bottom:6px}
+  .ob-free-text{font-size:11px;color:var(--txt2);line-height:1.7}
+  .ob-free-text a{color:var(--acc3);text-decoration:none}
+  .ob-free-text a:hover{text-decoration:underline}
+  .ob-start{width:100%;background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:12px;padding:12px;cursor:pointer;letter-spacing:3px;transition:all .2s}
+  .ob-start:hover{background:rgba(0,229,255,.08)}
+  .ob-version{position:absolute;top:12px;right:16px;font-size:9px;color:var(--txt3);letter-spacing:1px}
+
   .hdr{border:1px solid var(--brd);background:var(--panel);padding:10px 16px;margin-bottom:8px;display:flex;align-items:center;justify-content:space-between;position:relative;overflow:hidden}
   .hdr::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--acc),transparent)}
   .hdr-title{font-family:var(--head);font-size:18px;color:var(--acc);font-weight:900;letter-spacing:4px}
@@ -34,8 +59,6 @@
   .sdot{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--acc3);box-shadow:0 0 6px var(--acc3);margin-right:4px;animation:blink 1.2s infinite}
   @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
 
-  .api-panel{background:var(--panel);border:1px solid var(--brd);padding:10px 14px;margin-bottom:8px;display:flex;align-items:center;gap:10px}
-  .api-panel label{font-size:10px;color:var(--txt2);letter-spacing:1px;white-space:nowrap}
   .api-input{flex:1;background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:11px;padding:5px 8px;outline:none}
   .api-input:focus{border-color:var(--acc)}
 
@@ -119,6 +142,26 @@
   ::-webkit-scrollbar{width:4px}
   ::-webkit-scrollbar-track{background:var(--bg)}
   ::-webkit-scrollbar-thumb{background:var(--brd)}
+
+  /* ── GAME OVER / WIN OVERLAY ─────────────────────────────── */
+  .endgame-overlay{position:fixed;inset:0;background:rgba(5,10,14,.97);z-index:8000;display:none;align-items:center;justify-content:center;flex-direction:column;gap:24px;padding:32px;text-align:center}
+  .endgame-overlay.show{display:flex}
+  .endgame-title{font-family:var(--head);font-size:28px;letter-spacing:6px}
+  .endgame-title.lose{color:var(--dng)}
+  .endgame-title.win{color:var(--acc3)}
+  .endgame-sub{font-size:12px;color:var(--txt2);max-width:480px;line-height:1.8;font-family:var(--body)}
+  .endgame-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:480px;width:100%}
+  .endgame-stat{background:var(--panel);border:1px solid var(--brd);padding:12px;text-align:center}
+  .endgame-stat-k{font-size:9px;color:var(--txt3);letter-spacing:2px;margin-bottom:4px}
+  .endgame-stat-v{font-family:var(--head);font-size:18px}
+  .endgame-btn{background:transparent;border:1px solid var(--acc);color:var(--acc);font-family:var(--head);font-size:11px;padding:10px 32px;cursor:pointer;letter-spacing:3px;transition:all .2s}
+  .endgame-btn:hover{background:rgba(0,229,255,.08)}
+
+  /* ── NO-KEY BANNER ───────────────────────────────────────── */
+  .nokey-banner{background:rgba(255,171,0,.06);border:1px solid var(--amb);padding:8px 14px;margin-bottom:8px;display:none;align-items:center;gap:10px;font-size:10px;color:var(--amb);letter-spacing:.5px}
+  .nokey-banner.show{display:flex}
+  .nokey-banner a{color:var(--acc3);text-decoration:none;font-size:10px}
+  .nokey-banner a:hover{text-decoration:underline}
 </style>
 </head>
 <body>
@@ -126,6 +169,71 @@
 <div class="scanline"></div>
 <div class="crt"></div>
 
+<!-- MOBILE BLOCK -->
+<div class="mobile-block">
+  <h2>DESKTOP ONLY</h2>
+  <p>L.O.O.M. // SWARM CORE is optimised for desktop screens (1024px+).<br><br>Open it on a laptop or desktop to begin the operation.</p>
+  <div style="font-size:9px;color:var(--txt3);letter-spacing:2px">v1.0 ALPHA</div>
+</div>
+
+<!-- ONBOARDING MODAL -->
+<div class="ob-overlay" id="obOverlay">
+  <div class="ob-box">
+    <div class="ob-version">v1.0 ALPHA</div>
+    <div class="ob-logo">L.O.O.M.</div>
+    <div class="ob-sub">LOCAL OPINION OVERHAUL MONITOR // SWARM CORE</div>
+
+    <div class="ob-block">
+      <div class="ob-label">// WHAT IS THIS</div>
+      <div class="ob-text">
+        You are the director of a covert intelligence network.<br>
+        50 agents are distributed across 6 classified rooms.<br>
+        Every turn, the AI simulates what happens — stress builds, nodes move, crises erupt.<br>
+        Issue field directives, manage resources, and prevent total network collapse.
+      </div>
+    </div>
+
+    <hr class="ob-sep">
+
+    <div class="ob-free">
+      <div class="ob-free-title">⚡ START FREE — NO CREDIT CARD</div>
+      <div class="ob-free-text">
+        Select <strong style="color:var(--acc3)">GROQ</strong> as your provider — it's free, fast, and needs no payment.<br>
+        Get a free key in 30 seconds at <a href="https://console.groq.com" target="_blank">console.groq.com</a> → API Keys → Create.<br>
+        Paste it in the key field and hit CONNECT. That's it.
+      </div>
+    </div>
+
+    <div class="ob-block">
+      <div class="ob-label">// HOW TO LOSE</div>
+      <div class="ob-text">
+        Inspector Risk reaches <strong style="color:var(--dng)">100%</strong> — the NSA shuts you down.<br>
+        Global Reputation drops to <strong style="color:var(--dng)">0</strong> — network collapses, no one trusts you.<br>
+        Data Tokens hit <strong style="color:var(--dng)">0</strong> — operations cease, network goes dark.
+      </div>
+    </div>
+
+    <div class="ob-block">
+      <div class="ob-label">// HOW TO WIN</div>
+      <div class="ob-text">
+        Survive <strong style="color:var(--acc3)">20 turns</strong> with Reputation above 70 and Inspector Risk below 40%.<br>
+        Keep the network alive long enough to become untouchable.
+      </div>
+    </div>
+
+    <button class="ob-start" onclick="closeOnboarding()">◆ BEGIN OPERATION</button>
+  </div>
+</div>
+
+<!-- ENDGAME OVERLAY -->
+<div class="endgame-overlay" id="endgameOverlay">
+  <div class="endgame-title" id="endgameTitle">OPERATION TERMINATED</div>
+  <div class="endgame-sub" id="endgameSub"></div>
+  <div class="endgame-stats" id="endgameStats"></div>
+  <button class="endgame-btn" onclick="restartGame()">↺ NEW OPERATION</button>
+</div>
+
+<!-- LOADING -->
 <div id="loadingOverlay" class="loading-overlay">
   <div class="loading-txt">L.O.O.M. // SWARM CORE</div>
   <div style="font-size:10px;color:var(--txt2);letter-spacing:2px;text-align:center;line-height:1.8">
@@ -149,15 +257,22 @@
     <div class="hdr-right">
       <div class="turn-counter">TURN <span id="turnNum">01</span></div>
       <div style="font-size:9px;color:var(--txt2);margin-top:2px"><span class="sdot"></span>SECURE UPLINK ESTABLISHED</div>
+      <div style="font-size:9px;color:var(--txt3);margin-top:2px">WIN: survive 20 turns · REP&gt;70 · RISK&lt;40%</div>
     </div>
   </div>
 
-  <!-- PROVIDER + API KEY — COMPACT ROW -->
+  <!-- NO-KEY BANNER -->
+  <div class="nokey-banner" id="nokeyBanner">
+    <span>⚡ FREE TO PLAY —</span>
+    <span>Select <strong>GROQ</strong>, get a free key at <a href="https://console.groq.com" target="_blank">console.groq.com</a>, paste it below and hit CONNECT.</span>
+  </div>
+
+  <!-- PROVIDER + API KEY -->
   <div style="background:var(--panel);border:1px solid var(--brd);padding:8px 12px;margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:nowrap">
     <span style="font-size:9px;color:var(--txt3);letter-spacing:1px;white-space:nowrap">PROVIDER //</span>
     <div style="display:flex;gap:4px" id="providerGrid"></div>
     <div style="width:1px;height:20px;background:var(--brd2);flex-shrink:0"></div>
-    <input class="api-input" type="password" id="apiKey" placeholder="paste api key..." style="flex:1;min-width:120px;max-width:260px" />
+    <input class="api-input" type="password" id="apiKeyInput" placeholder="paste api key..." style="flex:1;min-width:120px;max-width:260px" />
     <select id="modelSelect" style="background:var(--bg);border:1px solid var(--brd2);color:var(--acc3);font-family:var(--mono);font-size:9px;padding:4px 6px;outline:none;cursor:pointer;max-width:200px"></select>
     <button class="btn btn-acc" onclick="saveKey()" style="padding:4px 10px;font-size:10px;white-space:nowrap">CONNECT</button>
     <span id="keyStatus" style="font-size:9px;color:var(--txt2);white-space:nowrap">NO KEY</span>
@@ -268,10 +383,17 @@ const FACTIONS=['regular','premium','competitor','inspector'];
 const FC={regular:'var(--acc)',premium:'var(--pur)',competitor:'var(--acc2)',inspector:'var(--amb)'};
 const NAMES=['Volkov','Chen','Harari','Osei','Petrov','Nkrumah','Lenz','Saito','Moreau','Dubois','Kowalski','Russo','Ferreira','Nakamura','Adeyemi','Svensson','Müller','Kofi','Dragan','Ivanovic','Berkov','Shin','Castellano','Yildiz','Okafor','Patel','Brennan','Fonseca','Renard','Andrade','Vogel','Santos','Bassi','Mehta','Park','Lindqvist','Tremblay','Okonkwo','Leblanc','Czerny','Watanabe','Ngozi','Popescu','Reyes','Aziz','Takeda','Mendez','Blum','Sato','Koroma'];
 
+const PROVIDERS={
+  anthropic:{label:'ANTHROPIC',color:'var(--acc)',placeholder:'sk-ant-api03-...',models:['claude-sonnet-4-20250514','claude-haiku-4-5-20251001'],freeNote:'Trial credits (~$5)',link:'https://console.anthropic.com'},
+  groq:{label:'GROQ',color:'var(--acc3)',placeholder:'gsk_...',models:['llama-4-scout-17b-16e-instruct','llama3-70b-8192','mixtral-8x7b-32768','gemma2-9b-it'],freeNote:'FREE — 14.4K req/day',link:'https://console.groq.com'},
+  gemini:{label:'GEMINI',color:'var(--amb)',placeholder:'AIza...',models:['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'],freeNote:'FREE — 1500 req/day',link:'https://aistudio.google.com/apikey'},
+  mistral:{label:'MISTRAL',color:'var(--pur)',placeholder:'your mistral key...',models:['open-mistral-nemo','mistral-small-latest','open-mixtral-8x7b'],freeNote:'FREE — rate limited',link:'https://console.mistral.ai'},
+  openrouter:{label:'OPENROUTER',color:'#ff9800',placeholder:'sk-or-v1-...',models:['meta-llama/llama-4-scout:free','google/gemma-3-27b-it:free','mistralai/mistral-7b-instruct:free','qwen/qwen3-8b:free'],freeNote:'FREE — :free models',link:'https://openrouter.ai/keys'},
+};
+
 function mkNodes(){
   return NAMES.map((n,i)=>({
-    id:'N'+String(i+1).padStart(3,'0'),
-    name:n,
+    id:'N'+String(i+1).padStart(3,'0'),name:n,
     faction:FACTIONS[i<20?0:i<30?1:i<42?2:3],
     room:ROOMS[i%6].itKey,
     stress:parseFloat((Math.random()*.5).toFixed(2)),
@@ -280,100 +402,90 @@ function mkNodes(){
   }));
 }
 
-let gs={
-  turn:1,cash:1200,reputation:50,inspectorRisk:.20,
-  intel:40,diplomacy:35,sanction:25,
-  rooms:Object.fromEntries(ROOMS.map(r=>[r.itKey,{
-    stress:parseFloat((Math.random()*.4).toFixed(2)),
-    occupancy:5+Math.floor(Math.random()*10),
-    revenue:50+Math.floor(Math.random()*150),
-  }])),
-  nodes:mkNodes(),
-  alerts:[],
-  pendingOps:[],
-};
+function mkGs(){
+  return {
+    turn:1,cash:1200,reputation:50,inspectorRisk:.20,
+    intel:40,diplomacy:35,sanction:25,
+    rooms:Object.fromEntries(ROOMS.map(r=>[r.itKey,{
+      stress:parseFloat((Math.random()*.4).toFixed(2)),
+      occupancy:5+Math.floor(Math.random()*10),
+      revenue:50+Math.floor(Math.random()*150),
+    }])),
+    nodes:mkNodes(),alerts:[],pendingOps:[],
+  };
+}
 
+let gs=mkGs();
 let loading=false;
-
-const PROVIDERS={
-  anthropic:{
-    label:'ANTHROPIC',color:'var(--acc)',placeholder:'sk-ant-api03-...',
-    models:['claude-sonnet-4-20250514','claude-haiku-4-5-20251001'],
-    freeNote:'Trial credits (~$5)',link:'https://console.anthropic.com',
-  },
-  groq:{
-    label:'GROQ',color:'var(--acc3)',placeholder:'gsk_...',
-    models:['llama-4-scout-17b-16e-instruct','llama3-70b-8192','mixtral-8x7b-32768','gemma2-9b-it'],
-    freeNote:'FREE — 14.4K req/day',link:'https://console.groq.com',
-  },
-  gemini:{
-    label:'GEMINI',color:'var(--amb)',placeholder:'AIza...',
-    models:['gemini-2.5-flash','gemini-2.0-flash','gemini-1.5-flash'],
-    freeNote:'FREE — 1500 req/day',link:'https://aistudio.google.com/apikey',
-  },
-  mistral:{
-    label:'MISTRAL',color:'var(--pur)',placeholder:'your mistral key...',
-    models:['open-mistral-nemo','mistral-small-latest','open-mixtral-8x7b'],
-    freeNote:'FREE — rate limited',link:'https://console.mistral.ai',
-  },
-  openrouter:{
-    label:'OPENROUTER',color:'#ff9800',placeholder:'sk-or-v1-...',
-    models:['meta-llama/llama-4-scout:free','google/gemma-3-27b-it:free','mistralai/mistral-7b-instruct:free','qwen/qwen3-8b:free'],
-    freeNote:'FREE — :free models',link:'https://openrouter.ai/keys',
-  },
-};
-
 let selectedProvider='groq';
 let apiKey='';
 let selectedModel='';
+let gameEnded=false;
+let firstKey=localStorage.getItem('loom_seen_onboarding');
 
+// ── ONBOARDING ───────────────────────────────────────────────
+function closeOnboarding(){
+  document.getElementById('obOverlay').style.display='none';
+  localStorage.setItem('loom_seen_onboarding','1');
+}
+
+// ── PROVIDER / KEY ───────────────────────────────────────────
 function renderProviders(){
   const g=document.getElementById('providerGrid');
   g.innerHTML='';
   Object.entries(PROVIDERS).forEach(([id,p])=>{
     const active=selectedProvider===id;
-    g.innerHTML+=`<button onclick="selectProvider('${id}')" title="${p.freeNote}" style="background:${active?'rgba(0,229,255,0.06)':'transparent'};border:1px solid ${active?p.color:'var(--brd2)'};color:${active?p.color:'var(--txt3)'};font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap">${p.label}</button>`;
+    g.innerHTML+=`<button onclick="selectProvider('${id}')" title="${p.freeNote} — ${p.link}" style="background:${active?'rgba(0,229,255,0.06)':'transparent'};border:1px solid ${active?p.color:'var(--brd2)'};color:${active?p.color:'var(--txt3)'};font-family:var(--mono);font-size:9px;padding:3px 8px;cursor:pointer;letter-spacing:1px;transition:all .15s;white-space:nowrap">${p.label}</button>`;
   });
 }
 
 function selectProvider(id){
   selectedProvider=id;
   const p=PROVIDERS[id];
-  document.getElementById('keyLabel').textContent=p.label+' KEY //';
-  document.getElementById('apiKey').placeholder=p.placeholder;
-  document.getElementById('apiKey').value='';
-  document.getElementById('keyStatus').textContent='NO KEY LOADED';
+  document.getElementById('apiKeyInput').placeholder=p.placeholder;
+  document.getElementById('apiKeyInput').value='';
+  document.getElementById('keyStatus').textContent='NO KEY';
   document.getElementById('keyStatus').style.color='var(--txt2)';
   apiKey='';
   const sel=document.getElementById('modelSelect');
   sel.innerHTML=p.models.map(m=>`<option value="${m}">${m}</option>`).join('');
   selectedModel=p.models[0];
   renderProviders();
+  updateNokeyBanner();
 }
 
 function saveKey(){
-  apiKey=document.getElementById('apiKey').value.trim();
+  apiKey=document.getElementById('apiKeyInput').value.trim();
   selectedModel=document.getElementById('modelSelect').value;
   const s=document.getElementById('keyStatus');
   const p=PROVIDERS[selectedProvider];
-  s.textContent=apiKey?`${p.label} ACTIVE`:'NO KEY LOADED';
+  s.textContent=apiKey?`${p.label} ACTIVE`:'NO KEY';
   s.style.color=apiKey?p.color:'var(--txt2)';
+  updateNokeyBanner();
 }
 
-function sc(s){
-  if(s<.4)return'var(--acc3)';
-  if(s<.7)return'var(--amb)';
-  return'var(--dng)';
+function updateNokeyBanner(){
+  const b=document.getElementById('nokeyBanner');
+  b.className=apiKey?'nokey-banner':'nokey-banner show';
 }
+
+// ── RENDER ───────────────────────────────────────────────────
+function sc(s){if(s<.4)return'var(--acc3)';if(s<.7)return'var(--amb)';return'var(--dng)';}
 
 function renderPowers(){
-  [{n:'Intel',v:gs.intel},{n:'Diplomacy',v:gs.diplomacy},{n:'Sanction',v:gs.sanction}].forEach(p=>{
-    document.getElementById('bar'+p.n).style.width=Math.min(p.v,100)+'%';
-    document.getElementById('val'+p.n).textContent=Math.round(p.v);
+  ['Intel','Diplomacy','Sanction'].forEach(k=>{
+    const v=gs[k.toLowerCase()];
+    document.getElementById('val'+k).textContent=v;
+    document.getElementById('bar'+k).style.width=v+'%';
   });
+}
+
+function renderEcon(){
   document.getElementById('valCash').textContent=gs.cash;
   document.getElementById('valRep').textContent=gs.reputation;
   document.getElementById('valRisk').textContent=Math.round(gs.inspectorRisk*100)+'%';
+  document.getElementById('valRep').style.color=gs.reputation>60?'var(--acc3)':gs.reputation>30?'var(--amb)':'var(--dng)';
+  document.getElementById('valRisk').style.color=gs.inspectorRisk<.4?'var(--acc3)':gs.inspectorRisk<.7?'var(--amb)':'var(--dng)';
   document.getElementById('turnNum').textContent=String(gs.turn).padStart(2,'0');
 }
 
@@ -381,20 +493,28 @@ function renderRooms(){
   const g=document.getElementById('roomsGrid');
   g.innerHTML='';
   ROOMS.forEach(r=>{
-    const rd=gs.rooms[r.itKey]||{stress:0,occupancy:0,revenue:0};
-    const c=sc(rd.stress);
-    g.innerHTML+=`<div class="room-card">
+    const rm=gs.rooms[r.itKey]||{stress:.1,occupancy:5,revenue:100};
+    const s=rm.stress;
+    const nodes=gs.nodes.filter(n=>n.room===r.itKey);
+    const d=document.createElement('div');
+    d.className='room-card';
+    d.style.borderColor=s>.7?'var(--dng)':s>.4?'var(--wrn)':'var(--brd)';
+    d.innerHTML=`
       <div class="room-id">${r.id}</div>
-      <div class="room-name" style="color:${r.color}">${r.key.toUpperCase()}</div>
+      <div class="room-name">${r.key}</div>
       <div class="room-name-it">${r.itKey}</div>
       <div class="room-stats">
-        <div class="stat-mini">STRESS<span style="color:${c}">${Math.round(rd.stress*100)}%</span></div>
-        <div class="stat-mini">NODES<span>${rd.occupancy}</span></div>
-        <div class="stat-mini">REVENUE<span style="color:var(--amb)">${rd.revenue}t</span></div>
+        <div class="stat-mini">STRESS<span style="color:${sc(s)}">${Math.round(s*100)}%</span></div>
+        <div class="stat-mini">NODES<span>${nodes.length}</span></div>
+        <div class="stat-mini">REV<span style="color:var(--amb)">${rm.revenue}</span></div>
       </div>
-      <div class="sbar-bg"><div class="sbar" style="width:${rd.stress*100}%;background:${c}"></div></div>
-      <div class="room-tag" style="color:${r.color};border-color:${r.color}">${r.tag}</div>
-    </div>`;
+      <div class="sbar-bg"><div class="sbar" style="width:${s*100}%;background:${sc(s)}"></div></div>
+      <div style="margin-top:6px;display:flex;gap:2px;flex-wrap:wrap">
+        ${nodes.slice(0,8).map(n=>`<div class="ndot" style="background:${FC[n.faction]};${n.mole?'box-shadow:0 0 4px var(--dng)':''}" title="${n.name} [${n.faction}]"></div>`).join('')}
+        ${nodes.length>8?`<span style="font-size:8px;color:var(--txt3)">+${nodes.length-8}</span>`:''}
+      </div>
+      <div class="room-tag" style="color:${r.color};border-color:${r.color}">${r.tag}</div>`;
+    g.appendChild(d);
   });
 }
 
@@ -403,159 +523,67 @@ function renderOps(){
   g.innerHTML='';
   OPS.forEach(op=>{
     const active=gs.pendingOps.includes(op.code);
-    g.innerHTML+=`<button class="op-btn${active?' active-op':''}" onclick="toggleOp('${op.code}')" ${loading?'disabled':''}>
-      <span class="op-code">[${op.code.toUpperCase()}]</span>
-      <span style="font-size:11px">${op.label}</span>
-      <span class="op-desc">${op.desc}</span>
-    </button>`;
+    const b=document.createElement('button');
+    b.className='op-btn'+(active?' active-op':'');
+    b.disabled=loading;
+    b.onclick=()=>toggleOp(op.code);
+    b.innerHTML=`<span class="op-code">${op.code.toUpperCase().replace(/_/g,' ')}</span><strong>${op.label}</strong><span class="op-desc">${op.desc}</span>`;
+    g.appendChild(b);
   });
 }
 
 function renderAlerts(){
-  document.getElementById('alertsPanel').innerHTML=gs.alerts.map(a=>`<span class="alert-chip">!! ${a}</span>`).join('');
-}
-
-const FC_HEX={regular:'#00e5ff',premium:'#ea80fc',competitor:'#ff3d00',inspector:'#ffab00'};
-let selectedNode=null;
-
-function getNodeRelations(node){
-  const roomMates=gs.nodes.filter(n=>n.room===node.room&&n.id!==node.id);
-  const sameFactRooms=gs.nodes.filter(n=>n.faction===node.faction&&n.id!==node.id&&n.room!==node.room);
-  const moles=gs.nodes.filter(n=>n.mole&&n.id!==node.id&&n.room===node.room);
-  return{roomMates,sameFactRooms,moles};
+  const ap=document.getElementById('alertsPanel');
+  ap.innerHTML=(gs.alerts||[]).map(a=>`<div class="alert-chip">${a}</div>`).join('');
 }
 
 function renderNodes(){
   const g=document.getElementById('radarGrid');
+  const rooms={};
+  ROOMS.forEach(r=>{rooms[r.itKey]=[];});
+  gs.nodes.forEach(n=>{if(rooms[n.room])rooms[n.room].push(n);});
   g.innerHTML='';
   ROOMS.forEach(r=>{
-    const roomNodes=gs.nodes.filter(n=>n.room===r.itKey);
-    const W=200,H=180,CX=100,CY=90,RAD=68;
-    const rings=[0.35,0.65,1.0];
-    let svgDots='',svgLines='',svgLabels='';
-    const positions=[];
-    roomNodes.forEach((n,i)=>{
-      const angle=(2*Math.PI*i/Math.max(roomNodes.length,1))-(Math.PI/2);
-      const ringR=RAD*rings[Math.min(n.loyalty,2)];
-      const x=CX+Math.cos(angle)*ringR*(0.85+Math.random()*0.15);
-      const y=CY+Math.sin(angle)*ringR*(0.85+Math.random()*0.15);
-      positions.push({n,x,y,angle});
-    });
-    // web lines between roommates
-    positions.forEach((a,ai)=>{
-      positions.forEach((b,bi)=>{
-        if(bi<=ai)return;
-        const isMoleLink=a.n.mole||b.n.mole;
-        const opacity=isMoleLink?'0.5':'0.12';
-        const stroke=isMoleLink?'#ff1744':'#1a3045';
-        const dash=isMoleLink?'3,2':'4,3';
-        svgLines+=`<line x1="${a.x.toFixed(1)}" y1="${a.y.toFixed(1)}" x2="${b.x.toFixed(1)}" y2="${b.y.toFixed(1)}" stroke="${stroke}" stroke-width="0.8" stroke-opacity="${opacity}" stroke-dasharray="${dash}"/>`;
-      });
-    });
-    // radar rings
-    rings.forEach((r,ri)=>{
-      const labels=['T0','T1','T2'];
-      svgDots+=`<circle cx="${CX}" cy="${CY}" r="${RAD*r}" fill="none" stroke="#1a3045" stroke-width="0.5" stroke-opacity="0.4" stroke-dasharray="2,4"/>`;
-      svgDots+=`<text x="${CX+RAD*r+2}" y="${CY+3}" fill="#2a4a5a" font-size="6" font-family="Share Tech Mono">${labels[ri]}</text>`;
-    });
-    // center cross
-    svgDots+=`<line x1="${CX-4}" y1="${CY}" x2="${CX+4}" y2="${CY}" stroke="#1a3045" stroke-width="0.5"/>`;
-    svgDots+=`<line x1="${CX}" y1="${CY-4}" x2="${CX}" y2="${CY+4}" stroke="#1a3045" stroke-width="0.5"/>`;
-    // node dots
-    positions.forEach(({n,x,y})=>{
-      const col=FC_HEX[n.faction]||'#888';
-      const isSel=selectedNode&&selectedNode.id===n.id;
-      const isRelated=selectedNode&&selectedNode.id!==n.id&&n.room===selectedNode.room;
-      const r2=isSel?5:n.mole?4:3;
-      const opacity=selectedNode&&!isSel&&!isRelated?'0.25':'1';
-      const stroke=isSel?'#ffffff':n.mole?'#ff1744':'none';
-      const sw=isSel?1.5:n.mole?1:0;
-      svgDots+=`<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${r2}" fill="${col}" fill-opacity="${opacity}" stroke="${stroke}" stroke-width="${sw}" style="cursor:pointer" onclick="clickNode('${n.id}')"/>`;
-      if(isSel||isRelated||!selectedNode){
-        const lx=x>CX?x+6:x-6;
-        const anchor=x>CX?'start':'end';
-        svgLabels+=`<text x="${lx.toFixed(1)}" y="${(y+3).toFixed(1)}" fill="${isSel?'#ffffff':col}" fill-opacity="${opacity}" font-size="6" font-family="Share Tech Mono" text-anchor="${anchor}" style="cursor:pointer;pointer-events:none">${n.name.slice(0,6)}</text>`;
-      }
-    });
-    // stress arc on outer ring
-    const rd=gs.rooms[r.itKey]||{stress:0};
-    const stress=rd.stress||0;
-    const arcAngle=stress*2*Math.PI;
-    const ex=CX+Math.cos(-Math.PI/2+arcAngle)*RAD;
-    const ey=CY+Math.sin(-Math.PI/2+arcAngle)*RAD;
-    const largeArc=arcAngle>Math.PI?1:0;
-    const stressCol=stress<0.4?'#76ff03':stress<0.7?'#ffab00':'#ff1744';
-    if(stress>0.01){
-      svgDots+=`<path d="M ${CX} ${CY-RAD} A ${RAD} ${RAD} 0 ${largeArc} 1 ${ex.toFixed(1)} ${ey.toFixed(1)}" fill="none" stroke="${stressCol}" stroke-width="1.5" stroke-opacity="0.6"/>`;
-    }
-
-    const rColor=r.color.replace('var(--acc)','#00e5ff').replace('var(--pur)','#ea80fc').replace('var(--acc2)','#ff3d00').replace('var(--wrn)','#ff6d00').replace('var(--amb)','#ffab00').replace('var(--acc3)','#76ff03');
-
-    g.innerHTML+=`<div style="background:var(--bg2);border:1px solid var(--brd2);padding:6px;position:relative">
-      <div style="font-size:8px;color:${rColor};letter-spacing:1px;margin-bottom:2px;font-family:'Orbitron',monospace">${r.tag}</div>
-      <div style="font-size:7px;color:var(--txt3);margin-bottom:4px">${roomNodes.length} nodes</div>
-      <svg viewBox="0 0 ${W} ${H}" width="100%" style="display:block">
-        ${svgLines}${svgDots}${svgLabels}
-      </svg>
-    </div>`;
+    const ns=rooms[r.itKey]||[];
+    const d=document.createElement('div');
+    d.style.cssText='background:var(--bg2);border:1px solid var(--brd2);padding:6px 8px';
+    d.innerHTML=`<div style="font-size:8px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">${r.key} (${ns.length})</div>`+
+      ns.slice(0,6).map(n=>`<div style="font-size:9px;display:flex;align-items:center;gap:3px;margin-bottom:2px;cursor:pointer" onclick="showNodeDetail('${n.id}')">
+        <div class="ndot" style="background:${FC[n.faction]};${n.mole?'box-shadow:0 0 3px var(--dng)':''}"></div>
+        <span style="color:${n.loyalty<1?'var(--txt3)':n.loyalty>1?'var(--acc3)':'var(--txt)'}">${n.name}</span>
+        ${n.mole?'<span style="color:var(--dng);font-size:8px">⚠</span>':''}
+      </div>`).join('')+
+      (ns.length>6?`<div style="font-size:8px;color:var(--txt3)">+${ns.length-6} more</div>`:'');
+    g.appendChild(d);
   });
-  renderNodeDetail();
 }
 
-function clickNode(id){
-  const node=gs.nodes.find(n=>n.id===id);
-  if(!node)return;
-  if(selectedNode&&selectedNode.id===id){
-    selectedNode=null;
-    document.getElementById('nodeDetail').style.display='none';
-  } else {
-    selectedNode=node;
-  }
-  renderNodes();
-}
-
-function renderNodeDetail(){
-  if(!selectedNode)return;
+function showNodeDetail(id){
+  const n=gs.nodes.find(x=>x.id===id);
+  if(!n)return;
   const d=document.getElementById('nodeDetail');
   d.style.display='block';
-  const n=selectedNode;
-  const {roomMates,sameFactRooms,moles}=getNodeRelations(n);
-  const col=FC_HEX[n.faction]||'#888';
-  const room=ROOMS.find(r=>r.itKey===n.room);
-  const loyLbl=['DEFECTOR','ACTIVE ASSET','BLACK OPS OPERATOR'];
-  const relLines=roomMates.slice(0,8).map(r=>{
-    const rc=FC_HEX[r.faction]||'#888';
-    return `<span style="color:${rc};margin-right:8px;font-size:9px">${r.name}${r.mole?' [M]':''}</span>`;
-  }).join('');
-  const netLines=sameFactRooms.slice(0,5).map(r=>`<span style="color:var(--txt2);margin-right:8px;font-size:9px">${r.name}@${ROOMS.find(rm=>rm.itKey===r.room)?.tag||'?'}</span>`).join('');
-  d.innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">NODE PROFILE</div>
-      <div style="font-family:'Orbitron',monospace;font-size:11px;color:${col}">${n.name.toUpperCase()}</div>
-      <div style="font-size:9px;color:var(--txt2);margin-top:2px">${n.id} // ${n.faction.toUpperCase()}</div>
-      <div style="font-size:9px;color:var(--txt2);margin-top:1px">LOCATION: ${room?room.tag:'?'}</div>
-      <div style="font-size:9px;margin-top:2px;color:${n.loyalty===0?'var(--dng)':n.loyalty===2?'var(--acc3)':'var(--txt)'}">${loyLbl[n.loyalty]||'UNKNOWN'}</div>
-      <div style="font-size:9px;margin-top:2px;color:${n.stress>0.7?'var(--dng)':n.stress>0.4?'var(--amb)':'var(--acc3)'}">STRESS: ${Math.round(n.stress*100)}%</div>
-      ${n.mole?'<div style="font-size:9px;color:var(--dng);margin-top:3px;letter-spacing:1px">!! MOLE SUSPECTED</div>':''}
-    </div>
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">ROOM CONNECTIONS (${roomMates.length})</div>
-      <div style="line-height:1.8">${relLines||'<span style="color:var(--txt3);font-size:9px">ISOLATED</span>'}</div>
-      ${moles.length?`<div style="font-size:9px;color:var(--dng);margin-top:4px">!! ${moles.length} MOLE(S) IN ROOM</div>`:''}
-    </div>
-    <div>
-      <div style="font-size:9px;color:var(--txt3);letter-spacing:1px;margin-bottom:4px">FACTION NETWORK (${sameFactRooms.length})</div>
-      <div style="line-height:1.8">${netLines||'<span style="color:var(--txt3);font-size:9px">NO EXTERNAL CONTACTS</span>'}</div>
-    </div>
+  d.innerHTML=`<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+    <div class="ndot" style="width:10px;height:10px;background:${FC[n.faction]};${n.mole?'box-shadow:0 0 6px var(--dng)':''}"></div>
+    <strong style="color:var(--acc);font-family:var(--head);font-size:12px">${n.name}</strong>
+    <span style="font-size:9px;color:var(--txt3)">${n.id}</span>
+    ${n.mole?'<span style="color:var(--dng);font-size:10px">⚠ MOLE SUSPECTED</span>':''}
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;font-size:10px">
+    <div><div style="color:var(--txt3);font-size:8px;letter-spacing:1px">FACTION</div><div style="color:${FC[n.faction]}">${n.faction.toUpperCase()}</div></div>
+    <div><div style="color:var(--txt3);font-size:8px;letter-spacing:1px">LOCATION</div><div>${n.room}</div></div>
+    <div><div style="color:var(--txt3);font-size:8px;letter-spacing:1px">STRESS</div><div style="color:${sc(n.stress)}">${Math.round(n.stress*100)}%</div></div>
+    <div><div style="color:var(--txt3);font-size:8px;letter-spacing:1px">LOYALTY</div><div style="color:${n.loyalty>1?'var(--acc3)':n.loyalty>0?'var(--txt)':'var(--dng)'}">${['HOSTILE','NEUTRAL','LOYAL'][n.loyalty]||'?'}</div></div>
   </div>`;
 }
 
-function renderAll(){renderPowers();renderRooms();renderOps();renderAlerts();renderNodes();}
+function renderAll(){
+  renderPowers();renderEcon();renderRooms();renderOps();renderAlerts();renderNodes();
+}
 
 function toggleOp(code){
   const i=gs.pendingOps.indexOf(code);
-  if(i>=0)gs.pendingOps.splice(i,1);
-  else gs.pendingOps.push(code);
+  if(i>-1)gs.pendingOps.splice(i,1);else gs.pendingOps.push(code);
   renderOps();
 }
 
@@ -574,13 +602,74 @@ function addLog(turn,txt,events,alerts){
 function setLoading(v){
   loading=v;
   const btn=document.getElementById('advanceBtn');
-  btn.disabled=v;
+  btn.disabled=v||gameEnded;
   btn.textContent=v?'⟳ PROCESSING — ENGINE ACTIVE...':'▶ ADVANCE TURN — GLOBAL SYNCHRONIZATION';
   renderOps();
 }
 
+// ── GAME OVER / WIN CHECK ────────────────────────────────────
+function checkEndgame(){
+  const risk=gs.inspectorRisk;
+  const rep=gs.reputation;
+  const cash=gs.cash;
+  const turn=gs.turn;
+
+  let ended=false,win=false,title='',sub='';
+
+  if(risk>=1){
+    ended=true;win=false;
+    title='OPERATION TERMINATED';
+    sub='Inspector Risk reached 100%. The NSA has shut down the network. All assets are burned. The operation is over.';
+  } else if(rep<=0){
+    ended=true;win=false;
+    title='NETWORK COLLAPSED';
+    sub='Global Reputation hit zero. No one trusts the network anymore. The nodes scatter. The operation dissolves into silence.';
+  } else if(cash<=0){
+    ended=true;win=false;
+    title='RESOURCES DEPLETED';
+    sub='Data Tokens exhausted. Operations have ceased. The network goes dark — not with a bang, but a timeout.';
+  } else if(turn>20&&rep>70&&risk<.4){
+    ended=true;win=true;
+    title='OPERATION COMPLETE';
+    sub='You survived 20 turns with the network intact. Reputation above 70. Inspector Risk below 40%. The network is untouchable. For now.';
+  }
+
+  if(ended){
+    gameEnded=true;
+    const ov=document.getElementById('endgameOverlay');
+    const t=document.getElementById('endgameTitle');
+    const s=document.getElementById('endgameSub');
+    const st=document.getElementById('endgameStats');
+    t.textContent=title;
+    t.className='endgame-title '+(win?'win':'lose');
+    s.textContent=sub;
+    st.innerHTML=`
+      <div class="endgame-stat"><div class="endgame-stat-k">TURNS</div><div class="endgame-stat-v" style="color:var(--amb)">${gs.turn}</div></div>
+      <div class="endgame-stat"><div class="endgame-stat-k">REPUTATION</div><div class="endgame-stat-v" style="color:${rep>50?'var(--acc3)':'var(--dng)'}">${rep}</div></div>
+      <div class="endgame-stat"><div class="endgame-stat-k">INSPECTOR RISK</div><div class="endgame-stat-v" style="color:${risk<.4?'var(--acc3)':'var(--dng)'}">${Math.round(risk*100)}%</div></div>`;
+    ov.className='endgame-overlay show';
+    document.getElementById('advanceBtn').disabled=true;
+  }
+  return ended;
+}
+
+function restartGame(){
+  gs=mkGs();
+  gameEnded=false;
+  document.getElementById('endgameOverlay').className='endgame-overlay';
+  document.getElementById('logEntries').innerHTML='';
+  document.getElementById('advanceBtn').disabled=false;
+  renderAll();
+  addLog('--','New operation initialized. 50 nodes redeployed across 6 classified rooms.',['Grid reset','Node network re-seeded'],[]);
+}
+
+// ── ADVANCE TURN ─────────────────────────────────────────────
 async function doAdvanceTurn(){
-  if(!apiKey){alert('Connect an API key first — select a provider above and paste your key.');return;}
+  if(!apiKey){
+    alert('Connect an API key first.\n\nSelect GROQ (free), get a key at console.groq.com, paste it and hit CONNECT.');
+    return;
+  }
+  if(gameEnded)return;
   setLoading(true);
 
   const snap=JSON.stringify({
@@ -648,33 +737,18 @@ JSON SCHEMA:
     const resp=await fetch('/api/proxy',{
       method:'POST',
       headers:{'Content-Type':'application/json','x-api-key':apiKey,'x-provider':selectedProvider},
-      body:JSON.stringify({
-        model:selectedModel,
-        max_tokens:1000,
-        system:sys,
-        messages:[{role:'user',content:userMsg}]
-      })
+      body:JSON.stringify({model:selectedModel,max_tokens:1000,system:sys,messages:[{role:'user',content:userMsg}]})
     });
     const data=await resp.json();
     const raw=data.content.map(c=>c.text||'').join('').trim();
     const result=JSON.parse(raw.replace(/```json|```/g,'').trim());
 
     gs.turn+=1;
-    if(result.roomUpdates){
-      Object.entries(result.roomUpdates).forEach(([k,v])=>{
-        if(gs.rooms[k])Object.assign(gs.rooms[k],v);
-      });
-    }
-    if(result.nodeMovements){
-      result.nodeMovements.forEach(mv=>{
-        const node=gs.nodes.find(n=>n.id===mv.id||n.name===mv.name);
-        if(node){
-          if(mv.to)node.room=mv.to;
-          if(mv.stress!==undefined)node.stress=mv.stress;
-          if(mv.loyalty!==undefined)node.loyalty=mv.loyalty;
-        }
-      });
-    }
+    if(result.roomUpdates)Object.entries(result.roomUpdates).forEach(([k,v])=>{if(gs.rooms[k])Object.assign(gs.rooms[k],v);});
+    if(result.nodeMovements)result.nodeMovements.forEach(mv=>{
+      const node=gs.nodes.find(n=>n.id===mv.id||n.name===mv.name);
+      if(node){if(mv.to)node.room=mv.to;if(mv.stress!==undefined)node.stress=mv.stress;if(mv.loyalty!==undefined)node.loyalty=mv.loyalty;}
+    });
     gs.cash=Math.max(0,gs.cash+(result.cashDelta||0));
     gs.reputation=Math.max(0,Math.min(100,gs.reputation+(result.reputationDelta||0)));
     gs.intel=Math.max(0,Math.min(100,gs.intel+(result.intelDelta||0)));
@@ -686,21 +760,28 @@ JSON SCHEMA:
 
     addLog(gs.turn-1,result.log||'—',result.events,result.alerts);
     renderAll();
+    checkEndgame();
   }catch(e){
     addLog(gs.turn,`[ERROR] ${e.message}`,[],'UPLINK FAILURE');
-    gs.alerts=['SYSTEM ERROR'];
-    renderAlerts();
+    gs.alerts=['SYSTEM ERROR'];renderAlerts();
   }
   setLoading(false);
 }
 
+// ── INIT ─────────────────────────────────────────────────────
 window.addEventListener('DOMContentLoaded',()=>{
+  // Onboarding: mostra solo al primo avvio
+  if(localStorage.getItem('loom_seen_onboarding')){
+    document.getElementById('obOverlay').style.display='none';
+  }
+
   selectProvider('groq');
   setTimeout(()=>{
     document.getElementById('loadingOverlay').style.display='none';
     renderProviders();
     renderAll();
-    addLog('--','System initialized. Operations grid online. 50 active nodes detected across 6 classified rooms. Select a provider and connect your API key to begin.',['Grid stabilized','Node network nominal','Multi-provider uplink: READY'],[]);
+    updateNokeyBanner();
+    addLog('--','System initialized. Operations grid online. 50 active nodes detected across 6 classified rooms. Select GROQ (free) or another provider and connect your API key to begin.',['Grid stabilized','Node network nominal','Multi-provider uplink: READY'],[]);
   },2200);
 });
 </script>
