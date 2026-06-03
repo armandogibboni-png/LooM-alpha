@@ -1290,7 +1290,11 @@ export class SwarmEngine {
     return this.agents.filter(a => a.currentZone === zoneLabel && !a.isBlacklisted);
   }
   getLocalFallback(agentId, tier, pressure) {
-    const matrix = FALLBACK_MATRIX;
+    const matrix = {
+      0: { bassa:['Yes?','What do you need?','Not now.'], media:['Leave me alone.','Later.'], alta:['Go away.','No.'] },
+      1: { bassa:['Interesting.','Sure, go on.','I hear you.'], media:['Be quick.','Not sure about this.'], alta:['Talk later.','Not a good time.'] },
+      2: { bassa:['Between us.','This stays here.','You earned that.'], media:['I trust you, but still.','Careful.'], alta:['Even now I trust you.','Keep this close.'] },
+    };
     const level = pressure > 0.65 ? 'alta' : pressure > 0.30 ? 'media' : 'bassa';
     const pool = matrix[tier]?.[level] || matrix[0]?.['bassa'] || ['Ok.'];
     const v = JSON.parse(localStorage.getItem('loom_swarm_vocabulary') || '{}');

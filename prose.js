@@ -156,7 +156,7 @@ export const AMBIENT_INTERCEPTS = {
     'Press Room': [
       'An article was written and pulled within twenty minutes of publication.',
       '{a} met three different journalists at three different locations. No story ran.',
-      'Yesterday's anonymous source uses the same syntax as {b}.',
+      'Yesterday\'s anonymous source uses the same syntax as {b}.',
       'Three outlets received the same leak from three separate sources. Not a leak — a campaign.',
       'Someone is preparing a story. Not to publish it — to have it ready.',
     ],
