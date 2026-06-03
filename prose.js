@@ -172,6 +172,15 @@ export const AMBIENT_INTERCEPTS = {
 
 
 
+// ── SCENARIO INTRO ───────────────────────────────────────────────────────────
+export const SCENARIO_INTRO = [
+  'The network is already active.',
+  '90 nodes. 6 zones. Four factions that do not trust each other.',
+  'Two sovereigns control the flow of information.',
+  'Your objective: neutralize both before suspicion burns your cover.',
+  'You have no identity. You have one advantage: you know things they do not know you know.',
+];
+
 // ── FALLBACK NARRATIVO (quando AI non disponibile) ────────────────────────────
 export const FALLBACK_TURNS = [
   'The network holds. Nodes shift. No significant deviations this turn.',
