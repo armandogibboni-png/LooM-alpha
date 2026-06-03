@@ -150,8 +150,17 @@ export class SwarmEngine {
     this._generateMissions();
     this.initRooms();
     this._initFeaturedCast();
+    this._initMoles();
     this._posCache = {};
     this._moleClues = {}; // agentId → count clues shown
+  }
+
+  _initMoles() {
+    // 1-2 featured non-queen agents are moles — picked at random
+    const candidates = this.agents.filter(a => a.isFeatured && !a.isQueen && !a.isRecurring);
+    const moleCount = Math.min(2, Math.max(1, Math.floor(candidates.length * 0.12)));
+    const shuffled = candidates.sort(() => Math.random() - 0.5);
+    shuffled.slice(0, moleCount).forEach(a => { a.mole = true; });
   }
 
   _initFeaturedCast() {
