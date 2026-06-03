@@ -99,7 +99,7 @@ export class SwarmEngine {
       const center = this.config.factionCenters[faction];
       const angle = Math.random() * Math.PI * 2;
       const radius = 0.03 + Math.random() * 0.10;
-      const lorePool = loreByFaction[faction] || ['Nasconde qualcosa.'];
+      const lorePool = loreByFaction[faction] || ['Holds something back.'];
       const isHub = (i < this.factions.length);
       const isMissionAgent = isHub;
       const zone = zones.length > 0 ? zones[Math.floor(Math.random() * zones.length)] : null;
@@ -563,14 +563,14 @@ export class SwarmEngine {
     });
 
     // Calcola rischio spostamento
-    let riskLevel = 'silenzioso';
+    let riskLevel = 'quiet';
     let suspicionHit = 0;
 
     if (postura === 'OMBRA') {
-      riskLevel = 'invisibile';
+      riskLevel = 'invisible';
       suspicionHit = 0;
     } else if (postura === 'VISIBILE') {
-      riskLevel = 'esposto';
+      riskLevel = 'exposed';
       suspicionHit = 0.05;
       // Annuncia entrata nel monitor di tutti gli agenti della stanza
       if (this.onVisibleEntry) {
@@ -578,10 +578,10 @@ export class SwarmEngine {
         this.onVisibleEntry(roomLabel, agentsHere);
       }
     } else { // NEUTRALE
-      if (queenHere) { riskLevel = 'critico'; suspicionHit = 0.05; }
-      else if (anxiety > 0.6) { riskLevel = 'rischioso'; suspicionHit = 0.05; }
-      else if (anxiety > 0.3) { riskLevel = 'moderato'; suspicionHit = 0.02; }
-      else { riskLevel = 'silenzioso'; suspicionHit = 0; }
+      if (queenHere) { riskLevel = 'critical'; suspicionHit = 0.05; }
+      else if (anxiety > 0.6) { riskLevel = 'risky'; suspicionHit = 0.05; }
+      else if (anxiety > 0.3) { riskLevel = 'moderate'; suspicionHit = 0.02; }
+      else { riskLevel = 'quiet'; suspicionHit = 0; }
     }
 
     // Applica sospetto
@@ -765,7 +765,7 @@ export class SwarmEngine {
           const distantRoom = target.currentZone !== this.playerRoom;
           if (!distantRoom) return { text: 'Target must be in a different zone for this operation.', type: 'negative' };
           this.activeFieldOp = { type: 'safe_cracking', targetId, targetRoom: target.currentZone, turnsLeft: 8, effectMod };
-          return { text: `Cracking della cassaforte avviato. 8 turni. Alto rischio.`, type: 'negative', ongoing: true };
+          return { text: `Deep crack initiated. 8 turns. High exposure risk.`, type: 'negative', ongoing: true };
         }
       },
       // SET 3 — WARFARE
@@ -982,7 +982,7 @@ export class SwarmEngine {
     const events = [
       {
         type: 'agent_eliminated',
-        desc: 'Un agente è sparito dalla rete. La tua copertura si è parzialmente assottigliata.',
+        desc: 'An asset disappeared from the network. Your cover has partially thinned.',
         action: () => {
           // Elimina un agente casuale non-regina non-ricorrente
           const targets = this.agents.filter(a => !a.isQueen && !a.isRecurring && !a.isBlacklisted);
@@ -1010,7 +1010,7 @@ export class SwarmEngine {
       },
       {
         type: 'new_informant',
-        desc: 'Un agente ti contatta spontaneamente. Dice di avere qualcosa di importante.',
+        desc: 'An asset contacts you spontaneously. Says they have something important.',
         action: () => {
           const candidates = this.agents.filter(a =>
             !a.isBlacklisted && !a.isQueen && !a.isMissionAgent &&
