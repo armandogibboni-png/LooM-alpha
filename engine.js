@@ -94,7 +94,7 @@ export class SwarmEngine {
     const loreByFaction = LORE_BY_CONTEXT[this.contextKey] || {};
     const zones = this.config.zones || [];
 
-    for (let i = 0; i < 200; i++) {
+    for (let i = 0; i < identities.length; i++) {
       const faction = this.factions[i % this.factions.length];
       const center = this.config.factionCenters[faction];
       const angle = Math.random() * Math.PI * 2;
@@ -840,24 +840,26 @@ export class SwarmEngine {
 
     this.factions.forEach((faction, fi) => {
       const mAgent = this.agents[fi];
-      const templates = MISSION_TEMPLATES[this.contextKey]?.[faction] || MISSION_TEMPLATES.DEFAULT;
+      const templates = MISSION_TEMPLATES[this.contextKey]?.[faction]
+                     || MISSION_TEMPLATES[this.contextKey]?.DEFAULT
+                     || ['{target} has something we need. Find it.'];
       const template = templates[Math.floor(Math.random() * templates.length)];
-      const targets = this.agents.filter(a => a.id !== mAgent.id && !a.isMissionAgent);
+      if (!template) return;
+      const targets = this.agents.filter(a => a.id !== mAgent.id && !a.isMissionAgent && a.faction !== faction);
       const target = targets[Math.floor(Math.random() * targets.length)];
+      if (!target) return;
       const type = MISSION_TYPES[fi % MISSION_TYPES.length];
 
       this.activeMissions.push({
         id: `mission_${fi}`, faction,
-        type, // 'intel' | 'disinfo' | 'timed'
+        type,
         givenBy: mAgent.id, givenByName: mAgent.name,
         targetId: target.id, targetName: target.name, targetFaction: target.faction,
         description: template.replace('{target}', target.name.split(' ')[0]).replace('{faction}', target.faction),
         status: 'active',
-        reward: type === 'timed' ? '+200 pts — bonus velocità' : '+150 pts + Slot Machine',
-        // Per timed: timer in turni
+        reward: type === 'timed' ? '+200 pts — speed bonus' : '+150 pts',
         timeLimit: type === 'timed' ? 15 : null,
         turnsUsed: 0,
-        // Per disinfo: quale rumor iniettare
         disinfoZone: type === 'disinfo' ? (this.config.zones?.[0]?.label || null) : null,
         disinfoCompleted: false,
       });
