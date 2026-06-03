@@ -90,7 +90,7 @@ export class SwarmEngine {
 
   init() {
     this.agents = [];
-    const identities = generateUniqueSwarmNames(200, this.contextKey);
+    const identities = generateUniqueSwarmNames(90, this.contextKey);
     const loreByFaction = LORE_BY_CONTEXT[this.contextKey] || {};
     const zones = this.config.zones || [];
 
@@ -159,7 +159,7 @@ export class SwarmEngine {
     let count = 0;
     this.agents.forEach(a => {
       if (a.isQueen || a.isRecurring) { a.isFeatured = true; return; }
-      if (count < 18) { a.isFeatured = true; count++; }
+      if (count < 14) { a.isFeatured = true; count++; }
       else { a.isFeatured = false; }
     });
   }

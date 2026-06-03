@@ -214,7 +214,7 @@ body{background:var(--bg);color:var(--txt);font-family:var(--mono);font-size:12p
 
 <div id="loading">
   <div class="lt">L.O.O.M.</div>
-  <div class="ls">SWARM CORE v2.2<br>INITIALIZING LOCAL ENGINE<br>SEEDING 200 NODES — 6 ZONES<br>ENCRYPTING IDENTITIES</div>
+  <div class="ls">SWARM CORE v2.2<br>INITIALIZING LOCAL ENGINE<br>SEEDING 90 NODES — 6 ZONES<br>ENCRYPTING IDENTITIES</div>
   <div class="lb"><div class="lf"></div></div>
 </div>
 
@@ -406,7 +406,7 @@ window.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => {
         needsRender = true;
         SCENARIO_INTRO.forEach((l,i) => setTimeout(() => pushMon(l), i*280));
-        addLog('--', 'Engine online. Network encrypted. 200 nodes seeded — identities classified until contact.', [], []);
+        addLog('--', 'Engine online. Network encrypted. 90 nodes seeded — identities classified until contact.', [], []);
       });
     });
   };
